@@ -25,6 +25,7 @@ SECRET_KEY = '6l96=e*-y!^4w+3dg&*liclqe!2tc_c$w2f#x)*(&p_m7&aao9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# TODO: Add host name
 ALLOWED_HOSTS = []
 
 
@@ -37,6 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+
+    'base'
+    'coresys',
+    'usersys',
+    'demandsys',
+    'invitesys',
+    'ordersys',
+    'paymentsys'
 ]
 
 MIDDLEWARE = [
@@ -73,6 +84,7 @@ WSGI_APPLICATION = 'walibackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
+# TODO: Change database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -99,6 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'coresys.UserBase'
+
+# TODO: Add LOG
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -118,3 +133,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Upload location
+UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/'
+UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/'
+UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/'
