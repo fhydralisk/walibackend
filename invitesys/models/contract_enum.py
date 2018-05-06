@@ -13,4 +13,4 @@ class _SignStatusChoice(FieldChoice):
     )
 
 
-sign_status_choice = _SignStatusChoice
+sign_status_choice = _SignStatusChoice()

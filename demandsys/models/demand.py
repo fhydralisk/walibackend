@@ -4,10 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
 from coresys.models import CoreAddressProvince, CoreAddressCity, CoreAddressArea
-from ordersys.models import OrderPaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
-from demand_enum import t_demand_choice, unit_choice
+from .payment import ProductPaymentMethod
+from .demand_enum import t_demand_choice, unit_choice
 
 
 class ProductDemand(models.Model):
@@ -20,7 +20,7 @@ class ProductDemand(models.Model):
     min_quantity = models.FloatField()
     price = models.FloatField()
     unit = models.IntegerField(max_length=unit_choice.MAX_LENGTH, choices=unit_choice.choice)
-    pmid = models.ForeignKey(OrderPaymentMethod)
+    pmid = models.ForeignKey(ProductPaymentMethod)
     st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("start time"))
     duration = models.FloatField()
     abid = models.ForeignKey(UserAddressBook, on_delete=models.SET_NULL, verbose_name=_("user address book"))

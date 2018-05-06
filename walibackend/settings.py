@@ -41,7 +41,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'base'
+    'base',
     'coresys',
     'usersys',
     'demandsys',
