@@ -42,7 +42,7 @@ class UserManager(BaseUserManager):
 class UserBase(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), null=True)
-    pn = models.CharField(_('phone number'), max_length=25)
+    pn = models.CharField(_('phone number'), max_length=25, unique=True)
     role = models.IntegerField(_("user role"), choices=role_choice.choice, max_length=role_choice.MAX_LENGTH)
     register_date = models.DateTimeField(_("register date"), auto_now_add=True)
     is_active = models.BooleanField(default=True)
@@ -88,14 +88,14 @@ class UserValidatePhoto(models.Model):
 
 class UserValidateArea(models.Model):
     vid = models.OneToOneField(UserValidate, on_delete=models.CASCADE, related_name="validate_area", db_index=True)
-    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="province", db_index=False)
-    cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, related_name="city", db_index=False)
-    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, related_name="area", db_index=False)
+    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="uv_province", db_index=False, null=True)
+    cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, db_index=False, null=True)
+    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True)
 
 
 class UserAddressBook(models.Model):
     uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_addressbook", db_index=True)
-    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, related_name="area", db_index=False)
+    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True, verbose_name=_("Area ID"))
     street = models.CharField(max_length=511, blank=True, null=True)
     contacts = models.CharField(max_length=100, null=True, blank=True)
     phone = models.CharField(max_length=25, null=True, blank=True)

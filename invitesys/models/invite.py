@@ -12,20 +12,21 @@ class InviteInfo(models.Model):
     uid_s = models.ForeignKey(
         UserBase,
         on_delete=models.CASCADE,
-        related_name="user_invite",
+        related_name="user_invite_src",
         db_index=True,
         verbose_name=_("inviter")
     )
     uid_t = models.ForeignKey(
         UserBase,
         on_delete=models.CASCADE,
-        related_name="user_invite",
+        related_name="user_invite_dst",
         db_index=True,
         verbose_name=_("invitee")
     )
     dmid_s = models.ForeignKey(
         ProductDemand,
         on_delete=models.PROTECT,  # Do not allow?
+        related_name="demand_invite_src",
         verbose_name=_("inviter's demand"),
         null=True,
         blank=True
@@ -33,7 +34,8 @@ class InviteInfo(models.Model):
     dmid_t = models.ForeignKey(
         ProductDemand,
         on_delete=models.PROTECT,
-        verbose_name=_("inviter's demand")
+        related_name="demand_invite_dst",
+        verbose_name=_("invitee's demand")
     )
     quality = models.FloatField()
     price = models.FloatField()
