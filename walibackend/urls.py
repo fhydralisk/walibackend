@@ -16,14 +16,17 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
+import testapp.urls
+import usersys.urls
 
 urlpatterns = [
     url(r'^bg/', admin.site.urls),
-    url(r'^core/', include('coresys.urls')),
-    url(r'^user/', include('usersys.urls')),
-    url(r'^demand/', include('demandsys.urls')),
-    url(r'^invite/', include('invitesys.urls')),
-    url(r'^order/', include('ordersys.urls')),
-    url(r'^payment/', include('paymentsys.urls')),
+    # url(r'^core/', include('coresys.urls')),
+    url(r'^user/', include(usersys.urls.urlpatterns)),
+    # url(r'^demand/', include('demandsys.urls')),
+    # url(r'^invite/', include('invitesys.urls')),
+    # url(r'^order/', include('ordersys.urls')),
+    # url(r'^payment/', include('paymentsys.urls')),
+    url(r'^test/', include(testapp.urls.urlpatterns)),
 
 ]

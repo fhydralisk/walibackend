@@ -7,7 +7,9 @@ Last modified: May 6, 2018
 """
 
 import random
-from django.core.cache import cache
+from django.conf import settings
+from django.utils.module_loading import import_string
+
 
 class BasePhoneValidator(object):
     """
@@ -36,4 +38,9 @@ class ConsolePhoneValidator(BasePhoneValidator):
         return v
 
 
+class AliyunPhoneValidator(BasePhoneValidator):
+    # TODO: Implement this validator
+    pass
 
+
+phone_validator = import_string(settings.PHONE_VALIDATOR)()

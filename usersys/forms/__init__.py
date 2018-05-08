@@ -1,0 +1,1 @@
+from .vphoto_upload_form import ValidatePhotoUploadForm

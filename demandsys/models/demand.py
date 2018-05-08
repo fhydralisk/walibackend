@@ -40,8 +40,8 @@ class ProductDemand(models.Model):
 
 class ProductDemandPhoto(models.Model):
     dmid = models.ForeignKey(ProductDemand, on_delete=models.CASCADE, related_name="demand_photo", db_index=True)
-    path = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO)
-    path_snapshot = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO_SNAPSHOT)
+    demand_photo = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO)
+    demand_photo_snapshot = models.FilePathField(null=True, blank=True)
     inuse = models.BooleanField(default=True)
     upload_date = models.DateTimeField(auto_now_add=True)
     photo_desc = models.CharField(max_length=255)

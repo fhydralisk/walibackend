@@ -8,6 +8,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
 from user_enum import role_choice, t_user_choice, validate_status_choice, t_photo_choice
 from coresys.models import CoreAddressArea, CoreAddressCity, CoreAddressProvince
+from base.util.misc_validators import validators
 from django.conf import settings
 
 
@@ -42,8 +43,10 @@ class UserManager(BaseUserManager):
 class UserBase(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), null=True)
-    pn = models.CharField(_('phone number'), max_length=25, unique=True)
-    role = models.IntegerField(_("user role"), choices=role_choice.choice, max_length=role_choice.MAX_LENGTH)
+    pn = models.CharField(_('phone number'), max_length=25, unique=True, validators=[
+        validators.get_validator("phone number")
+    ])
+    role = models.IntegerField(_("user role"), choices=role_choice.choice)
     register_date = models.DateTimeField(_("register date"), auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
@@ -65,29 +68,33 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
+# TODO: Deal with the validator, it is unsafe to be here.
 class UserValidate(models.Model):
-    uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_validate", db_index=True)
+    uid = models.OneToOneField(UserBase, on_delete=models.CASCADE, related_name="user_validate", db_index=True)
     contact = models.CharField(max_length=100, null=True, blank=True)
     company = models.CharField(max_length=255, null=True, blank=True)
+    idcard_number = models.CharField(max_length=30, null=True, blank=True)
     bankcard = models.CharField(max_length=255, null=True, blank=True)
     obank = models.CharField(max_length=255, null=True, blank=True)
     textno = models.CharField(max_length=255, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
-    phonenum = models.CharField(max_length=25, null=True, blank=True)
-    t_user = models.IntegerField(max_length=t_user_choice.MAX_LENGTH, choices=t_user_choice.choice)
-    validate_status = models.IntegerField(max_length=validate_status_choice.MAX_LENGTH, choices=validate_status_choice.choice)
+    phonenum = models.CharField(max_length=25, null=True, blank=True, validators=[
+        validators.get_validator("phone number")
+    ])
+    t_user = models.IntegerField(choices=t_user_choice.choice, null=True, blank=True)
+    validate_status = models.IntegerField(choices=validate_status_choice.choice)
 
 
 class UserValidatePhoto(models.Model):
     vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_photo", db_index=True)
-    path = models.ImageField(upload_to=settings.UPLOAD_VALIDATE_PHOTO)
+    v_photo = models.ImageField(upload_to=settings.UPLOAD_VALIDATE_PHOTO)
     inuse = models.BooleanField(default=True)
     upload_date = models.DateTimeField(auto_now_add=True)
-    t_photo = models.IntegerField(max_length=t_photo_choice.MAX_LENGTH, choices=t_photo_choice.choice)
+    t_photo = models.IntegerField(choices=t_photo_choice.choice)
 
 
 class UserValidateArea(models.Model):
-    vid = models.OneToOneField(UserValidate, on_delete=models.CASCADE, related_name="validate_area", db_index=True)
+    vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_area", db_index=True)
     pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="uv_province", db_index=False, null=True)
     cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, db_index=False, null=True)
     aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True)

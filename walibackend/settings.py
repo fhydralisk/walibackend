@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'demandsys',
     'invitesys',
     'ordersys',
-    'paymentsys'
+    'paymentsys',
+    'testapp'
 ]
 
 MIDDLEWARE = [
@@ -111,9 +112,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'coresys.UserBase'
+# User model
+
+AUTH_USER_MODEL = 'usersys.UserBase'
 
 # TODO: Add LOG
+
+# Caches
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'LOCATION': 'unix:/tmp/memcached.sock',
+        'KEY_PREFIX': 'DEFAULT'
+    },
+    'sessions': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'unix:/tmp/memcached.sock',
+        'KEY_PREFIX': 'SESSION'
+    }
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -136,6 +153,29 @@ STATIC_URL = '/static/'
 
 
 # Upload location
-UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/'
-UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/'
-UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/'
+# FIXME: this path shall be changed
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/%Y/%D/'
+UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/%Y/%D/'
+UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/%Y/%D/'
+
+# File Storage
+DEFAULT_FILE_STORAGE = 'base.util.WLFileStorage.UUIDFileStorage'
+
+# Phone Validator
+
+PHONE_VALIDATOR = "base.util.phone_validator.validator.ConsolePhoneValidator"
+
+# String Validators
+
+STRING_VALIDATORS = [
+    {
+        "NAME": "phone number",
+        "CLASS": "base.util.misc_validators.PNValidator",
+        "ARGS": {
+
+        }
+    },
+]
+

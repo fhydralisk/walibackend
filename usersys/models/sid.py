@@ -8,7 +8,7 @@ from django.db import models
 class UserSid(models.Model):
     sid = models.CharField(max_length=128, primary_key=True)
     uid = models.ForeignKey(UserBase)
-    last_ipaddr = models.IPAddressField()
+    last_ipaddr = models.GenericIPAddressField()
     generate_datetime = models.DateTimeField(auto_now_add=True)
     expire_datetime = models.DateTimeField()
     last_login = models.DateTimeField()
