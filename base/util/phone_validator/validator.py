@@ -38,6 +38,16 @@ class ConsolePhoneValidator(BasePhoneValidator):
         return v
 
 
+class DummyPhoneValidator(BasePhoneValidator):
+    STATIC_VCODE = "123456"
+    """
+    A Dummy validator that always send specified same validation code.
+    """
+
+    def generate_and_send(self, pn):
+        return self.STATIC_VCODE
+
+
 class AliyunPhoneValidator(BasePhoneValidator):
     # TODO: Implement this validator
     pass

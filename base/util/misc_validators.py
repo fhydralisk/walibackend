@@ -59,10 +59,20 @@ class PNValidator(RegexAbstractValidator):
     REGEX_PATTERN = r'^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$'
 
 
+@deconstructible
+class DummyValidator(AbstractValidator):
+    """
+    Dummy Validator always pass validations
+    """
+    def validate(self, vstr):
+        return True
+
+
 class ValidatorManager(object):
     def __init__(self):
         self._validators = {
-            e["NAME"]: import_string(e["CLASS"])(**e["ARGS"]) for e in settings.STRING_VALIDATORS
+            e["NAME"]: import_string(e["CLASS"])(**(e["ARGS"] if "ARGS" in e else {}))
+            for e in settings.STRING_VALIDATORS
         }
 
     def validate(self, vstr, vname):

@@ -34,3 +34,6 @@ class FieldChoice(object):
 
     def validate(self, v):
         return v in self._choice_values
+
+    def get_choices(self):
+        return list(self._choice_values)

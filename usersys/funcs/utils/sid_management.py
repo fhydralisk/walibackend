@@ -62,8 +62,9 @@ def sid_destroy(sid):
     if sidobj is not None:
         sidobj.is_login = False
         sidobj.save()
-
         # TODO: Clean sid-user cache
+    else:
+        raise KeyError("Sid not exist")
 
 
 def sid_getuser(sid):

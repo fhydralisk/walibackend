@@ -76,7 +76,7 @@ class UserValidate(models.Model):
     idcard_number = models.CharField(max_length=30, null=True, blank=True)
     bankcard = models.CharField(max_length=255, null=True, blank=True)
     obank = models.CharField(max_length=255, null=True, blank=True)
-    textno = models.CharField(max_length=255, null=True, blank=True)
+    texno = models.CharField(max_length=255, null=True, blank=True)
     address = models.CharField(max_length=255, null=True, blank=True)
     phonenum = models.CharField(max_length=25, null=True, blank=True, validators=[
         validators.get_validator("phone number")
@@ -95,9 +95,9 @@ class UserValidatePhoto(models.Model):
 
 class UserValidateArea(models.Model):
     vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_area", db_index=True)
-    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="uv_province", db_index=False, null=True)
-    cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, db_index=False, null=True)
-    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True)
+    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="uv_province", db_index=False, null=True, blank=True)
+    cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, db_index=False, null=True, blank=True)
+    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True, blank=True)
 
 
 class UserAddressBook(models.Model):

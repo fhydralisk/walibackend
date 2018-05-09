@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -165,7 +166,7 @@ DEFAULT_FILE_STORAGE = 'base.util.WLFileStorage.UUIDFileStorage'
 
 # Phone Validator
 
-PHONE_VALIDATOR = "base.util.phone_validator.validator.ConsolePhoneValidator"
+PHONE_VALIDATOR = "base.util.phone_validator.validator.DummyPhoneValidator"
 
 # String Validators
 
@@ -177,5 +178,13 @@ STRING_VALIDATORS = [
 
         }
     },
+    {
+        "NAME": "user password",
+        "CLASS": "base.util.misc_validators.DummyValidator",
+    }
 ]
+
+# User_Sid duration
+SID_DURATION = datetime.timedelta(days=10)
+
 

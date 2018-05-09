@@ -8,20 +8,22 @@ Last modified: May 6, 2018
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 from base.exceptions import *
-from usersys.funcs.utils import sid_create, sid_destroy, sid_getuser
+from usersys.funcs.utils.sid_management import sid_create, sid_destroy, sid_getuser
+
+from django.conf import settings
 
 User = get_user_model()
 
 
 @default_exception(Error500)
-def login(pn, password):
+def login(pn, password, role, ipaddr):
     # validate username and password
-    user = authenticate(pn=pn, password=password)
+    user = authenticate(pn=pn, password=password, role=role)
     if user is None:
         raise Error401("authenticate failed")
 
     # create SID if match
-    sid = sid_create(user)
+    sid = sid_create(user, ipaddr, settings.SID_DURATION)
 
     # TODO: cache user and sid?
 
@@ -30,12 +32,15 @@ def login(pn, password):
 
 
 @default_exception(Error500)
-def logout(sid, pn):
-    user = sid_getuser(sid)
+def logout(user_sid, pn):
+    user = sid_getuser(user_sid)
     if user is None:
-        return
+        raise Error404("user_id do not exist")
 
     if user.pn == pn:
-        sid_destroy(sid)
+        try:
+            sid_destroy(user_sid)
+        except KeyError:
+            raise Error404("user_id do not exist")
     else:
-        raise Error409("sid and pn not match")
+        raise Error409("user_sid and pn not match")

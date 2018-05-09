@@ -1,9 +1,10 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from usersys.models.usermodel import UserValidate, UserValidateArea
 from .validators.validate_validator import UserValidateStatusValidator, UserValidateTUserValidator
 
 
-class UserValidateUserSerializer(ModelSerializer):
+class UserValidateUserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = UserValidate
         fields = '__all__'
@@ -18,7 +19,7 @@ class UserValidateUserSerializer(ModelSerializer):
         }
 
 
-class UserValidateAreaSerializer(ModelSerializer):
+class UserValidateAreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserValidateArea
         fields = '__all__'

@@ -35,14 +35,14 @@ class UserValidateStatusValidator(object):
 
         # Validate status
         if self.is_user and\
-                value not in (validate_status_choice.NOT_COMMITED, validate_status_choice.NOT_PROCEEDED):
+                value not in (validate_status_choice.NOT_COMMITTED, validate_status_choice.NOT_PROCEEDED):
             return False
         else:
             return True
 
     def ensure_fields(self, value):
         # Ensure each filed is filled
-        if value != validate_status_choice.NOT_COMMITED:
+        if value != validate_status_choice.NOT_COMMITTED:
             if self.instance.t_user is None:
                 return False
 
@@ -61,7 +61,7 @@ class UserValidateStatusValidator(object):
 
     def ensure_photos(self, value):
         # Ensure photos are uploaded
-        if value != validate_status_choice.NOT_COMMITED:
+        if value != validate_status_choice.NOT_COMMITTED:
             photoobjs = self.instance.validate_photo.filter(inuse=True)
             if self.instance.t_user == t_user_choice.ENTERPRISE_USER:
                 photoobjs = photoobjs.filter(t_photo=t_photo_choice.LICENSE)
@@ -77,7 +77,7 @@ class UserValidateStatusValidator(object):
 
     def ensure_areas(self, value):
         # Ensure areas are submitted
-        if value != validate_status_choice.NOT_COMMITED:
+        if value != validate_status_choice.NOT_COMMITTED:
             area_objs = self.instance.validate_area.filter(vid=self.instance)
             if not area_objs.exists():
                 return False
@@ -98,7 +98,7 @@ class UserValidateStatusValidator(object):
         if self.instance is None:
             return
 
-        if value == validate_status_choice.NOT_COMMITED:
+        if value == validate_status_choice.NOT_COMMITTED:
             return
 
         if not self.is_user:

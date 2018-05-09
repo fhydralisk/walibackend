@@ -16,7 +16,7 @@ from .session import RegistrationSessionKeys, ValidateStatus
 User = get_user_model()
 
 
-def modify_password(sid, pn, new_passwd):
+def modify_password(sid, pn, password, role):
     # validate sid to confirm the phone validation process
     session = get_session_dict(sid)
     if session is None:
@@ -28,14 +28,14 @@ def modify_password(sid, pn, new_passwd):
 
     if session.get(RegistrationSessionKeys.VALIDATE_STATUS) == ValidateStatus.VALIDATE_SUCCEEDED:
         # change password and save
-        users = User.objects.filter(pn=pn)
+        users = User.objects.filter(pn=pn, role=role)
         if len(users) == 0:
             raise Error404("User does not exist")
 
-        if not validators.validate(new_passwd, "user password"):
+        if not validators.validate(password, "user password"):
             raise Error403("Format of password not valid")
 
-        users[0].set_password(new_passwd)
+        users[0].set_password(password)
         users[0].save()
         # destroy sid
         destroy_session(sid)
