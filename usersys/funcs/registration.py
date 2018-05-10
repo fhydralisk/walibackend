@@ -119,7 +119,7 @@ def register(sid, pn, password, role):
         raise Error404("Sid does not exist")
 
     if pn != session.get(RegistrationSessionKeys.PHONE_NUMBER):
-        raise Error409("Validation code not match")
+        raise Error409("Phone number and sid do not match.")
 
     if session.get(RegistrationSessionKeys.VALIDATE_STATUS) == ValidateStatus.VALIDATE_SUCCEEDED:
         if len(User.objects.filter(pn=pn)) != 0:

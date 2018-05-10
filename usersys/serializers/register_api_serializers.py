@@ -13,6 +13,11 @@ class PNFinalRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBase
         fields = ('pn', 'role', 'password', 'sid')
+        extra_kwargs = {
+            'pn': {
+                'validators': []
+            }
+        }
 
 
 class PNValidateSerializer(serializers.Serializer):

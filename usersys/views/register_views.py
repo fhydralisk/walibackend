@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
-from base.views import WLAPIView
+from rest_framework.exceptions import ValidationError
 
+from base.views import WLAPIView
+from base.exceptions import WLException
 from usersys.serializers.register_api_serializers import PNSubmitSerializer, PNValidateSerializer, PNFinalRegisterSerializer
 from usersys.funcs.registration import get_sid_by_phonenumber, validate_sid, register
 
