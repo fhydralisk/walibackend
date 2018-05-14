@@ -26,4 +26,4 @@ class InviteContractSign(models.Model):
     sign_status_B = models.IntegerField(_("Party B sign status"), choices=sign_status_choice.choice)
 
     def __unicode__(self):
-        return self.generate_date
+        return self.generate_date.strftime("%b %d %Y %H:%M:%S")

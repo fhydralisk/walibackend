@@ -9,3 +9,6 @@ class CorePaymentMethod(models.Model):
     deposit_scale = models.FloatField()
     opmdesc = models.TextField(verbose_name=_("Description"), max_length=125)
     in_use = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.opmdesc
