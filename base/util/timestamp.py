@@ -1,6 +1,8 @@
 import datetime
 import time
 
+from django.utils.timezone import now
+
 
 # TODO: Test and consider about time zone issue.
 

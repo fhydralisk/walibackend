@@ -1,4 +1,9 @@
-class _OStatusChoice:
+from base.util.field_choice import FieldChoice
+
+
+# TODO: Translate codes into verbose names and identifiers!
+
+class _OStatusChoice(FieldChoice):
     WAIT_EARNEST = None
     WAIT_EARNEST_CHECK = None
     WAIT_PRODUCT_DELIVER = None
@@ -14,13 +19,13 @@ class _OStatusChoice:
     SUCCEEDED = None
 
 
-class _OPTypeChoice:
+class _OPTypeChoice(FieldChoice):
     CANCEL = None
     ADJUST_PRICE = None
     NORMAL = None
 
 
-class _PStatusChoice:
+class _PStatusChoice(FieldChoice):
     CREATED = None
     AGREED = None
     REJECTED = None
@@ -28,7 +33,7 @@ class _PStatusChoice:
     EXECUTED = None
 
 
-class _POperateStatusChoice:
+class _POperateStatusChoice(FieldChoice):
     CANCEL_WAIT_RETURN = None
     CANCEL_WAIT_CONFIRM = None
     CANCEL_WAIT_REFINE = None

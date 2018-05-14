@@ -78,7 +78,7 @@ class ObtainValidateInfoView(WLAPIView, APIView):
         data, context = self.get_request_obj(request)
 
         try:
-            validate, areas, photos = get_validate(data["user_sid"])
+            validate, areas, photos = get_validate(user_sid=data["user_sid"])
             seri_return = ValidationInfoDisplaySeralizer(instance={
                 "validate_obj": validate,
                 "validate_areas": areas,

@@ -3,7 +3,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from usersys.models import UserBase
-from demandsys.models import ProductDemand, ProductPaymentMethod
+from demandsys.models import ProductDemand
+from coresys.models import CoreDistributionMethod, CorePaymentMethod
 from .invite_enum import i_status_choice
 from demandsys.models.demand_enum import unit_choice
 
@@ -37,13 +38,14 @@ class InviteInfo(models.Model):
         related_name="demand_invite_dst",
         verbose_name=_("invitee's demand")
     )
-    quality = models.FloatField()
+    quantity = models.FloatField()
     price = models.FloatField()
     unit = models.IntegerField(max_length=unit_choice.MAX_LENGTH, choices=unit_choice.choice)
-    pmid = models.ForeignKey(ProductPaymentMethod, on_delete=models.PROTECT, verbose_name=_("Pay method"))
+    pmid = models.ForeignKey(CorePaymentMethod, on_delete=models.PROTECT, verbose_name=_("Pay method"))
+    disid = models.ForeignKey(CoreDistributionMethod, on_delete=models.PROTECT, verbose_name=_("Distribution Method"))
     dis_duration = models.IntegerField(verbose_name=_("Distribution duration"))
-    i_status = models.IntegerField(_("Invite status"), max_length=i_status_choice.MAX_LENGTH, choices=i_status_choice.choice)
-    reason = models.TextField()
+    i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
+    reason = models.TextField(null=True, blank=True)
 
     def __unicode__(self):
         return str(self.uid_s) + " v.s. " + str(self.uid_t)
