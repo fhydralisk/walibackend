@@ -43,6 +43,7 @@ class UserManager(BaseUserManager):
 class UserBase(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), null=True)
+    # FIXME: This is an issue, pn field should not be unique.
     pn = models.CharField(_('phone number'), max_length=25, unique=True, validators=[
         validators.get_validator("phone number")
     ])
@@ -57,6 +58,7 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('userbase')
         verbose_name_plural = _('usersbase')
+        unique_together = ('pn', 'role')
 
     def get_full_name(self):
         return self.pn

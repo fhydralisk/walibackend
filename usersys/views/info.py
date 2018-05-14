@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
 
-from usersys.serializers.user_info_serializer import UserInfoSerialzier
+from usersys.serializers.user_info import UserInfoSerialzier
 from usersys.funcs.info import get_user_info
 from base.exceptions import WLException
 

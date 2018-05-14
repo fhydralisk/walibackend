@@ -9,7 +9,7 @@ from base.exceptions import WLException
 from base.views import WLAPIView
 from usersys.funcs.validate import get_validate_photo, submit_validate_photo, \
     get_validate, save_validate, delete_validate_photo
-from usersys.serializers.validate_api_serializers import \
+from usersys.serializers.validate_api import \
     ValidationPhotoSerializer, ValidationSubmitSerializer, ValidationInfoDisplaySeralizer
 
 

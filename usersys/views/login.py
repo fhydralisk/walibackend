@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
 from base.util.get_ip import get_client_ip
-from usersys.serializers.login_api_serializers import LoginSerializer, LogoutSerializer
+from usersys.serializers.login_api import LoginSerializer, LogoutSerializer
 from usersys.funcs.login import login, logout
 
 
