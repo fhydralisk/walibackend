@@ -16,7 +16,7 @@ def get_page_info(queryset, count_per_page, page, page_start=0):
     """
 
     n_pages = queryset.count() + (count_per_page - 1) / count_per_page
-    if page - page_start > n_pages or page - page_start < 0:
+    if page - page_start > n_pages - 1 or page - page_start < 0:
         raise IndexError("page out of range")
 
     start = page * count_per_page - page_start
