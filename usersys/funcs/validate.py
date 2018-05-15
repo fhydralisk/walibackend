@@ -61,7 +61,7 @@ def submit_validate_photo(user, t_photo, photo_files_form_obj):
 @default_exception(Error500)
 @user_from_sid(Error404)
 def delete_validate_photo(user, t_photo):
-    vobj = user.user_validate
+    vobj = user.user_validate  # what's user_validate?
     if vobj.validate_status != validate_status_choice.NOT_COMMITTED:
         raise Error401("Cannot change photo because already submitted the validation")
 

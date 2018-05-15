@@ -1,9 +1,10 @@
 from django.forms import ModelForm
-from usersys.models import UserValidatePhoto
+from demandsys.models import ProductDemandPhoto
 
 
 class UploadPhotoForm(ModelForm):
 
     class Meta:
-        model = UserValidatePhoto
+        model = ProductDemandPhoto
         fields = ('demand_photo',)
+
