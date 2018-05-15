@@ -33,6 +33,7 @@ class UserManager(BaseUserManager):
 
     def create_superuser(self, pn, password, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault("is_staff", True)
 
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
@@ -43,12 +44,14 @@ class UserManager(BaseUserManager):
 class UserBase(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), null=True)
+    # FIXME: This is an issue, pn field should not be unique.
     pn = models.CharField(_('phone number'), max_length=25, unique=True, validators=[
         validators.get_validator("phone number")
     ])
     role = models.IntegerField(_("user role"), choices=role_choice.choice)
     register_date = models.DateTimeField(_("register date"), auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
     USERNAME_FIELD = 'pn'
@@ -57,6 +60,7 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('userbase')
         verbose_name_plural = _('usersbase')
+        unique_together = ('pn', 'role')
 
     def get_full_name(self):
         return self.pn

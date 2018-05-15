@@ -16,4 +16,23 @@ class _IStatusChoice(FieldChoice):
     )
 
 
+class _TInviteChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _(""), "PROCEEDING_INVITES_MINE"),
+        (2, _(""), "CLOSED_INVITES_MINE"),
+        (3, _(""), "PROCEEDING_INVITES_OTHERS"),
+        (4, _(""), "CLOSED_INVITES_OTHERS"),
+    )
+
+
+class _HandleMethodChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _(""), "ACCEPT"),
+        (2, _(""), "REJECT"),
+        (3, _(""), "CANCEL"),
+    )
+
+
 i_status_choice = _IStatusChoice()
+t_invite_choice = _TInviteChoice()
+handle_method_choice = _HandleMethodChoice()

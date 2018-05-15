@@ -9,7 +9,7 @@ from base.exceptions import WLException
 from base.views import WLAPIView
 from usersys.funcs.validate import get_validate_photo, submit_validate_photo, \
     get_validate, save_validate, delete_validate_photo
-from usersys.serializers.validate_api_serializers import \
+from usersys.serializers.validate_api import \
     ValidationPhotoSerializer, ValidationSubmitSerializer, ValidationInfoDisplaySeralizer
 
 
@@ -78,7 +78,7 @@ class ObtainValidateInfoView(WLAPIView, APIView):
         data, context = self.get_request_obj(request)
 
         try:
-            validate, areas, photos = get_validate(data["user_sid"])
+            validate, areas, photos = get_validate(user_sid=data["user_sid"])
             seri_return = ValidationInfoDisplaySeralizer(instance={
                 "validate_obj": validate,
                 "validate_areas": areas,

@@ -160,9 +160,12 @@ STATIC_URL = '/static/'
 # FIXME: this path shall be changed
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/%Y/%D/'
-UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/%Y/%D/'
-UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/%Y/%D/'
+UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/%Y/%m/%d/'
+UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/%Y/%m/%d/'
+UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/%Y/%m/%d/'
+CONTRACTS_GENERATE = 'contract/%Y/%m/%d/'
+CONTRACTS_TEMPLATE = 'contract_template/'
+
 
 # File Storage
 DEFAULT_FILE_STORAGE = 'base.util.WLFileStorage.UUIDFileStorage'
@@ -183,6 +186,10 @@ STRING_VALIDATORS = [
     },
     {
         "NAME": "user password",
+        "CLASS": "base.util.misc_validators.DummyValidator",
+    },
+    {
+        "NAME": "reason",
         "CLASS": "base.util.misc_validators.DummyValidator",
     }
 ]

@@ -18,8 +18,8 @@ User = get_user_model()
 @default_exception(Error500)
 def login(pn, password, role, ipaddr):
     # validate username and password
-    user = authenticate(pn=pn, password=password, role=role)
-    if user is None:
+    user = authenticate(pn=pn, password=password)
+    if user is None or user.role != role:
         raise Error401("authenticate failed")
 
     # create SID if match

@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
 
-from usersys.serializers.register_api_serializers import ResetPasswordSerializer
+from usersys.serializers.register_api import ResetPasswordSerializer
 from usersys.funcs.registration import validate_sid
 from usersys.funcs.modify_password import modify_password
 

@@ -13,4 +13,13 @@ class _SignStatusChoice(FieldChoice):
     )
 
 
+class _SignMethodChoice(FieldChoice):
+    MAX_LENGTH = 4
+    CHOICE_DISPLAY = (
+        (1, _("Accept"), "ACCEPT"),
+        (2, _("Reject"), "REJECT"),
+    )
+
+
 sign_status_choice = _SignStatusChoice()
+sign_method_choice = _SignMethodChoice()
