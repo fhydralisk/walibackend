@@ -11,7 +11,10 @@ def user_from_sid(exception_no_sid):
                 user = kwargs.pop("user", None)
 
             if user is None:
-                raise exception_no_sid("No such sid")
+                if exception_no_sid is not None:
+                    raise exception_no_sid("No such sid")
+                else:
+                    return func(user=None, **kwargs)
 
             return func(user=user, **kwargs)
 

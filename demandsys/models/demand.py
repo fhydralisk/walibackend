@@ -7,7 +7,7 @@ from base.util.timestamp import now
 from django.db import models
 from django.conf import settings
 from base.exceptions import WLException
-from coresys.models import CoreAddressProvince, CoreAddressCity, CoreAddressArea, CorePaymentMethod
+from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
 from .demand_enum import t_demand_choice, unit_choice
@@ -15,14 +15,14 @@ from .demand_enum import t_demand_choice, unit_choice
 
 class ProductDemand(models.Model):
     uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_demand")
-    t_demand = models.IntegerField(verbose_name=_("demand type"), max_length=t_demand_choice.MAX_LENGTH, choices=t_demand_choice.choice, db_index=True)
+    t_demand = models.IntegerField(verbose_name=_("demand type"), choices=t_demand_choice.choice, db_index=True)
     pid = models.ForeignKey(ProductTypeL3, on_delete=models.CASCADE, related_name="product_demand", db_index=True)
     qid = models.ForeignKey(ProductQuality, related_name="product_quality")
     wcid = models.ForeignKey(ProductWaterContent, related_name="product_watercontent")
     quantity = models.FloatField()
     min_quantity = models.FloatField()
     price = models.FloatField()
-    unit = models.IntegerField(max_length=unit_choice.MAX_LENGTH, choices=unit_choice.choice)
+    unit = models.IntegerField(choices=unit_choice.choice)
     pmid = models.ForeignKey(CorePaymentMethod)
     st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("start time"))
     duration = models.FloatField()
