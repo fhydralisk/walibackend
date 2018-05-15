@@ -11,6 +11,6 @@ class UserInfoView(WLAPIView, APIView):
         data, context = self.get_request_obj(request)
         if "user_sid" not in data:
             raise WLException(message="Bad Request", code=400)
-        user = get_user_info(data["user_sid"])
+        user = get_user_info(user_sid=data["user_sid"])
         useri = UserInfoSerialzier(user)
         return self.generate_response(data=useri.data, context=context)
