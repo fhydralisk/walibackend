@@ -26,7 +26,7 @@ class ProductDemand(models.Model):
     pmid = models.ForeignKey(CorePaymentMethod)
     st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("start time"))
     duration = models.FloatField()
-    abid = models.ForeignKey(UserAddressBook, on_delete=models.SET_NULL, verbose_name=_("user address book"), null=True)
+    abid = models.ForeignKey(UserAddressBook, on_delete=models.SET_NULL, verbose_name=_("user address book"), null=True, blank=True)
     aid = models.ForeignKey(CoreAddressArea, blank=True, null=True)
     street = models.CharField(max_length=511, blank=True, null=True)
     description = models.TextField()
