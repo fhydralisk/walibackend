@@ -27,3 +27,10 @@ class InviteContractSign(models.Model):
 
     def __unicode__(self):
         return self.generate_date.strftime("%b %d %Y %H:%M:%S")
+
+    @property
+    def content(self):
+        self.path.open()
+        content = self.path.read()
+        self.path.close()
+        return content

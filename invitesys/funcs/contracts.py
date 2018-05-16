@@ -66,11 +66,7 @@ def get_contract_obj(user, cid):
 def obtain_contract_content(user, cid):
 
     contract = get_contract_obj(user, cid)
-
-    contract.path.open()
-    content = contract.path.read()
-    contract.path.close()
-    return content
+    return contract.content
 
 
 @default_exception(Error500)

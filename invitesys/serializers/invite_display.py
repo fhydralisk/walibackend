@@ -2,6 +2,7 @@ from rest_framework import serializers
 from invitesys.models import InviteInfo
 from usersys.models import UserBase
 from usersys.models.user_enum import role_choice
+from .contract import ContractInfoSerializer
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -66,8 +67,8 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
 
 class InviteReadableDetailDisplaySerializer(InviteReadableDisplaySerializer):
 
-    contract_ids = serializers.PrimaryKeyRelatedField(source='invite_contract', many=True, read_only=True)
+    contracts = ContractInfoSerializer(source='invite_contract', many=True, read_only=True)
 
     class Meta(InviteReadableDisplaySerializer.Meta):
-        fields = InviteReadableDisplaySerializer.Meta.fields + ('contract_ids',)
+        fields = InviteReadableDisplaySerializer.Meta.fields + ('contracts',)
 
