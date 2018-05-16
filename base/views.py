@@ -52,9 +52,21 @@ class WLAPIView(object):
             raise WLException(code=500, message="Unexpected call of get request object method.")
 
     def validate_serializer(self, serializer, exc_code=None):
+
+        def iterate_err(errors, parent_field, s_field_errors):
+            for field, errs in errors.items():
+                if isinstance(errs, dict):
+                    iterate_err(errs, field + ".", s_field_errors)
+                else:
+                    for err in errs:
+                        s_field_errors.append("%s%s: %s" % (parent_field, field, err))
+
         if not serializer.is_valid():
+            field_errors = []
+            iterate_err(serializer.errors, "", field_errors)
+
             raise WLException(message="Validation on request object failed, errors: %s" % ";".join(
-                map(lambda x: str(x), serializer.errors)
+                field_errors
             ), code=exc_code if exc_code is not None else self.DEFAULT_VALIDATE_EXC_CODE)
 
     def handle_exception(self, exc):
