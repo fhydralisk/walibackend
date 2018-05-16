@@ -9,27 +9,16 @@ from invitesys.models import InviteInfo
 from .contracts import create_contract, get_current_template
 
 MAP_TINVITE_INVITE_STATUS = {
-    t_invite_choice.PROCEEDING_INVITES_MINE: (
+    t_invite_choice.PROCEEDING_INVITES: (
         i_status_choice.STARTED,
         i_status_choice.CONFIRMED,
     ),
-    t_invite_choice.CLOSED_INVITES_MINE: (
+    t_invite_choice.CLOSED_INVITES: (
         i_status_choice.CANCELED,
         i_status_choice.REJECTED,
         i_status_choice.CONTRACT_NOT_AGREE,
     ),
-    t_invite_choice.PROCEEDING_INVITES_OTHERS: (
-        i_status_choice.STARTED,
-        i_status_choice.CONFIRMED,
-    ),
-    t_invite_choice.CLOSED_INVITES_OTHERS: (
-        i_status_choice.REJECTED,
-        i_status_choice.CONTRACT_NOT_AGREE,
-    ),
-    t_invite_choice.FINISHED_INVITES_MINE: (
-        i_status_choice.SIGNED,
-    ),
-    t_invite_choice.FINISHED_INVITES_OTHERS: (
+    t_invite_choice.FINISHED_INVITES: (
         i_status_choice.SIGNED,
     )
 }
@@ -46,30 +35,46 @@ def obtain(user, t_invite, page, count_pre_page):
     :return: invites, n_pages
     """
 
-    if t_invite in (
-        t_invite_choice.PROCEEDING_INVITES_MINE,
-        t_invite_choice.CLOSED_INVITES_MINE,
-        t_invite_choice.FINISHED_INVITES_MINE,
-    ):
-        qs = user.user_invite_src.select_related(
-            'dmid_t__qid__t3id__t2id__t1id',
-            'dmid_t__wcid',
-            'uid_s__user_validate',
-            'uid_t__user_validate'
-        ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
-    elif t_invite in (
-        t_invite_choice.PROCEEDING_INVITES_OTHERS,
-        t_invite_choice.CLOSED_INVITES_OTHERS,
-        t_invite_choice.FINISHED_INVITES_OTHERS,
-    ):
-        qs = user.user_invite_dst.select_related(
-            'dmid_t__qid__t3id__t2id__t1id',
-            'dmid_t__wcid',
-            'uid_s__user_validate',
-            'uid_t__user_validate'
-        ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
-    else:
-        raise WLException(400, "t_invite is invalid")
+    # if t_invite in (
+    #     t_invite_choice.PROCEEDING_INVITES_MINE,
+    #     t_invite_choice.CLOSED_INVITES_MINE,
+    #     t_invite_choice.FINISHED_INVITES_MINE,
+    # ):
+    #     qs = user.user_invite_src.select_related(
+    #         'dmid_t__qid__t3id__t2id__t1id',
+    #         'dmid_t__wcid',
+    #         'uid_s__user_validate',
+    #         'uid_t__user_validate'
+    #     ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
+    # elif t_invite in (
+    #     t_invite_choice.PROCEEDING_INVITES_OTHERS,
+    #     t_invite_choice.CLOSED_INVITES_OTHERS,
+    #     t_invite_choice.FINISHED_INVITES_OTHERS,
+    # ):
+    #     qs = user.user_invite_dst.select_related(
+    #         'dmid_t__qid__t3id__t2id__t1id',
+    #         'dmid_t__wcid',
+    #         'uid_s__user_validate',
+    #         'uid_t__user_validate'
+    #     ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
+    # else:
+    #     raise WLException(400, "t_invite is invalid")
+
+    qs1 = user.user_invite_src.select_related(
+        'dmid_t__qid__t3id__t2id__t1id',
+        'dmid_t__wcid',
+        'uid_s__user_validate',
+        'uid_t__user_validate'
+    ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
+
+    qs2 = user.user_invite_dst.select_related(
+        'dmid_t__qid__t3id__t2id__t1id',
+        'dmid_t__wcid',
+        'uid_s__user_validate',
+        'uid_t__user_validate'
+    ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
+
+    qs = qs1 | qs2
 
     start, end, n_pages = get_page_info(qs, count_pre_page, page, index_error_excepiton=WLException(400, "Page out of range"))
 

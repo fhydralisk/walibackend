@@ -11,12 +11,9 @@ class _IStatusChoice(FieldChoice):
 
 
 class _TInviteChoice(FieldChoice):
-    PROCEEDING_INVITES_MINE = None
-    CLOSED_INVITES_MINE = None
-    PROCEEDING_INVITES_OTHERS = None
-    CLOSED_INVITES_OTHERS = None
-    FINISHED_INVITES_MINE = None
-    FINISHED_INVITES_OTHERS = None
+    PROCEEDING_INVITES = None
+    CLOSED_INVITES = None
+    FINISHED_INVITES= None
 
 
 class _HandleMethodChoice(FieldChoice):
