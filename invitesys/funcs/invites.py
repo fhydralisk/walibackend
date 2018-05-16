@@ -174,9 +174,9 @@ def handle(user, ivid, handle_method, reason=None):
     # TODO: Log here
 
     if handle_method == handle_method_choice.ACCEPT:
+        create_contract(iv_obj, get_current_template())
         iv_obj.i_status = i_status_choice.CONFIRMED
         iv_obj.save()
-        create_contract(iv_obj, get_current_template())
         return
 
     if handle_method == handle_method_choice.REJECT:

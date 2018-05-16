@@ -38,7 +38,7 @@ def create_contract(iv_obj, template):
             sign_status_B=sign_status_choice.NOT_SIGNED
         )
     except InviteContractSign.DoesNotExist:
-        contract = InviteContractSign.objects.create(
+        contract = InviteContractSign(
             ivid=iv_obj,
             sign_status_A=sign_status_choice.NOT_SIGNED,
             sign_status_B=sign_status_choice.NOT_SIGNED
