@@ -30,7 +30,7 @@ class ProductDemand(models.Model):
     aid = models.ForeignKey(CoreAddressArea, blank=True, null=True)
     street = models.CharField(max_length=511, blank=True, null=True)
     description = models.TextField()
-    comment = models.TextField()
+    comment = models.TextField(blank=True, null=True)
     match = models.BooleanField(default=False)
     create_datetime = models.DateTimeField(auto_now_add=True)
     in_use = models.BooleanField(default=True)
@@ -72,10 +72,10 @@ class ProductDemand(models.Model):
 
 
 class ProductDemandPhoto(models.Model):
-    dmid = models.ForeignKey(ProductDemand, on_delete=models.CASCADE, related_name="demand_photo", db_index=True)
+    dmid = models.ForeignKey(ProductDemand, on_delete=models.SET_NULL, related_name="demand_photo", db_index=True, null=True, blank=True)
     demand_photo = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO)
     demand_photo_snapshot = models.FilePathField(null=True, blank=True)
-    inuse = models.BooleanField(default=True)
+    inuse = models.BooleanField(default=False)
     upload_date = models.DateTimeField(auto_now_add=True)
     photo_desc = models.CharField(max_length=255)
 

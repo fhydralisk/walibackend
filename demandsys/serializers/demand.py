@@ -1,5 +1,18 @@
 from rest_framework import serializers
-from demandsys.models import ProductDemand
+from base.util.timestamp import datetime_to_timestamp
+from demandsys.models import ProductDemand, ProductDemandPhoto
+
+
+class DemandPhotoSerializers(serializers.ModelSerializer):
+
+    upload_date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductDemandPhoto
+        fields = ('id', 'photo_desc', 'upload_date')
+
+    def get_upload_date(self, obj):
+        return datetime_to_timestamp(obj.upload_date)
 
 
 class DemandReadableDisplaySerializer(serializers.ModelSerializer):
@@ -20,18 +33,45 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
     province = serializers.ReadOnlyField(source='aid.cid.pid.province')
 
     satisfied = serializers.SerializerMethodField()
-    demand_photos = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='demand_photo')
+    demand_photo_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='demand_photo')
+    demand_photos = DemandPhotoSerializers(read_only=True, many=True, source='demand_photo')
 
     class Meta:
         model = ProductDemand
         fields = (
-            'id', 't_demand', 'price', 'quantity', 'unit', 'match',
+            'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
             'satisfied',
-            'demand_photos',
+            'demand_photos', 'demand_photo_ids'
         )
 
     def get_satisfied(self, obj):
         return obj.quantity - obj.quantity_left()
+
+
+class DemandPublishSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductDemand
+        exclude = (
+            'id', 't_demand', 'st_time', 'uid', 'in_use', 'create_datetime',
+        )
+
+
+class DemandEditSerializer(serializers.ModelSerializer):
+
+    @property
+    def root(self):
+        """
+        Returns the top-level serializer for this field.
+        """
+        root = self
+        return root
+
+    class Meta:
+        model = ProductDemand
+        exclude = (
+            'id', 't_demand', 'st_time', 'uid', 'in_use', 'create_datetime', 'pid', 'wcid',
+        )

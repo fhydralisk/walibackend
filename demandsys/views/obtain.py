@@ -1,8 +1,13 @@
+import os
+
 from rest_framework.views import APIView
 from base.views import WLAPIView
+from django.http.response import FileResponse
+from django.conf import settings
 from demandsys.serializers.demand_api import ObtainDemandSerializer, ObtainDemandDetailSerializer, ObtainHotDemandSerializer
 from demandsys.serializers.demand import DemandReadableDisplaySerializer
-from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand
+from demandsys.serializers.photo_api import GetPhotoSerializer
+from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo
 
 
 # TODO: Move page size into settings
@@ -60,3 +65,18 @@ class ObtainDetailView(WLAPIView, APIView):
                 "demand": seri_demand.data,
             }, context=context
         )
+
+
+class ObtainPhotoDataView(WLAPIView, APIView):
+    ERROR_HTTP_STATUS = True
+
+    def get(self, request):
+        data, context = self.get_request_obj(request)
+
+        seri = GetPhotoSerializer(data=data)
+        self.validate_serializer(seri)
+
+        photo_path = get_specified_photo(**seri.data)
+        real_path = os.path.join(settings.BASE_DIR, photo_path)
+
+        return FileResponse(open(real_path), content_type='image')

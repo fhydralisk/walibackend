@@ -1,4 +1,4 @@
-from demandsys.models import ProductDemand
+from demandsys.models import ProductDemand, ProductDemandPhoto
 from base.exceptions import default_exception, Error500, Error404, Error400
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
@@ -27,7 +27,7 @@ def get_popular_demand(role, user, page, count_per_page):
         'qid__t3id__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
-    ).filter(in_use=True).exclude(t_demand=t_demand_translator.from_role(role))
+    ).filter(in_use=True).exclude(t_demand=t_demand_translator.from_role(role)).order_by("-id")
 
     st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
 
@@ -51,7 +51,7 @@ def get_my_demand(user, page, count_per_page):
         'qid__t3id__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
-    ).filter(uid=user, in_use=True)
+    ).filter(uid=user, in_use=True).order_by("-id")
 
     st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
     # return sliced single page
@@ -106,7 +106,6 @@ def get_demand_detail(user, id):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
 def get_specified_photo(id, dmid):
     """
     
@@ -114,10 +113,8 @@ def get_specified_photo(id, dmid):
     :param dmid: 
     :return: 
     """
-    return ProductDemand.objects.select_related(
-        'uid__user_validate',
-        'qid__t3id__t2id__t1id',
-        'aid__cid__pid',
-        'pmid', 'wcid'
-    ).filter(in_use=True, id=dmid)
+    try:
+        return ProductDemandPhoto.objects.get(inuse=True, id=id, dmid=dmid).demand_photo.path
+    except ProductDemandPhoto.DoesNotExist:
+        raise Error404("No such photo.")
 
