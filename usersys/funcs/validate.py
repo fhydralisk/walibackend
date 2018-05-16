@@ -54,6 +54,7 @@ def submit_validate_photo(user, t_photo, photo_files_form_obj):
     if form.is_valid():
         disable_former_photos(vobj)
         form.save()
+        return photo.id
     else:
         raise Error403(str(form.errors))
 

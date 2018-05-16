@@ -35,7 +35,7 @@ class SubmitPhotoView(WLAPIView, APIView):
     def post(self, request):
         data, context = self.get_request_obj(request, 'GET')
         try:
-            submit_validate_photo(
+            photo_id = submit_validate_photo(
                 user_sid=data["user_sid"],
                 t_photo=data["t_photo"],
                 photo_files_form_obj=request.FILES
@@ -43,7 +43,7 @@ class SubmitPhotoView(WLAPIView, APIView):
         except KeyError:
             raise WLException(message="Bad Request", code=400)
         else:
-            return self.generate_response(data={}, context=context)
+            return self.generate_response(data={"photo_id": photo_id}, context=context)
 
 
 class DeletePhotoView(WLAPIView, APIView):
