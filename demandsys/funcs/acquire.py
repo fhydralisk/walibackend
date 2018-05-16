@@ -29,10 +29,7 @@ def get_popular_demand(role, user, page, count_per_page):
         'pmid', 'wcid'
     ).filter(in_use=True).exclude(t_demand=t_demand_translator.from_role(role))
 
-    try:
-        st, ed, n_pages = get_page_info(qs, count_per_page, page)
-    except IndexError:
-        raise Error400("page exceeds max page.")
+    st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
 
     # return sliced single page
     return qs[st:ed], n_pages
@@ -56,11 +53,7 @@ def get_my_demand(user, page, count_per_page):
         'pmid', 'wcid'
     ).filter(uid=user, in_use=True)
 
-    try:
-        st, ed, n_pages = get_page_info(qs, count_per_page, page)
-    except IndexError:
-        raise Error400("page exceeds max page.")
-
+    st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
     # return sliced single page
     return qs[st:ed], n_pages
 

@@ -15,6 +15,8 @@ class _TInviteChoice(FieldChoice):
     CLOSED_INVITES_MINE = None
     PROCEEDING_INVITES_OTHERS = None
     CLOSED_INVITES_OTHERS = None
+    FINISHED_INVITES_MINE = None
+    FINISHED_INVITES_OTHERS = None
 
 
 class _HandleMethodChoice(FieldChoice):

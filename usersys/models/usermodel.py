@@ -88,6 +88,14 @@ class UserValidate(models.Model):
     t_user = models.IntegerField(choices=t_user_choice.choice, null=True, blank=True)
     validate_status = models.IntegerField(choices=validate_status_choice.choice)
 
+    def __unicode__(self):
+        if self.company is not None:
+            return self.company
+        elif self.contact is not None:
+            return self.contact
+        else:
+            return "Validate User: %s" % self.uid.pn
+
 
 class UserValidatePhoto(models.Model):
     vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_photo", db_index=True)
@@ -96,12 +104,18 @@ class UserValidatePhoto(models.Model):
     upload_date = models.DateTimeField(auto_now_add=True)
     t_photo = models.IntegerField(choices=t_photo_choice.choice)
 
+    def __unicode__(self):
+        return "Validate Photo of %s, uploaded %s" % (self.vid.uid.pn, self.upload_date.strftime("%b %d %Y %H:%M:%S"))
+
 
 class UserValidateArea(models.Model):
     vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_area", db_index=True)
     pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="uv_province", db_index=False, null=True, blank=True)
     cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, db_index=False, null=True, blank=True)
     aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True, blank=True)
+
+    def __unicode__(self):
+        return "Validate Area of %s, %s" % (self.vid.uid.pn, self.aid.area)
 
 
 class UserAddressBook(models.Model):

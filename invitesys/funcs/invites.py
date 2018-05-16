@@ -1,5 +1,6 @@
 from base.exceptions import WLException, default_exception, Error500, Error404
 from base.util.misc_validators import validators
+from base.util.pages import get_page_info
 from usersys.models.user_enum import validate_status_choice
 from usersys.models import UserBase, UserValidate
 from usersys.funcs.utils.usersid import user_from_sid
@@ -13,7 +14,6 @@ MAP_TINVITE_INVITE_STATUS = {
         i_status_choice.CONFIRMED,
     ),
     t_invite_choice.CLOSED_INVITES_MINE: (
-        i_status_choice.SIGNED,
         i_status_choice.CANCELED,
         i_status_choice.REJECTED,
         i_status_choice.CONTRACT_NOT_AGREE,
@@ -23,9 +23,14 @@ MAP_TINVITE_INVITE_STATUS = {
         i_status_choice.CONFIRMED,
     ),
     t_invite_choice.CLOSED_INVITES_OTHERS: (
-        i_status_choice.SIGNED,
         i_status_choice.REJECTED,
         i_status_choice.CONTRACT_NOT_AGREE,
+    ),
+    t_invite_choice.FINISHED_INVITES_MINE: (
+        i_status_choice.SIGNED,
+    ),
+    t_invite_choice.FINISHED_INVITES_OTHERS: (
+        i_status_choice.SIGNED,
     )
 }
 
@@ -37,21 +42,38 @@ def obtain(user, t_invite, page, count_pre_page):
     :param user:
     :param t_invite:
     :param page: page number
+    :param count_pre_page
     :return: invites, n_pages
     """
-    # FIXME: Order by date
-    if t_invite in (t_invite_choice.PROCEEDING_INVITES_MINE, t_invite_choice.CLOSED_INVITES_MINE):
-        qs = user.user_invite_src.filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
-    elif t_invite in (t_invite_choice.PROCEEDING_INVITES_OTHERS, t_invite_choice.CLOSED_INVITES_OTHERS):
-        qs = user.user_invite_dst.filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
+
+    if t_invite in (
+        t_invite_choice.PROCEEDING_INVITES_MINE,
+        t_invite_choice.CLOSED_INVITES_MINE,
+        t_invite_choice.FINISHED_INVITES_MINE,
+    ):
+        qs = user.user_invite_src.select_related(
+            'dmid_t__qid__t3id__t2id__t1id',
+            'dmid_t__wcid',
+            'uid_s__user_validate',
+            'uid_t__user_validate'
+        ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
+    elif t_invite in (
+        t_invite_choice.PROCEEDING_INVITES_OTHERS,
+        t_invite_choice.CLOSED_INVITES_OTHERS,
+        t_invite_choice.FINISHED_INVITES_OTHERS,
+    ):
+        qs = user.user_invite_dst.select_related(
+            'dmid_t__qid__t3id__t2id__t1id',
+            'dmid_t__wcid',
+            'uid_s__user_validate',
+            'uid_t__user_validate'
+        ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
     else:
         raise WLException(400, "t_invite is invalid")
-    n_pages = qs.count() + (count_pre_page - 1) / count_pre_page
-    if page > n_pages or page < 0:
-        raise WLException(400, "Page out of range")
 
-    start = page * count_pre_page
-    end = (page + 1) * count_pre_page
+    start, end, n_pages = get_page_info(qs, count_pre_page, page, index_error_excepiton=WLException(400, "Page out of range"))
+
+    qs = qs.order_by('-id')
     return qs[start: end], n_pages
 
 
@@ -65,7 +87,12 @@ def detail(user, ivid):
     :return: invite, contracts
     """
     try:
-        iv = InviteInfo.objects.get(id=ivid)
+        iv = InviteInfo.objects.select_related(
+            'dmid_t__qid__t3id__t2id__t1id',
+            'dmid_t__wcid',
+            'uid_s__user_validate',
+            'uid_t__user_validate'
+        ).get(id=ivid)
     except InviteInfo.DoesNotExist:
         raise WLException(404, "No such invite.")
 

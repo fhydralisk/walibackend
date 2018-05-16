@@ -22,6 +22,8 @@ class _TInviteChoice(FieldChoice):
         (2, _(""), "CLOSED_INVITES_MINE"),
         (3, _(""), "PROCEEDING_INVITES_OTHERS"),
         (4, _(""), "CLOSED_INVITES_OTHERS"),
+        (5, _(""), "FINISHED_INVITES_MINE"),
+        (6, _(""), "FINISHED_INVITES_OTHERS"),
     )
 
 
