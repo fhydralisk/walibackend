@@ -70,7 +70,7 @@ class UserValidateStatusValidator(object):
 
             if self.instance.t_user == t_user_choice.INDIVIDUAL_USER:
                 photo_id_top = photoobjs.filter(t_photo=t_photo_choice.ID_TOP)
-                photo_id_bot = photoobjs.filter(t_photo_choice=t_photo_choice.ID_BOTTOM)
+                photo_id_bot = photoobjs.filter(t_photo=t_photo_choice.ID_BOTTOM)
                 if not (photo_id_top.exists() and photo_id_bot.exists()):
                     return False
         return True

@@ -26,8 +26,6 @@ class ValidationInfoSubmitSerializer(serializers.ModelSerializer):
 
 class ValidationAreaSerializer(serializers.ModelSerializer):
 
-
-
     class Meta:
         model = UserValidateArea
         exclude = ('vid', 'id')
