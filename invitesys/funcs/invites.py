@@ -117,10 +117,7 @@ def publish(user, invite):
     :return:
     """
     # First check if the user is validated
-    try:
-        if user.user_validate.validate_status != validate_status_choice.ACCEPTED:
-            raise UserBase.DoesNotExist
-    except UserValidate.DoesNotExist:
+    if not user.is_validated:
         raise WLException(403, "User's validation does not passed, cannot publish.")
 
     # Validate whether

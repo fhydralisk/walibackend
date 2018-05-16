@@ -71,6 +71,13 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    def is_validated(self):
+        if self.user_validate is None:
+            return False
+        if self.user_validate.validate_status != validate_status_choice.ACCEPTED:
+            return False
+        return True
+
 
 # TODO: Deal with the validator, it is unsafe to be here.
 class UserValidate(models.Model):
