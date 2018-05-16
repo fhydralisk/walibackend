@@ -18,7 +18,7 @@ class InviteContractTemplate(models.Model):
 
 
 class InviteContractSign(models.Model):
-    ctid = models.OneToOneField(InviteContractTemplate, on_delete=models.SET_NULL, null=True, blank=True)
+    ctid = models.ForeignKey(InviteContractTemplate, on_delete=models.SET_NULL, null=True, blank=True)
     ivid = models.ForeignKey(InviteInfo, on_delete=models.CASCADE, related_name="invite_contract")
     path = models.FileField(upload_to=settings.CONTRACTS_GENERATE)
     generate_date = models.DateTimeField(auto_now_add=True)
