@@ -1,7 +1,7 @@
 import os
 
 from django.conf import settings
-from django.http.response import HttpResponse
+from django.http.response import FileResponse
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 
@@ -25,8 +25,8 @@ class FetchPhotoView(WLAPIView, APIView):
 
         photo_path = get_validate_photo(**seri.data)
         real_path = os.path.join(settings.BASE_DIR, photo_path)
-        with open(real_path) as fh:
-            return HttpResponse(fh.read(), content_type='image')
+
+        return FileResponse(open(real_path), content_type='image')
 
 
 class SubmitPhotoView(WLAPIView, APIView):
