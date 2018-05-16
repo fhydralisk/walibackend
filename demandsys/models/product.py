@@ -13,7 +13,7 @@ class ProductTypeL1(models.Model):
 
 class ProductTypeL2(models.Model):
     tname2 = models.CharField(max_length=255, verbose_name=_("2nd level product type"))
-    t1id = models.ForeignKey(ProductTypeL1)
+    t1id = models.ForeignKey(ProductTypeL1, related_name="product_l2")
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -22,7 +22,7 @@ class ProductTypeL2(models.Model):
 
 class ProductTypeL3(models.Model):
     tname3 = models.CharField(max_length=255, verbose_name=_("3nd level product type"))
-    t2id = models.ForeignKey(ProductTypeL2)
+    t2id = models.ForeignKey(ProductTypeL2, related_name="product_l3")
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -32,7 +32,7 @@ class ProductTypeL3(models.Model):
 class ProductQuality(models.Model):
     pqdesc = models.CharField(max_length=255, verbose_name=_("Quality description"))
     ord = models.IntegerField(verbose_name=_("Order field"))
-    t3id = models.ForeignKey(ProductTypeL3)
+    t3id = models.ForeignKey(ProductTypeL3, related_name="quality")
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):

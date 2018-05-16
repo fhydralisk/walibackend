@@ -8,7 +8,7 @@ def get_l1():
 
     :return:
     """
-    return ProductTypeL1.objects.filter(in_user=True)
+    return ProductTypeL1.objects.filter(in_use=True)
 
 
 @default_exception(Error500)
@@ -47,7 +47,7 @@ def get_l1_2_3():
     
     :return: 
     """
-    return ProductTypeL1.objects.filter(in_user=True)
+    return ProductTypeL1.objects.filter(in_use=True)
 
 
 @default_exception(Error500)
