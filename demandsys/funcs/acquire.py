@@ -106,7 +106,7 @@ def get_demand_detail(user, id):
 
 
 @default_exception(Error500)
-def get_specified_photo(id, dmid):
+def get_specified_photo(id):
     """
     
     :param id: 
@@ -114,7 +114,7 @@ def get_specified_photo(id, dmid):
     :return: 
     """
     try:
-        return ProductDemandPhoto.objects.get(inuse=True, id=id, dmid=dmid).demand_photo.path
+        return ProductDemandPhoto.objects.get(id=id).demand_photo.path
     except ProductDemandPhoto.DoesNotExist:
         raise Error404("No such photo.")
 
