@@ -12,4 +12,4 @@ class RemovePhotoSerializer(serializers.Serializer):
 
 
 class GetPhotoSerializer(serializers.Serializer):
-    dmid = serializers.IntegerField()
+    id = serializers.IntegerField()
