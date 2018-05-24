@@ -13,3 +13,6 @@ class UserSid(models.Model):
     expire_datetime = models.DateTimeField()
     last_login = models.DateTimeField()
     is_login = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return "%s : %s" % (self.uid, self.sid)
