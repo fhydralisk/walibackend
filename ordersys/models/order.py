@@ -8,7 +8,7 @@ from .order_enum import o_status_choice, op_type_choice, p_status_choice, p_oper
 
 
 class OrderInfo(models.Model):
-    ivid = models.ForeignKey(
+    ivid = models.OneToOneField(
         InviteInfo,
         verbose_name=_("Invite"),
         on_delete=models.PROTECT,
@@ -16,6 +16,23 @@ class OrderInfo(models.Model):
     )
     o_status = models.IntegerField(_("order status"), choices=o_status_choice.choice)
     final_price = models.FloatField(null=True, blank=True)
+
+    @property
+    def current_protocol(self):
+        return self.order_protocol.exclude(
+            p_status__in={p_status_choice.REJECTED, p_status_choice.EXECUTED, p_status_choice.CANCELED}
+        ).get()
+
+    @property
+    def current_receipt(self):
+        from paymentsys.models import PaymentReceipt
+
+        return self.order_receipt.exclude(
+            receipt_status__in=PaymentReceipt.current_status_set()
+        ).get()
+
+    def __unicode__(self):
+        return "Order from %s" % str(self.ivid)
 
 
 class OrderProtocol(models.Model):
@@ -32,3 +49,25 @@ class OrderProtocol(models.Model):
     description = models.TextField(blank=True, null=True)
     reason = models.TextField(blank=True, null=True)
     op_datetime = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def terminated(self):
+        return self.p_status in (p_status_choice.REJECTED, p_status_choice.EXECUTED, p_status_choice.CANCELED)
+
+    def init_p_operate_status(self):
+        map_optype_pops = {
+            op_type_choice.CANCEL: p_operate_status_choice.CANCEL_WAIT_RETURN,
+            op_type_choice.NORMAL: p_operate_status_choice.NORMAL_WAIT_FINAL,
+        }
+        if self.op_type == op_type_choice.ADJUST_PRICE:
+
+            self.p_operate_status = (
+                p_operate_status_choice.ADJUST_WAIT_FINAL
+                if self.c_price > self.oid.ivid.earnest
+                else p_operate_status_choice.ADJUST_CHECK_EARNEST
+                if self.c_price < self.oid.ivid.earnest
+                else p_operate_status_choice.ADJUST_OK
+            )
+
+        else:
+            self.p_operate_status = map_optype_pops[self.op_type]

@@ -244,4 +244,21 @@ CORS_ALLOW_HEADERS = (
     'Pragma',
 )
 
+# Payment
+PAYMENT = {
+    "RECEIPT_MANAGER": {
+        "CLASS": "paymentsys.funcs.receipt_manager.DummyReceiptManager",
+        "CALLBACK": "ordersys.funcs.callbacks.receipt_callback.simple_receipt_callback"
+    },
+    "LIQUIDATION_MANAGER": {
+        "CLASS": "paymentsys.funcs.liquidation_manager.DummyLiquidationManager",
+        "CALLBACK": "ordersys.funcs.callbacks.liquidation_callback.simple_liquidation_callback"
+    }
+}
+
+# Calculator
+CALCULATOR = {
+    "RECEIPT": "ordersys.funcs.calculator.receipt.DummyReceiptCalculator",
+    "LIQUIDATION": "ordersys.funcs.calculator.liquidation.DummyLiquidationCalculator"
+}
 

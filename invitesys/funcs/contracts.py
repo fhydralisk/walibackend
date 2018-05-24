@@ -7,6 +7,7 @@ from usersys.models.user_enum import role_choice
 from invitesys.models import InviteContractTemplate, InviteContractSign
 from invitesys.models.contract_enum import sign_status_choice
 from invitesys.models.invite_enum import i_status_choice
+from ordersys.funcs.operate_order import create_order as create_order_func
 
 
 def create_contract(iv_obj, template):
@@ -126,9 +127,8 @@ def sign_contract(user, cid, sign_method):
         contract.ivid.save()
         contract.save()
         if create_order:
-            # TODO: Create order
-            print "Creating order(FAKE)"
-            pass
+            # TODO: Log
+            create_order_func(contract.ivid)
 
     return contract
 

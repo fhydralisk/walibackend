@@ -1,8 +1,6 @@
 from base.exceptions import WLException, default_exception, Error500, Error404
 from base.util.misc_validators import validators
 from base.util.pages import get_page_info
-from usersys.models.user_enum import validate_status_choice
-from usersys.models import UserBase, UserValidate
 from usersys.funcs.utils.usersid import user_from_sid
 from invitesys.models.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
 from invitesys.models import InviteInfo

@@ -18,10 +18,32 @@ class _OStatusChoice(FieldChoice):
         (7, _("Protocol quality matches the demand, waiting for final payment"), "WAIT_FINAL_PAYMENT"),
         (8, _("Buyer has submitted the adjustment protocol, waiting for confirmation from seller"), "WAIT_ADJUSTMENT_CONFIRM"),
         (9, _("Adjustment protocol has been confirmed, waiting for completion"), "WAIT_ADJUSTMENT_COMPLETE"),
-        (16, _("Adjustment has been completed, no receipt needed, order closed"), "CLOSED"),
-        (18, _("Adjustment has been completed, waiting for seller to send receipt"), "WAIT_RECEIPT"),
+        (10, _("Good Product, waiting for default adjustment's completion"), "WAIT_DEFAULT_ADJUSTMENT_COMPLETE"),
+        (11, _("Adjustment has been completed, wait for liquidating"), "WAIT_LIQUIDATE"),
+        (16, _("Liquidated, no receipt needed, order closed"), "CLOSED"),
+        (18, _("Liquidated, waiting for seller to send receipt"), "WAIT_RECEIPT"),
         (19, _("Receipt has been send, waiting for buyer's confirmation"), "WAIT_RECEIPT_CHECK"),
         (21, _("Order succeeded"), "SUCCEEDED"),
+    )
+
+
+class _OBuyerActionChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _(""), "BUYER_PAY_EARNEST"),
+        (5, _(""), "BUYER_CHECK_PRODUCT"),
+        (6, _(""), "BUYER_CHECK_RESULT_BAD"),
+        (7, _(""), "BUYER_CHECK_RESULT_GOOD"),
+        (8, _(""), "BUYER_SUBMIT_PROTOCOL"),
+        (20, _(""), "BUYER_CONFIRMED_RECEIPT"),
+    )
+
+
+class _OSellerActionChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (4, _(""), "SELLER_SUBMIT_LOGISTICS_INFO"),
+        (9, _(""), "SELLER_AGREE_PROTOCOL"),
+        (10, _(""), "SELLER_REJECT_PROTOCOL"),
+        (19, _(""), "SELLER_APPEND_RECEIPT_LOGISTICS"),
     )
 
 
@@ -50,7 +72,7 @@ class _POperateStatusChoice(FieldChoice):
     CHOICE_DISPLAY = (
         (10, _("Cancel protocol is executing, waiting for return of goods"), "CANCEL_WAIT_RETURN"),
         (11, _("Goods returned, waiting for confirmation"), "CANCEL_WAIT_CONFIRM"),
-        (12, _("Return has been confirmed, waiting for platform to return the earnest"), "CANCEL_WAIT_REFINE"),
+        (12, _("Return has been confirmed, waiting for platform to return the earnest"), "CANCEL_WAIT_REFUND"),
         (13, _("Platform has returned the earnest"), "CANCEL_OK"),
         (200, _("Adjust price protocol is executing, waiting for final payment"), "ADJUST_WAIT_FINAL"),
         (201, _("Final payment is paid, waiting for platform to transfer the payment"), "ADJUST_CHECK_FINAL"),
@@ -62,7 +84,51 @@ class _POperateStatusChoice(FieldChoice):
     )
 
 
+class _OPBuyerActionChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (10, _(""), "CANCEL_APPEND_LOGISTICS_INFO"),
+        (1, _(""), "BUYER_PAY_FINAL"),
+    )
+
+
+class _OPSellerActionChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (11, _(""), "CANCEL_CONFIRM_PRODUCT"),
+    )
+
+
+class _OPFeedbackChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (13, _(""), "CANCEL_FINISH"),
+        (22, _(""), "ADJUST_FINISH"),
+        (32, _(""), "NORMAL_FINISH"),
+    )
+
+
+class _OTypeChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _(""), "PROCEEDING"),
+        (2, _(""), "SUCCEEDED"),
+        (4, _(""), "CLOSED"),
+    )
+# Platform Actions on Protocol and Order...
+
+
+class _OPPlatformActionChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (9000, _(""), "PLATFORM_CONFIRM_PAYMENT"),
+        (9001, _(""), "PLATFORM_CONFIRM_REFUND"),
+    )
+
+
 o_status_choice = _OStatusChoice()
 op_type_choice = _OPTypeChoice()
 p_status_choice = _PStatusChoice()
 p_operate_status_choice = _POperateStatusChoice()
+o_buyer_action_choice = _OBuyerActionChoice()
+o_seller_action_choice = _OSellerActionChoice()
+op_buyer_action_choice = _OPBuyerActionChoice()
+op_seller_action_choice = _OPSellerActionChoice()
+opf_feedback_choice = _OPFeedbackChoice()
+op_platform_action_choice = _OPPlatformActionChoice()
+order_type_choice = _OTypeChoice()

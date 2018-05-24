@@ -62,6 +62,7 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
             'dmid_s', 'dmid_t', 'quantity',
             'price', 'unit', 'pmid', 'disid', 'dis_duration', 'i_status',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc',
+            'earnest', 'final_price', 'total_price',
         )
 
 

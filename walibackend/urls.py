@@ -20,6 +20,7 @@ import usersys.urls
 import coresys.urls
 import invitesys.urls
 import demandsys.urls
+import ordersys.urls
 
 urlpatterns = [
     url(r'^bg/', admin.site.urls),
@@ -27,7 +28,6 @@ urlpatterns = [
     url(r'^user/', include(usersys.urls.urlpatterns)),
     url(r'^demand/', include(demandsys.urls.urlpatterns)),
     url(r'^invite/', include(invitesys.urls.urlpatterns)),
-    # url(r'^order/', include('ordersys.urls')),
+    url(r'^order/', include(ordersys.urls.url_pattern)),
     # url(r'^payment/', include('paymentsys.urls')),
-
 ]

@@ -7,6 +7,7 @@ from demandsys.models import ProductDemand
 from coresys.models import CoreDistributionMethod, CorePaymentMethod
 from .invite_enum import i_status_choice
 from demandsys.models.demand_enum import unit_choice
+from usersys.models.user_enum import role_choice
 
 
 class InviteInfo(models.Model):
@@ -49,3 +50,33 @@ class InviteInfo(models.Model):
 
     def __unicode__(self):
         return str(self.uid_s) + " v.s. " + str(self.uid_t)
+
+    @property
+    def buyer(self):
+        if self.uid_s.role == role_choice.BUYER:
+            return self.uid_s
+        elif self.uid_t.role == role_choice.BUYER:
+            return self.uid_t
+        else:
+            raise AssertionError("Either inviter or invitee should be buyer")
+
+    @property
+    def seller(self):
+        if self.uid_s.role == role_choice.SELLER:
+            return self.uid_s
+        elif self.uid_t.role == role_choice.SELLER:
+            return self.uid_t
+        else:
+            raise AssertionError("Either inviter or invitee should be seller")
+
+    @property
+    def total_price(self):
+        return self.price * self.quantity
+
+    @property
+    def earnest(self):
+        return self.total_price * self.pmid.deposit_scale
+
+    @property
+    def final_price(self):
+        return self.total_price - self.earnest

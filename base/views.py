@@ -6,6 +6,7 @@ from rest_framework.parsers import JSONParser
 from django.conf import settings
 from django.http.response import HttpResponse
 from base.exceptions import WLException
+from base.util.serializer_helper import errors_summery
 
 
 class WLAPIView(object):
@@ -53,21 +54,13 @@ class WLAPIView(object):
 
     def validate_serializer(self, serializer, exc_code=None):
 
-        def iterate_err(errors, parent_field, s_field_errors):
-            for field, errs in errors.items():
-                if isinstance(errs, dict):
-                    iterate_err(errs, field + ".", s_field_errors)
-                else:
-                    for err in errs:
-                        s_field_errors.append("%s%s: %s" % (parent_field, field, err))
-
         if not serializer.is_valid():
-            field_errors = []
-            iterate_err(serializer.errors, "", field_errors)
+            message = errors_summery(serializer)
 
-            raise WLException(message="Validation on request object failed, errors: %s" % ";".join(
-                field_errors
-            ), code=exc_code if exc_code is not None else self.DEFAULT_VALIDATE_EXC_CODE)
+            raise WLException(
+                message=message,
+                code=exc_code if exc_code is not None else self.DEFAULT_VALIDATE_EXC_CODE
+            )
 
     def handle_exception(self, exc):
         if isinstance(exc, WLException):
