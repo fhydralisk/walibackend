@@ -26,7 +26,7 @@ class StateMachine(object):
 
     @staticmethod
     def zip_ctx(list_se, ctx):
-        return [(se, ctx) for se in list_se]
+        return [(se, ctx if ctx is not None else {}) for se in list_se]
 
     def get_state_dict(self, state):
         try:
@@ -87,6 +87,8 @@ class StateMachine(object):
 
     def _execute_transition(self, pre_se, post_se, state_dealer, current_state, state_next, action, extra_ctx):
         current_func = None
+        if extra_ctx is None:
+            extra_ctx = {}
         try:
             for se, ctx in pre_se:
                 current_func = se
