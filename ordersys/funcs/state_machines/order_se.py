@@ -59,7 +59,7 @@ def _validate_and_close_existing_protocol(order):
 def append_order_protocol_info(extra_ctx, **kwargs):
     parameter = extra_ctx["parameter"]
     order = extra_ctx["order"]  # type: OrderInfo
-    pseri = OrderProtocolSubmitSerializer(data=parameter)
+    pseri = OrderProtocolSubmitSerializer(data=parameter["protocol"])
     if not pseri.is_valid():
         raise WLException(400, errors_summery(pseri))
 

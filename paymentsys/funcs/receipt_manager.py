@@ -4,6 +4,7 @@
 import uuid
 from django.utils.module_loading import import_string
 from django.conf import settings
+from base.exceptions import WLException
 from paymentsys.models.receipt_enum import receipt_status_choice
 from paymentsys.models import PaymentReceipt, PaymentPlatform
 
@@ -49,9 +50,18 @@ class DummyReceiptManager(AbstractReceiptManager):
         )
 
     def respond_receipt(self, receipt, response):
+        # type: (PaymentReceipt, dict) -> None
         if response["r_type"] == "refund":
+            if receipt.receipt_status != receipt_status_choice.WAIT_REFUND:
+                raise WLException(400, "Unexpected receipt status")
+            receipt.receipt_status = receipt_status_choice.REFUNDED
+            receipt.save()
             self.get_callback().refund_confirm(response["oid"], None)
         else:
+            if receipt.receipt_status not in (receipt_status_choice.WAIT_PAYMENT, receipt_status_choice.NOT_PAYED_WAIT_PLATFORM):
+                raise WLException(400, "Unexpected receipt status")
+            receipt.receipt_status = receipt_status_choice.PAYED
+            receipt.save()
             self.get_callback().pay_confirm(response["oid"], None)
 
 

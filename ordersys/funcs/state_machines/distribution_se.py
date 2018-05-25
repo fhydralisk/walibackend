@@ -17,7 +17,7 @@ def append_order_logistics_info(ctx, extra_ctx, **kwargs):
     l_type = ctx["l_type"]
     parameter = extra_ctx["parameter"]
     order = extra_ctx["order"]  # type: OrderInfo
-    dmseri = OrderLogisticsInfoSubmitSerializer(data=parameter)
+    dmseri = OrderLogisticsInfoSubmitSerializer(data=parameter["loginfo"])
     if not dmseri.is_valid():
         raise WLException(400, errors_summery(dmseri))
 
