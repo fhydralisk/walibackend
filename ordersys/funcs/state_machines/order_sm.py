@@ -76,6 +76,15 @@ class OrderInfoStateMachine(StateMachine):
                     o_buyer_action_choice.BUYER_CHECK_PRODUCT: {
                         StateMachine.K_NEXT_STATE: o_status_choice.WAIT_PRODUCT_CHECK,
                         StateMachine.K_PRE_SE: []
+                    },
+                    o_seller_action_choice.SELLER_SUBMIT_LOGISTICS_INFO: {
+                        StateMachine.K_NEXT_STATE: o_status_choice.WAIT_PRODUCT_CONFIRM,
+                        StateMachine.K_PRE_SE: [
+                            ordersys.funcs.state_machines.distribution_se.append_order_logistics_info,
+                        ],
+                        StateMachine.K_SE_CONTEXT: {
+                            "l_type": l_type_choice.FORWARD
+                        }
                     }
                 }
             },

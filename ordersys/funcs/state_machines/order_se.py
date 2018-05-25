@@ -36,7 +36,7 @@ def create_register_receipt(ctx, extra_ctx, **kwargs):
         # This should not be happen.
         raise
 
-    amount = receipt_calculator.cal_order_receipt_amount(order, r_type)
+    amount = receipt_calculator.cal_order_receipt_amount(order, r_type, dict(ctx, **extra_ctx))
 
     receipt_manager.generate(order, r_type, amount, extra_ctx["parameter"])
 
@@ -57,6 +57,8 @@ def _validate_and_close_existing_protocol(order):
 
 
 def append_order_protocol_info(extra_ctx, **kwargs):
+    # Create default protocol, but without initialize it.
+    # The initialization is done the same time when seller agree this protocol.
     parameter = extra_ctx["parameter"]
     order = extra_ctx["order"]  # type: OrderInfo
     pseri = OrderProtocolSubmitSerializer(data=parameter["protocol"])
@@ -73,6 +75,8 @@ def append_order_protocol_info(extra_ctx, **kwargs):
 
 
 def append_default_order_protocol_info(extra_ctx, **kwargs):
+    # Create default protocol, but without initialize it.
+    # The initialization is done the same time when seller agree this protocol.
     order = extra_ctx["order"]
     _validate_and_close_existing_protocol(order)
 
@@ -107,6 +111,12 @@ def agree_reject_protocol(ctx, extra_ctx, **kwargs):
 
 
 def init_protocol(extra_ctx, **kwargs):
+    """
+    Initialize the protocol, which will create receipt, generate refund receipt and so on.
+    :param extra_ctx:
+    :param kwargs:
+    :return:
+    """
     if "protocol" in extra_ctx:
         protocol = extra_ctx["protocol"]
     else:

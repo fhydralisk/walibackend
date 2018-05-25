@@ -58,7 +58,8 @@ class OrderProtocolOperateStateMachine(StateMachine):
                         order_se.create_register_receipt
                     ],
                     StateMachine.K_SE_CONTEXT: {
-                        "r_type": receipt_type_choice.FINAL_PAYMENT
+                        "r_type": receipt_type_choice.FINAL_PAYMENT,
+                        "with_adjustment": True
                     }
                 }
             },
@@ -73,7 +74,8 @@ class OrderProtocolOperateStateMachine(StateMachine):
                     order_se.create_register_receipt
                 ],
                 StateMachine.K_SE_CONTEXT: {
-                    "r_type": receipt_type_choice.EARNEST_REFUND
+                    "r_type": receipt_type_choice.EARNEST_REFUND,
+                    "with_adjustment": True
                 },
                 op_platform_action_choice.PLATFORM_CONFIRM_REFUND: {
                     StateMachine.K_NEXT_STATE: p_operate_status_choice.ADJUST_OK,
