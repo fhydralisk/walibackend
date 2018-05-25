@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
+import datetime
+
 from django.db import models
 from coresys.models import CoreDistributionMethod
 from .order import OrderInfo
@@ -28,6 +30,10 @@ class OrderLogisticsInfo(models.Model):
     contact_pn = models.CharField(max_length=50)
     attach_datetime = models.DateTimeField(auto_now_add=True)
     delivery_days = models.IntegerField(validators=[MinValueValidator(0)])
+
+    @property
+    def expected_delivery_time(self):
+        return self.attach_datetime + datetime.timedelta(days=self.delivery_days)
 
     def __unicode__(self):
         return self.logistics_company + " " + self.logistics_no
