@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from usersys.models import UserBase
-from base.util.timestamp import datetime_to_timestamp
 
 
 class UserInfoSerialzier(serializers.ModelSerializer):
@@ -13,7 +12,6 @@ class UserInfoSerialzier(serializers.ModelSerializer):
     validate_phonenum = serializers.ReadOnlyField(source='user_validate.phonenum')
     validate_t_user = serializers.ReadOnlyField(source='user_validate.t_user')
     validate_validate_status = serializers.ReadOnlyField(source='user_validate.validate_status')
-    register_date = serializers.SerializerMethodField()
 
     class Meta:
         model = UserBase
@@ -24,5 +22,9 @@ class UserInfoSerialzier(serializers.ModelSerializer):
             'validate_validate_status'
         )
 
-    def get_register_date(self, obj):
-        return int(datetime_to_timestamp(obj.register_date))
+        extra_kwargs = {
+            "register_date": {
+                "format": "%s"
+            }
+        }
+

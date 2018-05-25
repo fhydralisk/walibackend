@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from base.util.timestamp import datetime_to_timestamp
 from demandsys.models import ProductDemand, ProductDemandPhoto
 
 
@@ -10,9 +9,11 @@ class DemandPhotoSerializers(serializers.ModelSerializer):
     class Meta:
         model = ProductDemandPhoto
         fields = ('id', 'photo_desc', 'upload_date')
-
-    def get_upload_date(self, obj):
-        return datetime_to_timestamp(obj.upload_date)
+        extra_kwargs = {
+            "upload_date": {
+                "format": "%s"
+            }
+        }
 
 
 class DemandReadableDisplaySerializer(serializers.ModelSerializer):
