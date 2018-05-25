@@ -17,7 +17,7 @@ class FlowHandleView(WLAPIView, APIView):
         invite = handle(**seri.data)
 
         if invite is not None:
-            return_result = {"invite": InviteReadableDetailDisplaySerializer(invite)}
+            return_result = {"invite": InviteReadableDetailDisplaySerializer(invite).data}
         else:
             return_result = {}
 
