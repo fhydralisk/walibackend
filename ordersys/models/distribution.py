@@ -5,6 +5,7 @@ from django.db import models
 from coresys.models import CoreDistributionMethod
 from .order import OrderInfo
 from .distribution_enum import l_type_choice
+from django.core.validators import MinValueValidator
 
 
 class OrderLogisticsInfo(models.Model):
@@ -26,6 +27,7 @@ class OrderLogisticsInfo(models.Model):
     contact = models.CharField(max_length=100)
     contact_pn = models.CharField(max_length=50)
     attach_datetime = models.DateTimeField(auto_now_add=True)
+    delivery_days = models.IntegerField(validators=[MinValueValidator(0)])
 
     def __unicode__(self):
         return self.logistics_company + " " + self.logistics_no
