@@ -11,13 +11,13 @@ from usersys.models import UserBase
 @user_from_sid(Error404)
 def obtain_order_list(user, order_type, page, count_pre_page):
     # type: (UserBase, int, int) -> QuerySet
-    qs = OrderInfo.objects.filter(ivid__in=(user.user_invite_dst.all() | user.user_invite_dst.all()))
+    qs = OrderInfo.objects.filter(ivid__in=(user.user_invite_dst.all() | user.user_invite_src.all()))
     if order_type == order_type_choice.PROCEEDING:
-        qs.exclude(o_status__in=(o_status_choice.CLOSED, o_status_choice.SUCCEEDED))
+        qs = qs.exclude(o_status__in=(o_status_choice.CLOSED, o_status_choice.SUCCEEDED))
     elif order_type == order_type_choice.CLOSED:
-        qs.filter(o_status=o_status_choice.CLOSED)
+        qs = qs.filter(o_status=o_status_choice.CLOSED)
     elif order_type == order_type_choice.SUCCEEDED:
-        qs.filter(o_status=o_status_choice.SUCCEEDED)
+        qs = qs.filter(o_status=o_status_choice.SUCCEEDED)
     else:
         raise WLException(400, "order_type is invalid")
 
