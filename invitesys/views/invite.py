@@ -14,9 +14,14 @@ class FlowHandleView(WLAPIView, APIView):
 
         seri = FlowHandleSerializer(data=data)
         self.validate_serializer(seri)
-        handle(**seri.data)
+        invite = handle(**seri.data)
 
-        return self.generate_response(data={}, context=context)
+        if invite is not None:
+            return_result = {"invite": InviteReadableDetailDisplaySerializer(invite)}
+        else:
+            return_result = {}
+
+        return self.generate_response(data=return_result, context=context)
 
 
 class ObtainInviteView(WLAPIView, APIView):

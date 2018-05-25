@@ -142,7 +142,7 @@ def handle(user, ivid, handle_method, reason=None):
     :param ivid:
     :param handle_method:
     :param reason:
-    :return:
+    :return: invite object
     """
 
     def check(u, i, hm, r):
@@ -177,16 +177,18 @@ def handle(user, ivid, handle_method, reason=None):
         create_contract(iv_obj, get_current_template())
         iv_obj.i_status = i_status_choice.CONFIRMED
         iv_obj.save()
-        return
+        return iv_obj
 
-    if handle_method == handle_method_choice.REJECT:
+    elif handle_method == handle_method_choice.REJECT:
         iv_obj.i_status = i_status_choice.REJECTED
         iv_obj.reason = reason
         iv_obj.save()
-        return
 
-    if handle_method == handle_method_choice.CANCEL:
+    elif handle_method == handle_method_choice.CANCEL:
         iv_obj.i_status = i_status_choice.CANCELED
         iv_obj.reason = reason
         iv_obj.save()
-        return
+
+    else:
+        raise AssertionError("Handle method is invalid")
+
