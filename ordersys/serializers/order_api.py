@@ -3,26 +3,20 @@ from ordersys.models.order_enum import (
     o_buyer_action_choice, o_seller_action_choice, order_type_choice, op_buyer_action_choice, op_seller_action_choice
 )
 from ordersys.serializers.distribution import OrderLogisticsInfoSubmitSerializer
-from ordersys.models import OrderProtocol
+from ordersys.serializers.order import OrderProtocolSubmitSerializer
 from paymentsys.models import PaymentPlatform
 
 
 class PaymethodSerializer(serializers.Serializer):
     paymethod = serializers.PrimaryKeyRelatedField(queryset=PaymentPlatform.objects)
 
-class AppendLogisticsSerializer(serializers.Serializer):
+
+class SubmitLogisticsSerializer(serializers.Serializer):
     loginto = OrderLogisticsInfoSubmitSerializer()
 
 
-class OrderProtocolSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = OrderProtocol
-        fields = ('op_type', 'c_price', 'description')
-
-
 class SubmitProtocolSerializer(serializers.Serializer):
-    protocol = OrderProtocolSerializer()
+    protocol = OrderProtocolSubmitSerializer()
 
 
 class ReasonSerializer(serializers.Serializer):
@@ -45,10 +39,10 @@ class OperateOrderSerializer(serializers.Serializer):
                 o_seller_action_choice.SELLER_APPEND_RECEIPT_LOGISTICS,
                 o_seller_action_choice.SELLER_APPEND_RECEIPT_LOGISTICS
         ):
-            seri_class = AppendLogisticsSerializer
+            seri_class = SubmitLogisticsSerializer
 
         if action == o_buyer_action_choice.BUYER_SUBMIT_PROTOCOL:
-            seri_class = OrderProtocolSerializer
+            seri_class = SubmitProtocolSerializer
 
         if action == o_seller_action_choice.SELLER_REJECT_PROTOCOL:
             seri_class = ReasonSerializer
@@ -75,7 +69,7 @@ class OperateOrderProtocolSerializer(serializers.Serializer):
             seri_class = PaymethodSerializer
 
         if action == op_buyer_action_choice.CANCEL_APPEND_LOGISTICS_INFO:
-            seri_class = SubmitProtocolSerializer
+            seri_class = SubmitLogisticsSerializer
 
         if seri_class is not None:
             seri = seri_class(data=data.get("parameter", {}))
