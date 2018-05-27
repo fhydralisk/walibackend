@@ -82,7 +82,7 @@ def append_default_order_protocol_info(extra_ctx, **kwargs):
 
     default_protocol = OrderProtocol()
     default_protocol.oid = order
-    default_protocol.p_status = p_status_choice.CREATED
+    default_protocol.p_status = p_status_choice.AGREED
     # TODO: Move default protocol into settings or ctx
     default_protocol.op_type = op_type_choice.NORMAL
     default_protocol.init_p_operate_status()

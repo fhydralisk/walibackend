@@ -115,6 +115,7 @@ class OrderInfoStateMachine(StateMachine):
                         StateMachine.K_NEXT_STATE: o_status_choice.WAIT_DEFAULT_ADJUSTMENT_COMPLETE,
                         StateMachine.K_PRE_SE: [
                             ordersys.funcs.state_machines.order_se.append_default_order_protocol_info,
+                            ordersys.funcs.state_machines.order_se.init_protocol,
                         ],
                     }
                 }
@@ -154,12 +155,14 @@ class OrderInfoStateMachine(StateMachine):
             },
             o_status_choice.WAIT_DEFAULT_ADJUSTMENT_COMPLETE: {
                 StateMachine.K_TRANSITIONS: {
-                    o_buyer_action_choice.BUYER_CHECK_RESULT_BAD: {
-                        StateMachine.K_NEXT_STATE: o_status_choice.WAIT_ADJUSTMENT,
-                        StateMachine.K_PRE_SE: [
-                            ordersys.funcs.state_machines.order_se.close_existing_protocol,
-                        ]
-                    },
+                    # TODO: This transition shall be allowed in future. For now we cannot
+                    # deal with the receipt and closing stuff.
+                    # o_buyer_action_choice.BUYER_CHECK_RESULT_BAD: {
+                    #     StateMachine.K_NEXT_STATE: o_status_choice.WAIT_ADJUSTMENT,
+                    #     StateMachine.K_PRE_SE: [
+                    #         ordersys.funcs.state_machines.order_se.close_existing_protocol,
+                    #     ]
+                    # },
                     # OrderProtocol staff.
                     opf_feedback_choice.NORMAL_FINISH: {
                         StateMachine.K_NEXT_STATE: o_status_choice.WAIT_LIQUIDATE,
@@ -185,7 +188,7 @@ class OrderInfoStateMachine(StateMachine):
                 }
             },
             o_status_choice.WAIT_LIQUIDATE: {
-                StateMachine.K_PRE_SE: {
+                StateMachine.K_POST_SE: {
                     ordersys.funcs.state_machines.order_se.do_or_register_liquidation
                 },
                 StateMachine.K_TRANSITIONS: {

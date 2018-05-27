@@ -104,13 +104,14 @@ class OrderProtocolOperateStateMachine(StateMachine):
 
             p_operate_status_choice.NORMAL_WAIT_FINAL: {
                 StateMachine.K_TRANSITIONS: {
-                    op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT: {
-                        StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_OK,
-                        StateMachine.K_PRE_SE: [],
-                    },
                     op_buyer_action_choice.BUYER_PAY_FINAL: {
                         StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_CHECK_FINAL,
-                        StateMachine.K_PRE_SE: [],
+                        StateMachine.K_POST_SE: [
+                            order_se.create_register_receipt
+                        ],
+                        StateMachine.K_SE_CONTEXT: {
+                            "r_type": receipt_type_choice.FINAL_PAYMENT,
+                        }
                     }
                 }
             },

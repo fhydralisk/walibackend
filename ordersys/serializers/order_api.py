@@ -12,7 +12,7 @@ class PaymethodSerializer(serializers.Serializer):
 
 
 class SubmitLogisticsSerializer(serializers.Serializer):
-    loginto = OrderLogisticsInfoSubmitSerializer()
+    loginfo = OrderLogisticsInfoSubmitSerializer()
 
 
 class SubmitProtocolSerializer(serializers.Serializer):
