@@ -5,6 +5,10 @@ from ordersys.funcs.state_machines.order_sm_executer import execute_order_state_
 
 def order_protocol_finished(extra_ctx, ctx, **kwargs):
 
+    def save_order(state_next, **kwargs):
+        order.o_status = state_next
+        order.save()
+
     order = extra_ctx["order"]
     if "protocol" in extra_ctx:
         protocol = extra_ctx["protocol"]
@@ -21,6 +25,6 @@ def order_protocol_finished(extra_ctx, ctx, **kwargs):
         extra_ctx.get("user", None),
         order,
         ctx["action"],
-        None
+        save_order
     )
 
