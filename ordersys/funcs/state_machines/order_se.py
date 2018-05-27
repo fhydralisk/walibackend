@@ -104,7 +104,7 @@ def agree_reject_protocol(ctx, extra_ctx, **kwargs):
     agree = ctx["agree"]  # type: bool
 
     if protocol.p_status != p_status_choice.CREATED:
-        raise WLException(403, "Cannot reject this protocol of status %d." % protocol.p_status)
+        raise WLException(403, "Cannot agree or reject this protocol of status %d." % protocol.p_status)
 
     protocol.p_status = p_status_choice.AGREED if agree else p_status_choice.REJECTED
     protocol.save()
@@ -123,8 +123,11 @@ def init_protocol(extra_ctx, **kwargs):
         order = extra_ctx["order"]
         protocol = order.current_protocol
 
-    if protocol.p_status != p_status_choice.CREATED:
-        raise WLException(403, "Cannot init this protocol of status: %d." % protocol.p_status)
+    if protocol.p_status != p_status_choice.AGREED:
+        raise WLException(
+            403,
+            "Cannot init this protocol of status: %d. Protocol must be agreed to initialize" % protocol.p_status
+        )
     # Create receipt, or others...
     from order_protocol_sm import order_protocol_operate_sm
     order_protocol_operate_sm.start_sm(protocol.p_operate_status, None, None)
