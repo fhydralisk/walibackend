@@ -15,20 +15,24 @@ class OrderProtocolOperateStateMachine(StateMachine):
     STATE_MACHINE_DEFINE = {
         StateMachine.K_STATE_GRAPH: {
             p_operate_status_choice.CANCEL_WAIT_RETURN: {
-                op_buyer_action_choice.CANCEL_APPEND_LOGISTICS_INFO: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.CANCEL_WAIT_CONFIRM,
-                    StateMachine.K_PRE_SE: [
-                        append_order_logistics_info,
-                    ],
-                    StateMachine.K_SE_CONTEXT: {
-                        "l_type": l_type_choice.RETURN
+                StateMachine.K_TRANSITIONS: {
+                    op_buyer_action_choice.CANCEL_APPEND_LOGISTICS_INFO: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.CANCEL_WAIT_CONFIRM,
+                        StateMachine.K_PRE_SE: [
+                            append_order_logistics_info,
+                        ],
+                        StateMachine.K_SE_CONTEXT: {
+                            "l_type": l_type_choice.RETURN
+                        }
                     }
                 }
             },
             p_operate_status_choice.CANCEL_WAIT_CONFIRM: {
-                op_seller_action_choice.CANCEL_CONFIRM_PRODUCT: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.CANCEL_WAIT_REFUND,
-                    StateMachine.K_PRE_SE: []
+                StateMachine.K_TRANSITIONS: {
+                    op_seller_action_choice.CANCEL_CONFIRM_PRODUCT: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.CANCEL_WAIT_REFUND,
+                        StateMachine.K_PRE_SE: []
+                    }
                 }
             },
             p_operate_status_choice.CANCEL_WAIT_REFUND: {
@@ -38,8 +42,10 @@ class OrderProtocolOperateStateMachine(StateMachine):
                 StateMachine.K_SE_CONTEXT: {
                     "r_type": receipt_type_choice.EARNEST_REFUND
                 },
-                op_platform_action_choice.PLATFORM_CONFIRM_REFUND: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.CANCEL_OK,
+                StateMachine.K_TRANSITIONS: {
+                    op_platform_action_choice.PLATFORM_CONFIRM_REFUND: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.CANCEL_OK,
+                    }
                 }
             },
             p_operate_status_choice.CANCEL_OK: {
@@ -52,22 +58,26 @@ class OrderProtocolOperateStateMachine(StateMachine):
             },
 
             p_operate_status_choice.ADJUST_WAIT_FINAL: {
-                op_buyer_action_choice.BUYER_PAY_FINAL: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.ADJUST_CHECK_FINAL,
-                    StateMachine.K_POST_SE: [
-                        order_se.create_register_receipt
-                    ],
-                    StateMachine.K_SE_CONTEXT: {
-                        "r_type": receipt_type_choice.FINAL_PAYMENT,
-                        "with_adjustment": True
+                StateMachine.K_TRANSITIONS: {
+                    op_buyer_action_choice.BUYER_PAY_FINAL: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.ADJUST_CHECK_FINAL,
+                        StateMachine.K_POST_SE: [
+                            order_se.create_register_receipt
+                        ],
+                        StateMachine.K_SE_CONTEXT: {
+                            "r_type": receipt_type_choice.FINAL_PAYMENT,
+                            "with_adjustment": True
+                        }
                     }
                 }
             },
             p_operate_status_choice.ADJUST_CHECK_FINAL: {
-                op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.ADJUST_OK,
-                    StateMachine.K_PRE_SE: [],
-                },
+                StateMachine.K_TRANSITIONS: {
+                    op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.ADJUST_OK,
+                        StateMachine.K_PRE_SE: [],
+                    },
+                }
             },
             p_operate_status_choice.ADJUST_CHECK_EARNEST: {
                 StateMachine.K_PRE_SE: [
@@ -77,9 +87,11 @@ class OrderProtocolOperateStateMachine(StateMachine):
                     "r_type": receipt_type_choice.EARNEST_REFUND,
                     "with_adjustment": True
                 },
-                op_platform_action_choice.PLATFORM_CONFIRM_REFUND: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.ADJUST_OK,
-                },
+                StateMachine.K_TRANSITIONS: {
+                    op_platform_action_choice.PLATFORM_CONFIRM_REFUND: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.ADJUST_OK,
+                    },
+                }
             },
             p_operate_status_choice.ADJUST_OK: {
                 StateMachine.K_POST_SE: [
@@ -91,19 +103,23 @@ class OrderProtocolOperateStateMachine(StateMachine):
             },
 
             p_operate_status_choice.NORMAL_WAIT_FINAL: {
-                op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_OK,
-                    StateMachine.K_PRE_SE: [],
-                },
-                op_buyer_action_choice.BUYER_PAY_FINAL: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_CHECK_FINAL,
-                    StateMachine.K_PRE_SE: [],
+                StateMachine.K_TRANSITIONS: {
+                    op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_OK,
+                        StateMachine.K_PRE_SE: [],
+                    },
+                    op_buyer_action_choice.BUYER_PAY_FINAL: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_CHECK_FINAL,
+                        StateMachine.K_PRE_SE: [],
+                    }
                 }
             },
             p_operate_status_choice.NORMAL_CHECK_FINAL: {
-                op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT: {
-                    StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_OK,
-                },
+                StateMachine.K_TRANSITIONS: {
+                    op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT: {
+                        StateMachine.K_NEXT_STATE: p_operate_status_choice.NORMAL_OK,
+                    },
+                }
             },
             p_operate_status_choice.NORMAL_OK: {
                 StateMachine.K_POST_SE: [
