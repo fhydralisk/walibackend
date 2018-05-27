@@ -4,6 +4,11 @@ from ordersys.models import OrderProtocol
 
 
 def execute_order_protocol_state_machine(user, order, action, parameter):
+
+    def state_dealer(state_next, **kwargs):
+        protocol.p_operate_status = state_next
+        protocol.save()
+
     try:
         protocol = order.current_protocol
     except OrderProtocol.DoesNotExist:
@@ -12,14 +17,12 @@ def execute_order_protocol_state_machine(user, order, action, parameter):
         raise AssertionError("Multiple processing protocol")
 
     try:
-        state_next = order_protocol_operate_sm.execute_transition(
+        order_protocol_operate_sm.execute_transition(
             protocol.p_operate_status,
             action,
-            {"order": order, "protocol": protocol, "parameter": parameter, "user": user}
+            {"order": order, "protocol": protocol, "parameter": parameter, "user": user},
+            state_dealer
         )
-
-        protocol.p_operate_status = state_next
-        protocol.save()
     except order_protocol_operate_sm.ActionError:
         raise WLException(403, "Action error")
     except order_protocol_operate_sm.StateDoesNotExist:
