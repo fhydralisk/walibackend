@@ -92,7 +92,7 @@ class StateMachine(object):
         try:
             for se, ctx in pre_se:
                 current_func = se
-                se(current_state=current_state, action=action, ctx=ctx, extra_ctx=extra_ctx)
+                se(current_state=current_state, state_next=state_next, action=action, ctx=ctx, extra_ctx=extra_ctx)
 
             if state_dealer is not None:
                 current_func = state_dealer
@@ -100,7 +100,7 @@ class StateMachine(object):
 
             for se, ctx in post_se:
                 current_func = se
-                se(current_state=current_state, action=action, ctx=ctx, extra_ctx=extra_ctx)
+                se(current_state=current_state, state_next=state_next, action=action, ctx=ctx, extra_ctx=extra_ctx)
 
             return state_next
         except Exception as e:
