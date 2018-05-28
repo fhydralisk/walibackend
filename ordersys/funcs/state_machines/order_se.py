@@ -46,7 +46,7 @@ def _validate_and_close_existing_protocol(order):
     # Check if there is a protocol in progress
     all_protocols = protocols.all()
     for p in all_protocols:
-        if not p.terminated() and p.p_status != p_status_choice.CREATED:
+        if not p.terminated and p.p_status != p_status_choice.CREATED:
             raise WLException(403, "Cannot change or add order protocol due to unfinished protocol")
 
     # Cancel all protocols that are not in progress
