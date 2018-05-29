@@ -39,7 +39,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
         model = ProductDemand
         fields = (
             'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'closed', 'end_time',
-            'is_expired',
+            'is_expired', 'description',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
@@ -50,6 +50,12 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
     def get_satisfied(self, obj):
         # type: (ProductDemand) -> float
         return (obj.quantity_metric() - obj.quantity_left()).quantity
+
+
+class DemandReadableDisplaySelfSerializer(DemandReadableDisplaySerializer):
+
+    class Meta(DemandReadableDisplaySerializer.Meta):
+        fields = DemandReadableDisplaySerializer.Meta.fields + ('comment', )
 
 
 class DemandReadableDisplayMatchSerializer(DemandReadableDisplaySerializer):

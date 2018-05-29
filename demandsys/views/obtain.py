@@ -4,10 +4,12 @@ from rest_framework.views import APIView
 from base.views import WLAPIView
 from django.http.response import FileResponse
 from django.conf import settings
-from demandsys.serializers.demand_api import(
+from demandsys.serializers.demand_api import (
     ObtainDemandSerializer, ObtainDemandDetailSerializer, ObtainHotDemandSerializer, ObtainDemandMatchSerializer
 )
-from demandsys.serializers.demand import DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer
+from demandsys.serializers.demand import (
+    DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer, DemandReadableDisplaySelfSerializer
+)
 from demandsys.serializers.photo_api import GetPhotoSerializer
 from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand
 
@@ -41,7 +43,7 @@ class ObtainSelfView(WLAPIView, APIView):
 
         demands, n_pages = get_my_demand(count_per_page=5, **seri.data)
 
-        seri_demand = DemandReadableDisplaySerializer(demands, many=True)
+        seri_demand = DemandReadableDisplaySelfSerializer(demands, many=True)
 
         return self.generate_response(
             data={
