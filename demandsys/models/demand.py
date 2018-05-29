@@ -25,7 +25,7 @@ class ProductDemand(models.Model):
     unit = models.IntegerField(choices=unit_choice.choice)
     pmid = models.ForeignKey(CorePaymentMethod)
     st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("start time"))
-    duration = models.FloatField()
+    end_time = models.DateTimeField()
     abid = models.ForeignKey(UserAddressBook, on_delete=models.SET_NULL, verbose_name=_("user address book"), null=True, blank=True)
     aid = models.ForeignKey(CoreAddressArea, blank=True, null=True)
     street = models.CharField(max_length=511, blank=True, null=True)
@@ -33,6 +33,7 @@ class ProductDemand(models.Model):
     comment = models.TextField(blank=True, null=True)
     match = models.BooleanField(default=False)
     create_datetime = models.DateTimeField(auto_now_add=True)
+    closed = models.BooleanField(default=False)
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -51,7 +52,7 @@ class ProductDemand(models.Model):
 
         # Validate expire date
         # TODO: Check whether "now" works
-        if self.st_time + datetime.timedelta(days=self.duration) < now():
+        if self.end_time < now():
             raise WLException(404, "No such demand - expire")
 
         if opposite_role == self.uid.role:
@@ -69,6 +70,18 @@ class ProductDemand(models.Model):
     def quantity_left(self):
         # TODO: Implement this
         return self.quantity
+
+    @property
+    def is_expired(self):
+        return self.end_time < now()
+
+    @property
+    def duration(self):
+        return (self.end_time - self.st_time).days
+
+    @duration.setter
+    def duration(self, value):
+        self.end_time = now() + datetime.timedelta(days=value)
 
 
 class ProductDemandPhoto(models.Model):

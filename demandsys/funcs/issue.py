@@ -146,7 +146,26 @@ def shut_demand(user, id):
     """
 
     try:
-        demand_object = ProductDemand.objects.get(id=id, uid=user)
+        demand_object = ProductDemand.objects.get(id=id, uid=user, in_use=True)
+        demand_object.match = False
+        demand_object.closed = True
+        demand_object.save()
+    except ProductDemand.DoesNotExist:
+        raise Error404("No such demand")
+
+
+@default_exception(Error500)
+@user_from_sid(Error404)
+def delete_demand(user, id):
+    """
+
+    :param user:
+    :param id:
+    :return:
+    """
+
+    try:
+        demand_object = ProductDemand.objects.get(id=id, uid=user, in_use=True)
         demand_object.match = False
         demand_object.in_use = False
         demand_object.save()

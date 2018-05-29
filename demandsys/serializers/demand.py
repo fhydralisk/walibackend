@@ -4,8 +4,6 @@ from demandsys.models import ProductDemand, ProductDemandPhoto
 
 class DemandPhotoSerializers(serializers.ModelSerializer):
 
-    upload_date = serializers.SerializerMethodField()
-
     class Meta:
         model = ProductDemandPhoto
         fields = ('id', 'photo_desc', 'upload_date')
@@ -40,7 +38,8 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductDemand
         fields = (
-            'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match',
+            'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'closed', 'end_time',
+            'is_expired',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
@@ -54,10 +53,14 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
 
 class DemandPublishSerializer(serializers.ModelSerializer):
 
+    duration = serializers.FloatField(min_value=0.0)
+
     class Meta:
         model = ProductDemand
-        exclude = (
-            'id', 't_demand', 'st_time', 'uid', 'in_use', 'create_datetime',
+        fields = (
+            'pid', 'qid', 'wcid', 'quantity', 'min_quantity',
+            'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
+            'street', 'description', 'comment', 'match', 'comment'
         )
 
 
@@ -73,6 +76,8 @@ class DemandEditSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductDemand
-        exclude = (
-            'id', 't_demand', 'st_time', 'uid', 'in_use', 'create_datetime', 'pid', 'wcid',
+        fields = (
+            'quantity', 'min_quantity',
+            'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
+            'street', 'description', 'comment', 'match', 'comment', 'closed'
         )

@@ -1,5 +1,6 @@
 from demandsys.models import ProductDemand, ProductDemandPhoto
 from base.exceptions import default_exception, Error500, Error404, Error400
+from base.util.timestamp import now
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
 from demandsys.models.translaters import t_demand_translator
@@ -27,7 +28,9 @@ def get_popular_demand(role, user, page, count_per_page):
         'qid__t3id__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
-    ).filter(in_use=True).exclude(t_demand=t_demand_translator.from_role(role)).order_by("-id")
+    ).filter(
+        in_use=True, closed=False, end_time__gt=now()
+    ).exclude(t_demand=t_demand_translator.from_role(role)).order_by("-id")
 
     st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
 

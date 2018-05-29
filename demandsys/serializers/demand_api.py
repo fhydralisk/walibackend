@@ -31,6 +31,6 @@ class EditDemandSerializer(serializers.Serializer):
     demand = DemandEditSerializer(partial=True, required=False)
 
 
-class CloseDemandSerializer(serializers.Serializer):
+class CloseDeleteDemandSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     id = serializers.IntegerField()

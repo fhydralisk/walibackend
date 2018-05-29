@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from base.views import WLAPIView
-from demandsys.serializers.demand_api import PublishDemandSerializer, EditDemandSerializer, CloseDemandSerializer
+from demandsys.serializers.demand_api import PublishDemandSerializer, EditDemandSerializer, CloseDeleteDemandSerializer
 from demandsys.serializers.photo_api import UploadPhotoSerializer, RemovePhotoSerializer
-from demandsys.funcs.issue import publish_demand, edit_demand, upload_photo, shut_demand, delete_photo
+from demandsys.funcs.issue import publish_demand, edit_demand, upload_photo, shut_demand, delete_photo, delete_demand
 
 
 class PublishDemandView(WLAPIView, APIView):
@@ -34,10 +34,22 @@ class ShutDemandView(WLAPIView, APIView):
     def get(self, request):
         data, context = self.get_request_obj(request)
 
-        seri = CloseDemandSerializer(data=data)
+        seri = CloseDeleteDemandSerializer(data=data)
         self.validate_serializer(seri)
 
         shut_demand(**seri.data)
+
+        return self.generate_response(data={}, context=context)
+
+
+class DeleteDemandView(WLAPIView, APIView):
+    def get(self, request):
+        data, context = self.get_request_obj(request)
+
+        seri = CloseDeleteDemandSerializer(data=data)
+        self.validate_serializer(seri)
+
+        delete_demand(**seri.data)
 
         return self.generate_response(data={}, context=context)
 
@@ -64,7 +76,3 @@ class RemovePhotoView(WLAPIView, APIView):
         delete_photo(**seri.data)
 
         return self.generate_response(data={}, context=context)
-
-
-
-

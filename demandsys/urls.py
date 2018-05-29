@@ -1,7 +1,9 @@
 from django.conf.urls import url, include
 from demandsys.views.obtain import ObtainHotView, ObtainSelfView, ObtainDetailView, ObtainPhotoDataView
 from demandsys.views.catalog import GetTreedProductTypeView
-from demandsys.views.publish import EditDemandView, PublishDemandView, RemovePhotoView, ShutDemandView, UploadPhotoView
+from demandsys.views.publish import (
+    EditDemandView, PublishDemandView, RemovePhotoView, ShutDemandView, UploadPhotoView, DeleteDemandView
+)
 
 obtain_urlpatterns = [
     url(r'^hot/', ObtainHotView.as_view()),
@@ -20,6 +22,7 @@ publish_urlpatterns = [
     url(r'^publish_demand/', PublishDemandView.as_view()),
     url(r'^edit_demand/', EditDemandView.as_view()),
     url(r'^close_demand/', ShutDemandView.as_view()),
+    url(r'^remove_demand/', DeleteDemandView.as_view()),
 ]
 
 urlpatterns = [
