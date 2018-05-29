@@ -31,6 +31,10 @@ class OrderInfo(models.Model):
             receipt_status__in=PaymentReceipt.current_status_set()
         ).get()
 
+    @property
+    def buyer_invoice_info(self):
+        return self.ivid.buyer.user_validate
+
     def __unicode__(self):
         return "Order from %s" % str(self.ivid)
 
