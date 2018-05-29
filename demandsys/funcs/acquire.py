@@ -61,8 +61,6 @@ def get_my_demand(user, page, count_per_page):
     return qs[st:ed], n_pages
 
 
-# TODO: Figure this out later
-
 @default_exception(Error500)
 @user_from_sid(Error404)
 def get_matched_demand(user, id, page, count_per_page):
