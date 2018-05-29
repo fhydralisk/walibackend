@@ -33,7 +33,6 @@ class OrderInfo(models.Model):
 
     @property
     def buyer_invoice_info(self):
-        print 'testtest'
         return self.ivid.buyer.user_validate
 
     def __unicode__(self):
