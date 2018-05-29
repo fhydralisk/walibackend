@@ -3,7 +3,7 @@ from base.views import WLAPIView
 from base.exceptions import WLException
 from coresys.models import CoreAddressArea, CoreAddressCity, CoreAddressProvince
 from coresys.serializers.address_serializers import \
-    CoreAddressAreaSerializer, CoreAddressCitySerializer, CoreAddressProvinceSerializer
+    CoreAddressAreaSerializer, CoreAddressCitySerializer, CoreAddressProvinceSerializer, CoreAddressProvinceFSerializer
 
 
 class GetProvinceView(WLAPIView, APIView):
@@ -31,3 +31,10 @@ class GetAreaView(WLAPIView, APIView):
             return self.generate_response(data={"areas": cseri.data}, context=context)
         except (KeyError, ValueError):
             raise WLException(message="Expect cid", code=400)
+
+
+class GetAllFView(WLAPIView, APIView):
+    def get(self, request):
+        data, context = self.get_request_obj(request)
+        cseri = CoreAddressProvinceFSerializer(CoreAddressProvince.objects.all(), many=True)
+        return self.generate_response(data={"provinces": cseri.data, "ver": 0.1}, context=context)
