@@ -2,6 +2,7 @@ from base.exceptions import WLException, default_exception, Error500, Error404
 from base.util.misc_validators import validators
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
+from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
 from invitesys.models import InviteInfo
 from .contracts import create_contract, get_current_template
@@ -74,7 +75,9 @@ def obtain(user, t_invite, page, count_pre_page):
 
     qs = qs1 | qs2
 
-    start, end, n_pages = get_page_info(qs, count_pre_page, page, index_error_excepiton=WLException(400, "Page out of range"))
+    start, end, n_pages = get_page_info(
+        qs, count_pre_page, page, index_error_excepiton=WLException(400, "Page out of range")
+    )
 
     qs = qs.order_by('-id')
     return qs[start: end], n_pages
@@ -119,7 +122,9 @@ def publish(user, invite):
         raise WLException(403, "User's validation does not passed, cannot publish.")
 
     # Validate whether
-    invite["dmid_t"].validate_satisfy_demand(user.role, invite["quantity"])
+    invite["dmid_t"].validate_satisfy_demand(
+        user.role, quantity_metric=UnitQuantityMetric(invite["quantity"], invite["unit"])
+    )
 
     invite_obj = InviteInfo(**invite)
 

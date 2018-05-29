@@ -1,7 +1,7 @@
 from demandsys.models import ProductDemand, ProductDemandPhoto
 from base.exceptions import default_exception, Error500, Error404, Error400
 from base.util.timestamp import now
-from base.util.pages import get_page_info
+from base.util.pages import get_page_info, get_page_info_list
 from usersys.funcs.utils.usersid import user_from_sid
 from demandsys.models.translaters import t_demand_translator
 
@@ -63,27 +63,64 @@ def get_my_demand(user, page, count_per_page):
 
 # TODO: Figure this out later
 
-# @default_exception(Error500)
-# @user_from_sid(Error404)
-# def get_matched_demand(user, id, page):
-#     """
-#     TODO: DemandMatchingScore not set
-#     :param user_sid:
-#     :param id:
-#     :param page:
-#     :return:
-#     """
-#     # page_size = 3  # number of items per page
-#     page = int(page)
-#
-#     # TODO: match the specific id
-#     demand = ProductDemand.objects.filter(id=id)
-#
-#     # return sliced single page
-#     if page < 1:
-#         raise Error404('Page number must be positive int')
-#     else:
-#         return ProductDemand.objects.filter(in_use=True)[(page - 1) * page_size: page * page_size]
+@default_exception(Error500)
+@user_from_sid(Error404)
+def get_matched_demand(user, id, page, count_per_page):
+    """
+    :param user:
+    :param id:
+    :param page:
+    :return:
+    """
+
+    def confirm_satisfied(self, other):
+        # type: (ProductDemand, ProductDemand) -> bool
+        return self.quantity_metric() > other.min_quantity_metric()
+
+    def match_key(m):
+        return demand.match_score(m)["score_overall"]
+
+    try:
+        demand = ProductDemand.objects.select_related(
+            'uid__user_validate',
+            'qid__t3id__t2id__t1id',
+            'aid__cid__pid',
+            'pmid', 'wcid'
+        ).get(in_use=True, id=id, uid=user)
+    except ProductDemand.DoesNotExist:
+        raise Error404("No such demand.")
+
+    match_queryset = ProductDemand.objects.select_related(
+        'uid__user_validate',
+        'qid__t3id__t2id__t1id',
+        'aid__cid__pid',
+        'pmid', 'wcid'
+    ).filter(
+        in_use=True,            # Must be in use
+        closed=False,
+        match=True,
+        qid=demand.qid,
+        aid__cid__pid=demand.aid.cid.pid
+    ).exclude(
+        uid__role=user.role     # Exclude same role
+    ).filter(
+        end_time__gt=now(),
+    )
+
+    # FIXME: Here we got a efficient issue, Every time user use this api, it will query the full set
+    # of matched queryset. We must figure out how to fetch it by page, or ... cache it.
+    maches = match_queryset.all()
+    matches_list = [
+        m for m in maches if confirm_satisfied(demand, m)
+    ]
+    matches_list.sort(key=match_key, reverse=True)
+
+    st, ed, n_pages = get_page_info_list(
+        matches_list, count_per_page, page, index_error_excepiton=Error400("Page out of range")
+    )
+
+    # return sliced single page
+    return demand, matches_list[st:ed], n_pages
 
 
 @default_exception(Error500)

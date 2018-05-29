@@ -11,6 +11,11 @@ from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
 from demandsys.model_choices.demand_enum import t_demand_choice, unit_choice
+from demandsys.util.unit_converter import UnitQuantityMetric, UnitPriceMetric
+
+
+def calc_score_by_operator(m1, m2, score_tuple):
+    return score_tuple[1] if m1 == m2 else score_tuple[0] if m1 < m2 else score_tuple[2]
 
 
 class ProductDemand(models.Model):
@@ -26,26 +31,42 @@ class ProductDemand(models.Model):
     pmid = models.ForeignKey(CorePaymentMethod)
     st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("start time"))
     end_time = models.DateTimeField()
-    abid = models.ForeignKey(UserAddressBook, on_delete=models.SET_NULL, verbose_name=_("user address book"), null=True, blank=True)
+    abid = models.ForeignKey(
+        UserAddressBook,
+        on_delete=models.SET_NULL,
+        verbose_name=_("user address book"),
+        null=True,
+        blank=True
+    )
     aid = models.ForeignKey(CoreAddressArea, blank=True, null=True)
     street = models.CharField(max_length=511, blank=True, null=True)
     description = models.TextField()
     comment = models.TextField(blank=True, null=True)
     match = models.BooleanField(default=False)
     create_datetime = models.DateTimeField(auto_now_add=True)
-    closed = models.BooleanField(default=False)
+    closed = models.BooleanField(default=False, db_index=True)
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.description
 
-    def validate_satisfy_demand(self, opposite_role, quantity):
+    def price_metric(self):
+        return UnitPriceMetric(self.price, self.unit)
+
+    def quantity_metric(self):
+        return UnitQuantityMetric(self.quantity, self.unit)
+
+    def validate_satisfy_demand(self, opposite_role, quantity=None, quantity_metric=None):
         """
         Raise WLError if not satisfied.
         :param opposite_role:
+        :param quantity_metric:
         :param quantity:
         :return:
         """
+
+        if quantity_metric is None:
+            quantity_metric = UnitQuantityMetric(quantity, self.unit)
 
         if not self.in_use:
             raise WLException(404, "No such demand - not in use")
@@ -58,18 +79,21 @@ class ProductDemand(models.Model):
         if opposite_role == self.uid.role:
             raise WLException(404, "No such demand - role does not match")
 
-        if quantity < self.min_quantity:
+        if quantity_metric < self.min_quantity_metric():
             raise WLException(403, "Min Quantity not satisfied")
 
         # Validate whether quantity meets quantity - satisfied
-        if quantity > self.quantity_left():
+        if quantity_metric > self.quantity_left():
             raise WLException(403, "Exceed max quantity")
 
         return
 
     def quantity_left(self):
         # TODO: Implement this
-        return self.quantity
+        return UnitQuantityMetric(self.quantity, self.unit)
+
+    def min_quantity_metric(self):
+        return UnitQuantityMetric(self.min_quantity, self.unit)
 
     @property
     def is_expired(self):
@@ -83,6 +107,22 @@ class ProductDemand(models.Model):
     def duration(self, value):
         self.end_time = now() + datetime.timedelta(days=value)
 
+    def match_score(self, other):
+        # type: (self.__class__) -> dict
+        score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, (1, 0, -1))
+        score_price = calc_score_by_operator(self.price_metric(), other.price_metric(), (1, 0, -1))
+        score_paymethod = calc_score_by_operator(self.pmid.ord, other.pmid.ord, (1, 0, -1))
+        score_area = 1 if self.aid == other.aid else 0 if self.aid.cid == other.aid.cid else -1
+        score_total = score_water + score_price + score_paymethod + score_area
+
+        return {
+            "score_water": score_water,
+            "score_area": score_area,
+            "score_paymethod": score_paymethod,
+            "score_price": score_price,
+            "score_overall": score_total
+        }
+
 
 class ProductDemandPhoto(models.Model):
     dmid = models.ForeignKey(ProductDemand, on_delete=models.SET_NULL, related_name="demand_photo", db_index=True, null=True, blank=True)
@@ -94,4 +134,3 @@ class ProductDemandPhoto(models.Model):
 
     def __unicode__(self):
         return self.photo_desc
-

@@ -48,7 +48,22 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
         )
 
     def get_satisfied(self, obj):
-        return obj.quantity - obj.quantity_left()
+        # type: (ProductDemand) -> float
+        return (obj.quantity_metric() - obj.quantity_left()).quantity
+
+
+class DemandReadableDisplayMatchSerializer(DemandReadableDisplaySerializer):
+    def __init__(self, match_demand, *args, **kwargs):
+        self.match_demand = match_demand
+        super(DemandReadableDisplayMatchSerializer, self).__init__(*args, **kwargs)
+
+    score = serializers.SerializerMethodField()
+
+    class Meta(DemandReadableDisplaySerializer.Meta):
+        fields = DemandReadableDisplaySerializer.Meta.fields + ('score', )
+
+    def get_score(self, data):
+        return self.match_demand.match_score(data)
 
 
 class DemandPublishSerializer(serializers.ModelSerializer):

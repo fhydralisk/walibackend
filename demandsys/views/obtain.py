@@ -4,10 +4,12 @@ from rest_framework.views import APIView
 from base.views import WLAPIView
 from django.http.response import FileResponse
 from django.conf import settings
-from demandsys.serializers.demand_api import ObtainDemandSerializer, ObtainDemandDetailSerializer, ObtainHotDemandSerializer
-from demandsys.serializers.demand import DemandReadableDisplaySerializer
+from demandsys.serializers.demand_api import(
+    ObtainDemandSerializer, ObtainDemandDetailSerializer, ObtainHotDemandSerializer, ObtainDemandMatchSerializer
+)
+from demandsys.serializers.demand import DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer
 from demandsys.serializers.photo_api import GetPhotoSerializer
-from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo
+from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand
 
 
 # TODO: Move page size into settings
@@ -80,3 +82,22 @@ class ObtainPhotoDataView(WLAPIView, APIView):
         real_path = os.path.join(settings.BASE_DIR, photo_path)
 
         return FileResponse(open(real_path), content_type='image')
+
+
+class ObtainMatchView(WLAPIView, APIView):
+    def get(self, request):
+        data, context = self.get_request_obj(request)
+
+        seri = ObtainDemandMatchSerializer(data=data)
+        self.validate_serializer(seri)
+
+        demand, matches, pages = get_matched_demand(count_per_page=5, **seri.data)
+
+        seri_demand = DemandReadableDisplayMatchSerializer(match_demand=demand, instance=matches, many=True)
+
+        return self.generate_response(
+            data={
+                "match_demands": seri_demand.data,
+                "n_pages": pages,
+            }, context=context
+        )

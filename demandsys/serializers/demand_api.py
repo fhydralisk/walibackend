@@ -18,6 +18,12 @@ class ObtainDemandDetailSerializer(serializers.Serializer):
     id = serializers.IntegerField()
 
 
+class ObtainDemandMatchSerializer(serializers.Serializer):
+    user_sid = serializers.CharField(max_length=60)
+    id = serializers.IntegerField()
+    page = serializers.IntegerField(min_value=0, default=0)
+
+
 class PublishDemandSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     photo_ids = serializers.ListField(child=serializers.IntegerField(), required=False)
