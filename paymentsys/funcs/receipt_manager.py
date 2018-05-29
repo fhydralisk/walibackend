@@ -5,7 +5,7 @@ import uuid
 from django.utils.module_loading import import_string
 from django.conf import settings
 from base.exceptions import WLException
-from paymentsys.models.receipt_enum import receipt_status_choice
+from paymentsys.model_choices.receipt_enum import receipt_status_choice
 from paymentsys.models import PaymentReceipt, PaymentPlatform
 
 

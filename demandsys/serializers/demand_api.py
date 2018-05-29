@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from usersys.models.user_enum import role_choice
+from usersys.model_choices.user_enum import role_choice
 from .demand import DemandPublishSerializer, DemandEditSerializer
 
 

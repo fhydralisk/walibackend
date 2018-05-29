@@ -2,7 +2,7 @@ from django.utils.deconstruct import deconstructible
 from django.core.exceptions import ValidationError
 
 from usersys.models import UserValidate
-from usersys.models.user_enum import validate_status_choice, role_choice, t_user_choice, t_photo_choice
+from usersys.model_choices.user_enum import validate_status_choice, role_choice, t_user_choice, t_photo_choice
 
 
 @deconstructible

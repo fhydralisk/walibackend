@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from .usermodel import UserBase
-from .invoice_enum import invoice_type_choice
+from usersys.model_choices.invoice_enum import invoice_type_choice
 
 
 class UserReceiptInfo(models.Model):

@@ -8,11 +8,11 @@ import ordersys.funcs.state_machines.distribution_se
 import ordersys.funcs.state_machines.order_se
 
 from base.util.state_machine import StateMachine
-from ordersys.models.distribution_enum import l_type_choice
-from ordersys.models.order_enum import (
+from ordersys.model_choices.distribution_enum import l_type_choice
+from ordersys.model_choices.order_enum import (
     o_status_choice, o_buyer_action_choice, o_seller_action_choice, opf_feedback_choice, op_platform_action_choice
 )
-from paymentsys.models.receipt_enum import receipt_type_choice
+from paymentsys.model_choices.receipt_enum import receipt_type_choice
 
 
 class OrderInfoStateMachine(StateMachine):

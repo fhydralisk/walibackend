@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from invitesys.models import InviteInfo
 
-from .order_enum import o_status_choice, op_type_choice, p_status_choice, p_operate_status_choice
+from ordersys.model_choices.order_enum import o_status_choice, op_type_choice, p_status_choice, p_operate_status_choice
 
 
 class OrderInfo(models.Model):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from invitesys.models.contract_enum import sign_method_choice
+from invitesys.model_choices.contract_enum import sign_method_choice
 
 
 class ObtainContractInfoSerializer(serializers.Serializer):

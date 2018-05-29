@@ -1,5 +1,5 @@
-from usersys.models.user_enum import role_choice
-from demandsys.models.demand_enum import t_demand_choice
+from usersys.model_choices.user_enum import role_choice
+from demandsys.model_choices.demand_enum import t_demand_choice
 
 
 class _TDemandTranslator(object):

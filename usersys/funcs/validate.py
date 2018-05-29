@@ -8,7 +8,7 @@ Last modified: May 8, 2018
 from base.exceptions import *
 from rest_framework.exceptions import ValidationError
 from usersys.models import UserValidate, UserValidateArea, UserValidatePhoto
-from usersys.models.user_enum import validate_status_choice
+from usersys.model_choices.user_enum import validate_status_choice
 from .utils.usersid import user_from_sid
 from usersys.serializers.validate import UserValidateUserSerializer, UserValidateAreaSerializer
 from usersys.forms import ValidatePhotoUploadForm

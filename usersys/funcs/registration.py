@@ -14,7 +14,6 @@ from base.util.misc_validators import validators
 from base.util.temp_session import create_session, update_session_dict, \
     destroy_session, get_session_dict, get_session, update_session
 
-from usersys.models.user_enum import role_choice
 from .session import RegistrationSessionKeys, ValidateStatus
 
 User = get_user_model()

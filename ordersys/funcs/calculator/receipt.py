@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.utils.module_loading import import_string
 from ordersys.models import OrderInfo
-from paymentsys.models.receipt_enum import receipt_type_choice
+from paymentsys.model_choices.receipt_enum import receipt_type_choice
 
 
 # TODO: Calculate the amount of money

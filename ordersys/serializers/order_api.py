@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ordersys.models.order_enum import (
+from ordersys.model_choices.order_enum import (
     o_buyer_action_choice, o_seller_action_choice, order_type_choice, op_buyer_action_choice, op_seller_action_choice
 )
 from ordersys.serializers.distribution import OrderLogisticsInfoSubmitSerializer

@@ -3,7 +3,7 @@ from base.exceptions import WLException, default_exception, Error500, Error404
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
 from ordersys.models import OrderInfo
-from ordersys.models.order_enum import order_type_choice, o_status_choice
+from ordersys.model_choices.order_enum import order_type_choice, o_status_choice
 from usersys.models import UserBase
 
 

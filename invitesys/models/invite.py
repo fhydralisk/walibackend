@@ -5,9 +5,9 @@ from django.db import models
 from usersys.models import UserBase
 from demandsys.models import ProductDemand
 from coresys.models import CoreDistributionMethod, CorePaymentMethod
-from .invite_enum import i_status_choice
-from demandsys.models.demand_enum import unit_choice
-from usersys.models.user_enum import role_choice
+from invitesys.model_choices.invite_enum import i_status_choice
+from demandsys.model_choices.demand_enum import unit_choice
+from usersys.model_choices.user_enum import role_choice
 
 
 class InviteInfo(models.Model):

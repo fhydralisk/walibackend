@@ -1,7 +1,7 @@
 from paymentsys.funcs.receipt_manager import AbstractReceiptCallback
 from ordersys.funcs.state_machines.order_sm_executer import execute_order_state_machine
 from ordersys.funcs.state_machines.order_protocol_sm_executer import execute_order_protocol_state_machine
-from ordersys.models.order_enum import op_platform_action_choice, o_status_choice
+from ordersys.model_choices.order_enum import op_platform_action_choice, o_status_choice
 from ordersys.models import OrderInfo
 
 

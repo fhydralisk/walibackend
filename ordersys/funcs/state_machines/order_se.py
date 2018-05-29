@@ -3,12 +3,12 @@ from base.util.serializer_helper import errors_summery
 from ordersys.funcs.calculator.liquidation import liquidation_calculator
 from ordersys.funcs.calculator.receipt import receipt_calculator
 from ordersys.models import OrderInfo, OrderProtocol
-from ordersys.models.order_enum import o_status_choice, op_type_choice, p_status_choice
+from ordersys.model_choices.order_enum import o_status_choice, op_type_choice, p_status_choice
 from ordersys.serializers.order import OrderProtocolSubmitSerializer
 from paymentsys.funcs.liquidation_manager import manager as liquidation_manager
 from paymentsys.funcs.receipt_manager import manager as receipt_manager
 from paymentsys.models import PaymentReceipt
-from paymentsys.models.receipt_enum import receipt_status_choice
+from paymentsys.model_choices.receipt_enum import receipt_status_choice
 
 
 def do_or_register_liquidation(extra_ctx, state_next, **kwargs):

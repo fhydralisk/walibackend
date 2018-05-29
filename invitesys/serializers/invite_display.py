@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from invitesys.models import InviteInfo
 from usersys.models import UserBase
-from usersys.models.user_enum import role_choice
+from usersys.model_choices.user_enum import role_choice
 from .contract import ContractInfoSerializer
 
 

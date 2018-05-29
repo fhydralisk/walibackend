@@ -6,7 +6,7 @@ import datetime
 from django.db import models
 from coresys.models import CoreDistributionMethod
 from .order import OrderInfo
-from .distribution_enum import l_type_choice
+from ordersys.model_choices.distribution_enum import l_type_choice
 from django.core.validators import MinValueValidator
 
 

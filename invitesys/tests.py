@@ -1,14 +1,14 @@
 from django.test import TestCase
 
 from usersys.models import UserBase, UserValidate
-from usersys.models.user_enum import role_choice
+from usersys.model_choices.user_enum import role_choice
 from coresys.models import CoreDistributionMethod, CorePaymentMethod
 from demandsys.models import ProductDemand, ProductTypeL1, ProductTypeL2, ProductTypeL3, ProductQuality, ProductWaterContent
 from invitesys.models import InviteInfo
-from serializers.invite_display import UserInfoSerializer, InviteReadableDisplaySerializer
 
 from serializers.invite_api import PublishInviteSerializer
 from serializers.invite import InviteInfoSubmitSerializer
+
 
 def create_user():
     user = UserBase.objects.create_user('18513958704', '123456', role=role_choice.BUYER)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from invitesys.models.invite_enum import handle_method_choice, t_invite_choice
+from invitesys.model_choices.invite_enum import handle_method_choice, t_invite_choice
 from .invite import InviteInfoSubmitSerializer
 
 

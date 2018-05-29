@@ -3,10 +3,10 @@ from django.db.models import Q
 from django.db import transaction
 from base.exceptions import WLException, Error500, Error404, default_exception
 from usersys.funcs.utils.usersid import user_from_sid
-from usersys.models.user_enum import role_choice
+from usersys.model_choices.user_enum import role_choice
 from invitesys.models import InviteContractTemplate, InviteContractSign
-from invitesys.models.contract_enum import sign_status_choice
-from invitesys.models.invite_enum import i_status_choice
+from invitesys.model_choices.contract_enum import sign_status_choice
+from invitesys.model_choices.invite_enum import i_status_choice
 from ordersys.funcs.operate_order import create_order as create_order_func
 
 

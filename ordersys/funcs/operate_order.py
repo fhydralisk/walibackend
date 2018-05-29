@@ -1,9 +1,9 @@
 from base.exceptions import WLException, default_exception, Error500, Error404
 from usersys.funcs.utils.usersid import user_from_sid
-from usersys.models.user_enum import role_choice
+from usersys.model_choices.user_enum import role_choice
 from ordersys.models import OrderInfo
 from invitesys.models import InviteInfo
-from ordersys.models.order_enum import (
+from ordersys.model_choices.order_enum import (
     o_buyer_action_choice, o_seller_action_choice,
     op_buyer_action_choice, op_seller_action_choice,
     o_status_choice

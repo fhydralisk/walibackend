@@ -1,7 +1,7 @@
 from collections import OrderedDict, Mapping
 
 from rest_framework import serializers
-from usersys.models.user_enum import t_photo_choice
+from usersys.model_choices.user_enum import t_photo_choice
 from usersys.models import UserValidate, UserValidateArea
 
 

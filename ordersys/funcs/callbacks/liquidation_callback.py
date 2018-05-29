@@ -1,6 +1,6 @@
 from paymentsys.funcs.liquidation_manager import AbstractLiquidationCallback
 from ordersys.models import OrderInfo
-from ordersys.models.order_enum import op_platform_action_choice, o_status_choice
+from ordersys.model_choices.order_enum import op_platform_action_choice, o_status_choice
 from ordersys.funcs.state_machines.order_sm_executer import execute_order_state_machine
 
 

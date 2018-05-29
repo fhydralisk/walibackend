@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from ordersys.models import OrderInfo
-from .receipt_enum import receipt_status_choice, receipt_type_choice
+from paymentsys.model_choices.receipt_enum import receipt_status_choice, receipt_type_choice
 from .platform import PaymentPlatform
 
 

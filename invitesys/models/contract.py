@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
 from .invite import InviteInfo
-from .contract_enum import sign_status_choice
+from invitesys.model_choices.contract_enum import sign_status_choice
 
 
 class InviteContractTemplate(models.Model):

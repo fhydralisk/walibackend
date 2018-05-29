@@ -10,7 +10,7 @@ from base.exceptions import WLException
 from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
-from .demand_enum import t_demand_choice, unit_choice
+from demandsys.model_choices.demand_enum import t_demand_choice, unit_choice
 
 
 class ProductDemand(models.Model):

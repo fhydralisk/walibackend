@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
-from user_enum import role_choice, t_user_choice, validate_status_choice, t_photo_choice
+from usersys.model_choices.user_enum import role_choice, t_user_choice, validate_status_choice, t_photo_choice
 from coresys.models import CoreAddressArea, CoreAddressCity, CoreAddressProvince
 from base.util.misc_validators import validators
 from django.conf import settings
