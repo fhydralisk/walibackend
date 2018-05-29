@@ -85,4 +85,4 @@ class ValidationInfoInvoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserValidate
-        fields = ('company', 'idcard_number', 'address', 'texno', 'obank', 'bankcard')
+        fields = ('company', 'phonenum', 'address', 'texno', 'obank', 'bankcard')

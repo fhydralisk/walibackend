@@ -25,7 +25,7 @@ class OrderInfoDisplaySerializer(serializers.ModelSerializer):
     current_receipt = PaymentReceiptSerializer(read_only=True)
     invite = InviteReadableDetailDisplaySerializer(source='ivid', read_only=True)
     logistics = OrderLogisticsInfoSerializer(source='order_logistics', read_only=True, many=True)
-    invoice = ValidationInfoInvoiceSerializer(source='ivid.buyer_invoice_info', read_only=True)
+    invoice = ValidationInfoInvoiceSerializer(source='buyer_invoice_info', read_only=True)
 
     class Meta:
         model = OrderInfo
