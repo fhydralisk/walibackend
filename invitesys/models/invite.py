@@ -11,6 +11,14 @@ from demandsys.model_choices.demand_enum import unit_choice
 from usersys.model_choices.user_enum import role_choice
 
 
+class InviteCancelReason(models.Model):
+    in_use = models.BooleanField(default=True)
+    reason = models.CharField(max_length=256)
+
+    def __unicode__(self):
+        return self.reason
+
+
 class InviteInfo(models.Model):
     uid_s = models.ForeignKey(
         UserBase,
@@ -47,6 +55,12 @@ class InviteInfo(models.Model):
     disid = models.ForeignKey(CoreDistributionMethod, on_delete=models.PROTECT, verbose_name=_("Distribution Method"))
     dis_duration = models.IntegerField(verbose_name=_("Distribution duration"))
     i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
+    reason_class = models.ForeignKey(
+        InviteCancelReason,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     reason = models.TextField(null=True, blank=True)
     abid = models.ForeignKey(
         UserAddressBook,

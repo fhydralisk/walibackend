@@ -3,9 +3,9 @@ from base.views import WLAPIView
 from invitesys.serializers.invite_display import InviteReadableDisplaySerializer, InviteReadableDetailDisplaySerializer
 from invitesys.serializers.invite_api import (
     FlowHandleSerializer, ObtainInviteSerializer, ObtainInviteDetailSerializer,
-    PublishInviteSerializer
+    PublishInviteSerializer, InviteCancelReasonDisplaySerializer
 )
-from invitesys.funcs.invites import handle, obtain, detail, publish
+from invitesys.funcs.invites import handle, obtain, detail, publish, get_reason_classes
 
 
 class FlowHandleView(WLAPIView, APIView):
@@ -14,7 +14,7 @@ class FlowHandleView(WLAPIView, APIView):
 
         seri = FlowHandleSerializer(data=data)
         self.validate_serializer(seri)
-        invite = handle(**seri.data)
+        invite = handle(**seri.validated_data)
 
         if invite is not None:
             return_result = {"invite": InviteReadableDetailDisplaySerializer(invite).data}
@@ -77,3 +77,17 @@ class PublishInviteView(WLAPIView, APIView):
             context=context
         )
 
+
+class ObtainInviteCancelReasonClassView(WLAPIView, APIView):
+    def get(self, request):
+        data, context = self.get_request_obj(request)
+
+        reasons = get_reason_classes()
+        seri_reasons = InviteCancelReasonDisplaySerializer(reasons, many=True)
+
+        return self.generate_response(
+            data={
+                "reason_classes": seri_reasons.data
+            },
+            context=context
+        )

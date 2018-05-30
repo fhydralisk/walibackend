@@ -1,2 +1,2 @@
 from .contract import InviteContractSign, InviteContractTemplate
-from .invite import InviteInfo
+from .invite import InviteInfo, InviteCancelReason

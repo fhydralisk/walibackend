@@ -5,7 +5,7 @@ from usersys.funcs.utils.usersid import user_from_sid
 from usersys.model_choices.user_enum import role_choice
 from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
-from invitesys.models import InviteInfo
+from invitesys.models import InviteInfo, InviteCancelReason
 from .contracts import create_contract, get_current_template
 
 MAP_TINVITE_INVITE_STATUS = {
@@ -147,13 +147,14 @@ def publish(user, invite):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def handle(user, ivid, handle_method, reason=None):
+def handle(user, ivid, handle_method, reason=None, reason_class=None):
     """
 
     :param user:
     :param ivid:
     :param handle_method:
     :param reason:
+    :param reason_class
     :return: invite object
     """
 
@@ -167,6 +168,9 @@ def handle(user, ivid, handle_method, reason=None):
             raise WLException(404, "No such invite.")
 
         if hm == handle_method_choice.ACCEPT or hm == handle_method_choice.REJECT:
+            if i_obj.i_status != i_status_choice.STARTED:
+                raise WLException(403, "Cannot Accept or reject invite of status %d" % i_obj.i_status)
+
             if u != i_obj.uid_t:
                 raise WLException(403, "Inviter cannot accept or reject the invite.")
 
@@ -175,6 +179,9 @@ def handle(user, ivid, handle_method, reason=None):
                 raise WLException(400, "Invitee cannot cancel the invite, use Reject instead.")
 
         if hm == handle_method_choice.REJECT or hm == handle_method_choice.CANCEL:
+            if i_obj.i_status not in (i_status_choice.STARTED, i_status_choice.CONFIRMED):
+                raise WLException(403, "Cannot cancel invite of status %d" % i_obj.i_status)
+
             if not validators.validate(r, "reason"):
                 raise WLException(400, "Validation on reason field does not passed.")
 
@@ -193,14 +200,20 @@ def handle(user, ivid, handle_method, reason=None):
 
     elif handle_method == handle_method_choice.REJECT:
         iv_obj.i_status = i_status_choice.REJECTED
+        iv_obj.reason_class = reason_class
         iv_obj.reason = reason
         iv_obj.save()
 
     elif handle_method == handle_method_choice.CANCEL:
         iv_obj.i_status = i_status_choice.CANCELED
+        iv_obj.reason_class = reason_class
         iv_obj.reason = reason
         iv_obj.save()
 
     else:
         raise AssertionError("Handle method is invalid")
 
+
+@default_exception(Error500)
+def get_reason_classes():
+    return InviteCancelReason.objects.filter(in_use=True).all()

@@ -1,11 +1,12 @@
 from django.conf.urls import url, include
-from views.invite import ObtainInviteView, ObtainInviteDetailView, PublishInviteView, FlowHandleView
+from views.invite import ObtainInviteView, ObtainInviteDetailView, PublishInviteView, FlowHandleView, ObtainInviteCancelReasonClassView
 from views.contract import RetrieveContractInfoView, ObtainContractContentView, SignContractView
 
 
 obtain_urlpatterns = [
     url(r'^self/', ObtainInviteView.as_view()),
     url(r'^detail/', ObtainInviteDetailView.as_view()),
+    url(r'^cancel_reason/$', ObtainInviteCancelReasonClassView.as_view()),
 ]
 
 launch_urlpatterns = [
