@@ -40,7 +40,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
         model = ProductDemand
         fields = (
             'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'end_time',
-            'is_expired', 'description', 'street',
+            'is_expired', 'description',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
@@ -56,7 +56,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
 class DemandReadableDisplaySelfSerializer(DemandReadableDisplaySerializer):
 
     class Meta(DemandReadableDisplaySerializer.Meta):
-        fields = DemandReadableDisplaySerializer.Meta.fields + ('comment', )
+        fields = DemandReadableDisplaySerializer.Meta.fields + ('comment', 'street',)
 
 
 class DemandReadableDisplayMatchSerializer(DemandReadableDisplaySerializer):

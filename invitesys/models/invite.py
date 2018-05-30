@@ -2,9 +2,10 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
-from usersys.models import UserBase
+from usersys.models import UserBase, UserAddressBook
+
 from demandsys.models import ProductDemand
-from coresys.models import CoreDistributionMethod, CorePaymentMethod
+from coresys.models import CoreDistributionMethod, CorePaymentMethod, CoreAddressArea
 from invitesys.model_choices.invite_enum import i_status_choice
 from demandsys.model_choices.demand_enum import unit_choice
 from usersys.model_choices.user_enum import role_choice
@@ -47,6 +48,15 @@ class InviteInfo(models.Model):
     dis_duration = models.IntegerField(verbose_name=_("Distribution duration"))
     i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
     reason = models.TextField(null=True, blank=True)
+    abid = models.ForeignKey(
+        UserAddressBook,
+        on_delete=models.SET_NULL,
+        verbose_name=_("user address book"),
+        null=True,
+        blank=True
+    )
+    aid = models.ForeignKey(CoreAddressArea, blank=True, null=True)
+    street = models.CharField(max_length=511, blank=True, null=True)
 
     def __unicode__(self):
         return str(self.uid_s) + " v.s. " + str(self.uid_t)

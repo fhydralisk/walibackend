@@ -2,6 +2,7 @@ from base.exceptions import WLException, default_exception, Error500, Error404
 from base.util.misc_validators import validators
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
+from usersys.model_choices.user_enum import role_choice
 from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
 from invitesys.models import InviteInfo
@@ -129,6 +130,12 @@ def publish(user, invite):
     invite_obj = InviteInfo(**invite)
 
     # Auto fill missing fields
+
+    if user.role == role_choice.SELLER:
+        invite_obj.aid = invite["dmid_t"].aid
+        invite_obj.street = invite["dmid_t"].street
+        invite_obj.abid = invite["dmid_t"].abid
+
     invite_obj.uid_s = user
     invite_obj.uid_t = invite["dmid_t"].uid
     invite_obj.i_status = i_status_choice.STARTED
