@@ -6,5 +6,5 @@ from base.views import WLAPIView
 
 class RegisterProtocolView(WLAPIView, APIView):
     def get(self, request):
-        f = open(settings.USE_PROTOCOL, 'r')
-        return FileResponse(f, content_type='text/plain; charset=utf-8')
+        with open(settings.USE_PROTOCOL, 'r') as f:
+            return self.generate_response(data={"content": f.read()}, context=None)
