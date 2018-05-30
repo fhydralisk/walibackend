@@ -120,7 +120,7 @@ def publish(user, invite):
     """
     # First check if the user is validated
     if not user.is_validated:
-        raise WLException(403, "User's validation does not passed, cannot publish.")
+        raise WLException(410, "User's validation does not passed, cannot publish.")
 
     # Validate whether
     invite["dmid_t"].validate_satisfy_demand(

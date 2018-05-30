@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from base.exceptions import default_exception, Error500, Error404, Error403, Error400
+from base.exceptions import default_exception, Error500, Error404, Error403, Error400, WLException
 from base.util.db import update_instance_from_dict
 from demandsys.forms import UploadPhotoForm
 from demandsys.models import ProductDemand, ProductDemandPhoto
@@ -86,7 +86,7 @@ def publish_demand(user, demand, photo_ids=None):
     :return: 
     """
     if not user.is_validated:
-        raise Error403("User's validation does not passed, cannot publish.")
+        raise WLException(410, "User's validation does not passed, cannot publish.")
 
     if demand["min_quantity"] > demand["quantity"]:
         raise Error400("min_quantity must equal to or less than quantity")
