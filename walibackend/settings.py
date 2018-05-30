@@ -244,6 +244,9 @@ CORS_ALLOW_HEADERS = (
     'Pragma',
 )
 
+# Protocol Path
+USE_PROTOCOL = os.path.join(BASE_DIR, 'protocol/testprotocol.txt')
+
 # Payment
 PAYMENT = {
     "RECEIPT_MANAGER": {

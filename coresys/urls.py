@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
 from coresys.views.address import GetAreaView, GetCityView, GetProvinceView, GetAllFView
 from coresys.views.info import CoreInfoPDView
+from coresys.views.protocol import RegisterProtocolView
 
 address_urlpatterns = [
     url(r'^province/', GetProvinceView.as_view()),
@@ -16,4 +17,5 @@ info_urlpatterns = [
 urlpatterns = [
     url(r'^address/', include(address_urlpatterns)),
     url(r'^info/', include(info_urlpatterns)),
+    url(r'^protocol/content/$', RegisterProtocolView.as_view()),
 ]
