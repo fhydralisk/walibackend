@@ -7,8 +7,8 @@ from base.util.field_choice import FieldChoice
 class _UnitChoice(FieldChoice):
     MAX_LENGTH = 4
     CHOICE_DISPLAY = (
-        (0, _("T"), "T"),
-        (1, _("KG"), "KG"),
+        (1, _("T"), "T"),
+        (2, _("KG"), "KG"),
     )
 
 
