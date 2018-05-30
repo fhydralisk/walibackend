@@ -122,7 +122,7 @@ class UserValidateArea(models.Model):
     aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True, blank=True)
 
     def __unicode__(self):
-        return "Validate Area of %s, %s" % (self.vid.uid.pn, self.aid.area)
+        return "Validate Area of %s, %s" % (self.vid.uid.pn, self.aid.area if self.aid is not None else "None")
 
 
 class UserAddressBook(models.Model):
