@@ -19,6 +19,9 @@ def upload_photo(user, photo_from_object, dmid=None):
     :return:
     """
 
+    if not user.is_validated:
+        raise WLException(410, "User's validation does not passed, cannot publish.")
+
     # user exits
     photo = ProductDemandPhoto()
     if dmid is not None:
