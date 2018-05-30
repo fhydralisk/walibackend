@@ -80,7 +80,7 @@ class DemandPublishSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductDemand
         fields = (
-            'pid', 'qid', 'wcid', 'quantity', 'min_quantity',
+            'qid', 'wcid', 'quantity', 'min_quantity',
             'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
             'street', 'description', 'comment', 'match', 'comment'
         )

@@ -11,8 +11,15 @@ class UserValidateStatusValidator(object):
     Validate the validate_status field for UserValidate Model
     """
 
-    fields_ind = ('contact', 'bankcard', 'obank', 'idcard_number')
-    fields_ent = ('contact', 'company', 'bankcard', 'obank', 'phonenum', 'texno', 'address')
+    fields_to_validate = {
+        role_choice.BUYER: {
+            t_user_choice.ENTERPRISE_USER: ('contact', 'company', 'bankcard', 'obank', 'phonenum', 'texno', 'address')
+        },
+        role_choice.SELLER: {
+            t_user_choice.ENTERPRISE_USER: ('contact', 'company', 'bankcard', 'obank', 'phonenum', 'address'),
+            t_user_choice.INDIVIDUAL_USER: ('contact', 'bankcard', 'obank', 'idcard_number')
+        }
+    }
 
     def __init__(self, is_user=True):
         self.queryset = UserValidate.objects
@@ -45,8 +52,11 @@ class UserValidateStatusValidator(object):
         if value != validate_status_choice.NOT_COMMITTED:
             if self.instance.t_user is None:
                 return False
+            try:
+                fields_check = self.fields_to_validate[self.instance.uid.role][self.instance.t_user]
+            except KeyError:
+                raise ValidationError("user role, t_user is invalid", 403)
 
-            fields_check = self.fields_ind if self.instance.t_user == t_user_choice.INDIVIDUAL_USER else self.fields_ent
             for f in fields_check:
                 if f in self.updated_data:
                     # Check user submitted data first
@@ -77,6 +87,7 @@ class UserValidateStatusValidator(object):
 
     def ensure_areas(self, value):
         # Ensure areas are submitted
+        # FIXME: Check areas are in use.
         if value != validate_status_choice.NOT_COMMITTED:
             area_objs = self.instance.validate_area.filter(vid=self.instance)
             if not area_objs.exists():
