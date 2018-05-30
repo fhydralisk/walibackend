@@ -16,7 +16,7 @@ class UserValidateStatusValidator(object):
             t_user_choice.ENTERPRISE_USER: ('contact', 'company', 'bankcard', 'obank', 'phonenum', 'texno', 'address')
         },
         role_choice.SELLER: {
-            t_user_choice.ENTERPRISE_USER: ('contact', 'company', 'bankcard', 'obank', 'phonenum', 'address'),
+            t_user_choice.ENTERPRISE_USER: ('contact', 'company', 'bankcard', 'obank', 'phonenum'),
             t_user_choice.INDIVIDUAL_USER: ('contact', 'bankcard', 'obank', 'idcard_number')
         }
     }
