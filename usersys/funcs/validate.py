@@ -43,7 +43,11 @@ def submit_validate_photo(user, t_photo, photo_files_form_obj):
             former.inuse = False
             former.save()
 
-    vobj = user.user_validate
+    try:
+        vobj = user.user_validate
+    except UserValidate.DoesNotExist:
+        vobj = UserValidate.objects.create(uid=user, validate_status=validate_status_choice.NOT_COMMITTED)
+
     if vobj.validate_status != validate_status_choice.NOT_COMMITTED:
         raise Error401("Cannot change photo because already submitted the validation")
 
