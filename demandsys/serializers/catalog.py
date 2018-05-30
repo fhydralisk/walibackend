@@ -10,23 +10,28 @@ class FilteredListSerializer(serializers.ListSerializer):
 
 
 class ProductWaterContentSerializer(serializers.ModelSerializer):
+    value = serializers.ReadOnlyField(source='id')
+    label = serializers.ReadOnlyField(source='pwcdesc')
 
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = ProductWaterContent
-        fields = ('id', 'pwcdesc')
+        fields = ('value', 'label')
 
 
 class ProductQualitySerializer(serializers.ModelSerializer):
+    value = serializers.ReadOnlyField(source='id')
+    label = serializers.ReadOnlyField(source='pqdesc')
 
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = ProductQuality
-        fields = ('id', 'pqdesc')
+        fields = ('value', 'label')
 
 
 class ProductTypeL3Serializer(serializers.ModelSerializer):
-
+    value = serializers.ReadOnlyField(source='id')
+    label = serializers.ReadOnlyField(source='tname3')
     product_qualities = ProductQualitySerializer(source='quality', many=True)
 
     def __init__(self, *args, **kwargs):
@@ -39,11 +44,12 @@ class ProductTypeL3Serializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = ProductTypeL3
-        fields = ('id', 'tname3', 'product_qualities')
+        fields = ('value', 'label', 'product_qualities')
 
 
 class ProductTypeL2Serializer(serializers.ModelSerializer):
-
+    value = serializers.ReadOnlyField(source='id')
+    label = serializers.ReadOnlyField(source='tname2')
     product_types_l3 = ProductTypeL3Serializer(source='product_l3', many=True)
 
     def __init__(self, *args, **kwargs):
@@ -56,11 +62,12 @@ class ProductTypeL2Serializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = ProductTypeL2
-        fields = ('id', 'tname2', 'product_types_l3')
+        fields = ('value', 'label', 'product_types_l3')
 
 
 class ProductTypeSerializer(serializers.ModelSerializer):
-
+    value = serializers.ReadOnlyField(source='id')
+    label = serializers.ReadOnlyField(source='tname1')
     product_types_l2 = ProductTypeL2Serializer(source='product_l2', many=True)
 
     def __init__(self, *args, **kwargs):
@@ -73,4 +80,4 @@ class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = ProductTypeL1
-        fields = ('id', 'tname1', 'product_types_l2')
+        fields = ('value', 'label', 'product_types_l2')

@@ -3,6 +3,8 @@ from coresys.models import CorePaymentMethod
 
 
 class CorePaymentMethodSerializer(serializers.ModelSerializer):
+    value = serializers.ReadOnlyField(source='id')
+    label = serializers.ReadOnlyField(source='opmdesc')
 
     class Meta:
         model = CorePaymentMethod
