@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from demandsys.models import ProductDemand, ProductDemandPhoto
+from demandsys.serializers.validators.address_submit import AddressChoiceValidator
 
 
 class DemandPhotoSerializers(serializers.ModelSerializer):
@@ -83,6 +84,9 @@ class DemandPublishSerializer(serializers.ModelSerializer):
             'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
             'street', 'description', 'comment', 'match', 'comment'
         )
+        validators = [
+            AddressChoiceValidator()
+        ]
 
 
 class DemandEditSerializer(serializers.ModelSerializer):
@@ -102,3 +106,6 @@ class DemandEditSerializer(serializers.ModelSerializer):
             'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
             'street', 'description', 'comment', 'match', 'comment',
         )
+        validators = [
+            AddressChoiceValidator()
+        ]
