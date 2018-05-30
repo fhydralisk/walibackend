@@ -9,15 +9,11 @@ class PNSubmitSerializer(serializers.Serializer):
 
 class PNFinalRegisterSerializer(serializers.ModelSerializer):
     sid = serializers.CharField(max_length=60)
+    password = serializers.CharField(validators=[validators.get_validator("user password")])
 
     class Meta:
         model = UserBase
         fields = ('pn', 'role', 'password', 'sid')
-        extra_kwargs = {
-            'pn': {
-                'validators': []
-            }
-        }
 
 
 class PNValidateSerializer(serializers.Serializer):
@@ -34,3 +30,9 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBase
         fields = ('pn', 'role', 'password', 'sid', 'vcode')
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    user_sid = serializers.CharField()
+    old_password = serializers.CharField()
+    new_password = serializers.CharField(validators=[validators.get_validator("user password")])

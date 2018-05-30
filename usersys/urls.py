@@ -22,7 +22,8 @@ validate_urls = [
 
 reset_passwd_urls = [
     url(r'^pn/pn/$', register.PNPostPhoneNumber.as_view()),
-    url(r'^pn/validate/', resetpasswd.ResetPasswordView.as_view()),
+    url(r'^pn/validate/$', resetpasswd.ResetPasswordView.as_view()),
+    url(r'^changepasswd/$', resetpasswd.ChangePasswordView.as_view()),
 ]
 
 info_urls = [

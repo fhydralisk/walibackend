@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
 
-from usersys.serializers.register_api import ResetPasswordSerializer
+from usersys.serializers.register_api import ResetPasswordSerializer, ChangePasswordSerializer
 from usersys.funcs.registration import validate_sid
-from usersys.funcs.modify_password import modify_password
+from usersys.funcs.modify_password import modify_password, change_password
 
 
 class ResetPasswordView(WLAPIView, APIView):
@@ -26,3 +26,14 @@ class ResetPasswordView(WLAPIView, APIView):
         return self.generate_response(data={
             "pn": seri.data["pn"]
         }, context=context)
+
+
+class ChangePasswordView(WLAPIView, APIView):
+    def post(self, request):
+        data, context = self.get_request_obj(request)
+        seri = ChangePasswordSerializer(data=data)
+        self.validate_serializer(seri)
+
+        change_password(**seri.data)
+
+        return self.generate_response(data={}, context=context)

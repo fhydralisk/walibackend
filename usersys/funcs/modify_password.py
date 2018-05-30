@@ -6,12 +6,14 @@ Created by Hangyu Fan, May 6, 2018
 Last modified: May 6, 2018
 """
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from base.exceptions import *
 from base.util.misc_validators import validators
 from base.util.temp_session import destroy_session, get_session_dict
+from usersys.models import UserBase
 
 from .session import RegistrationSessionKeys, ValidateStatus
+from .utils.usersid import user_from_sid
 
 User = get_user_model()
 
@@ -42,3 +44,15 @@ def modify_password(sid, pn, password, role):
 
     else:
         raise Error405("Not validated")
+
+
+@default_exception(Error500)
+@user_from_sid(Error404)
+def change_password(user, old_password, new_password):
+    # type: (UserBase, str, str) -> None
+    user = authenticate(pn=user.pn, password=old_password)  # type: UserBase
+    if user is None:
+        raise WLException(403, "Authenticate failed.")
+
+    user.set_password(new_password)
+    user.save()
