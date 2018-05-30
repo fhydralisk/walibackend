@@ -39,7 +39,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
         model = ProductDemand
         fields = (
             'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'end_time',
-            'is_expired', 'description',
+            'is_expired', 'description', 'street',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
