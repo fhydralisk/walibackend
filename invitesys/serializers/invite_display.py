@@ -42,6 +42,7 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
     pqdesc = serializers.ReadOnlyField(source='dmid_t.qid.pqdesc')
     pwcdesc = serializers.ReadOnlyField(source='dmid_t.wcid.pwcdesc')
     related_order = serializers.PrimaryKeyRelatedField(source='invite_order', read_only=True)
+    reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
 
     def to_representation(self, instance):
         ret = super(InviteReadableDisplaySerializer, self).to_representation(instance)
@@ -60,7 +61,7 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'inviter', 'invitee',
-            'dmid_s', 'dmid_t', 'quantity',
+            'dmid_s', 'dmid_t', 'quantity', 'reason', 'reason_class',
             'price', 'unit', 'pmid', 'disid', 'dis_duration', 'i_status',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc',
             'earnest', 'final_price', 'total_price', 'related_order'
