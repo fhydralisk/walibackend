@@ -103,7 +103,7 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
         uvobj = UserValidate.objects.create(uid=user, validate_status=validate_status_choice.NOT_COMMITTED)
 
     # Cannot revert by user
-    if uvobj.validate_status != validate_status_choice.NOT_COMMITTED:
+    if uvobj.validate_status not in (validate_status_choice.NOT_COMMITTED, validate_status_choice.REJECTED):
         raise Error401("Already committed, cannot change")
 
     if validate_areas is not None:
