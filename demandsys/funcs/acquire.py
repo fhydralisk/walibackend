@@ -29,7 +29,7 @@ def get_popular_demand(role, user, page, count_per_page):
         'aid__cid__pid',
         'pmid', 'wcid'
     ).filter(
-        in_use=True, closed=False, end_time__gt=now()
+        in_use=True, match=True).filter(end_time__gt=now()
     ).exclude(t_demand=t_demand_translator.from_role(role)).order_by("-id")
 
     st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
@@ -95,7 +95,6 @@ def get_matched_demand(user, id, page, count_per_page):
         'pmid', 'wcid'
     ).filter(
         in_use=True,            # Must be in use
-        closed=False,
         match=True,
         qid=demand.qid,
         aid__cid__pid=demand.aid.cid.pid
@@ -148,8 +147,7 @@ def get_specified_photo(id):
     """
     
     :param id: 
-    :param dmid: 
-    :return: 
+    :return:
     """
     try:
         return ProductDemandPhoto.objects.get(id=id).demand_photo.path

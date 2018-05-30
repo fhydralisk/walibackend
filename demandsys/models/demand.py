@@ -44,7 +44,6 @@ class ProductDemand(models.Model):
     comment = models.TextField(blank=True, null=True)
     match = models.BooleanField(default=False)
     create_datetime = models.DateTimeField(auto_now_add=True)
-    closed = models.BooleanField(default=False, db_index=True)
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):

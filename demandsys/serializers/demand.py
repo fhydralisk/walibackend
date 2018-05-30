@@ -38,7 +38,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductDemand
         fields = (
-            'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'closed', 'end_time',
+            'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'end_time',
             'is_expired', 'description',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
@@ -100,5 +100,5 @@ class DemandEditSerializer(serializers.ModelSerializer):
         fields = (
             'quantity', 'min_quantity',
             'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
-            'street', 'description', 'comment', 'match', 'comment', 'closed'
+            'street', 'description', 'comment', 'match', 'comment',
         )
