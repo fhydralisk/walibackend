@@ -67,4 +67,4 @@ class InviteCancelReasonDisplaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InviteCancelReason
-        fields = ('Value', 'label')
+        fields = ('value', 'label')
