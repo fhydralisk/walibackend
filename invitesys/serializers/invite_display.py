@@ -41,6 +41,8 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
     tname3 = serializers.ReadOnlyField(source='dmid_t.qid.t3id.tname3')
     pqdesc = serializers.ReadOnlyField(source='dmid_t.qid.pqdesc')
     pwcdesc = serializers.ReadOnlyField(source='dmid_t.wcid.pwcdesc')
+    pmdesc = serializers.ReadOnlyField(source='pmid.opmdesc')
+    disdesc = serializers.ReadOnlyField(source='disid.odmdesc')
     related_order = serializers.PrimaryKeyRelatedField(source='invite_order', read_only=True)
     reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
 
@@ -63,7 +65,7 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
             'inviter', 'invitee',
             'dmid_s', 'dmid_t', 'quantity', 'reason', 'reason_class',
             'price', 'unit', 'pmid', 'disid', 'dis_duration', 'i_status',
-            'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc',
+            'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc', 'disdesc',
             'earnest', 'final_price', 'total_price', 'related_order'
         )
 
