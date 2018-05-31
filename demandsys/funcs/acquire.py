@@ -106,15 +106,20 @@ def get_matched_demand(user, id, page, count_per_page):
 
     # FIXME: Here we got a efficient issue, Every time user use this api, it will query the full set
     # of matched queryset. We must figure out how to fetch it by page, or ... cache it.
-    maches = match_queryset.all()
+    matches = match_queryset.all()
     matches_list = [
-        m for m in maches if confirm_satisfied(demand, m)
+        m for m in matches if confirm_satisfied(demand, m)
     ]
     matches_list.sort(key=match_key, reverse=True)
 
     st, ed, n_pages = get_page_info_list(
         matches_list, count_per_page, page, index_error_excepiton=Error400("Page out of range")
     )
+
+    # Set the match field
+    if not demand.match:
+        demand.match = True
+        demand.save()
 
     # return sliced single page
     return demand, matches_list[st:ed], n_pages
