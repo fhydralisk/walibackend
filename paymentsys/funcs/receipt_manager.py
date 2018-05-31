@@ -51,7 +51,7 @@ class DummyReceiptManager(AbstractReceiptManager):
                 related_payment = PaymentReceipt.objects.get(
                     oid=order,
                     receipt_status=receipt_status_choice.PAYED,
-                    r_type=r_type_payment
+                    receipt_type=r_type_payment
                 )
                 platform = related_payment.ppid
             except (PaymentReceipt.DoesNotExist, PaymentReceipt.MultipleObjectsReturned):
