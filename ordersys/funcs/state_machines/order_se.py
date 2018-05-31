@@ -130,5 +130,5 @@ def init_protocol(extra_ctx, **kwargs):
         )
     # Create receipt, or others...
     from order_protocol_sm import order_protocol_operate_sm
-    order_protocol_operate_sm.start_sm(protocol.p_operate_status, None, None)
+    order_protocol_operate_sm.start_sm(protocol.p_operate_status, extra_ctx, None)
 
