@@ -70,6 +70,7 @@ class WLAPIView(object):
         if isinstance(exc, WLException):
             reason = exc.message
             code = exc.code
+            django_logger.info("WLException: %d, %s" % (code, reason))
         else:
             if settings.DEBUG:
                 dbg = traceback.format_exc()
