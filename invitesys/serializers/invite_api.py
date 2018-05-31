@@ -62,9 +62,9 @@ class PublishInviteSerializer(serializers.Serializer):
 
 class InviteCancelReasonDisplaySerializer(serializers.ModelSerializer):
 
-    code = serializers.ReadOnlyField(source='id')
+    value = serializers.ReadOnlyField(source='id')
     label = serializers.ReadOnlyField(source='reason')
 
     class Meta:
         model = InviteCancelReason
-        fields = ('code', 'label')
+        fields = ('Value', 'label')
