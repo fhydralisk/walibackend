@@ -60,6 +60,7 @@ def operate_order_protocol_role(user, oid, action, parameter):
         raise WLException(404, "No such oid")
 
     execute_order_protocol_state_machine(user, order, action, parameter)
+    return order
 
 
 @default_exception(Error500)
@@ -76,4 +77,4 @@ def operate_order_protocol(user, oid, action, parameter):
     else:
         raise WLException(403, "Invalid user")
 
-    operate_order_protocol_role(user, oid, action, parameter)
+    return operate_order_protocol_role(user, oid, action, parameter)

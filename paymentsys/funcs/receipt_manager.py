@@ -5,7 +5,7 @@ import uuid
 from django.utils.module_loading import import_string
 from django.conf import settings
 from base.exceptions import WLException
-from paymentsys.model_choices.receipt_enum import receipt_status_choice
+from paymentsys.model_choices.receipt_enum import receipt_status_choice, receipt_type_choice
 from paymentsys.models import PaymentReceipt, PaymentPlatform
 
 
@@ -40,10 +40,30 @@ class DummyReceiptManager(AbstractReceiptManager):
         # else:
         #     self.callback.refund_confirm(order, None)
 
+        if r_type in (receipt_type_choice.EARNEST_REFUND, receipt_type_choice.FINAL_REFUND):
+            rs = receipt_status_choice.WAIT_REFUND
+            r_type_payment = (
+                receipt_type_choice.EARNEST_PAYMENT
+                if r_type == receipt_type_choice.EARNEST_REFUND
+                else receipt_type_choice.FINAL_PAYMENT
+            )
+            try:
+                related_payment = PaymentReceipt.objects.get(
+                    oid=order,
+                    receipt_status=receipt_status_choice.PAYED,
+                    r_type=r_type_payment
+                )
+                platform = related_payment.ppid
+            except (PaymentReceipt.DoesNotExist, PaymentReceipt.MultipleObjectsReturned):
+                raise AssertionError("Multiple or None related payment")
+        else:
+            rs = receipt_status_choice.WAIT_PAYMENT
+            platform = PaymentPlatform.objects.get(id=context["paymethod"])
+
         PaymentReceipt.objects.create(
             receipt_type=r_type,
-            receipt_status=receipt_status_choice.WAIT_PAYMENT,
-            ppid=PaymentPlatform.objects.get(id=context["paymethod"]),
+            receipt_status=rs,
+            ppid=platform,
             receipt_number=str(uuid.uuid1()),
             sum=amount,
             oid=order
