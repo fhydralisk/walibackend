@@ -11,5 +11,11 @@ class _TDemandChoice(FieldChoice):
     SELL = None
 
 
+class _FreightPayerChoice(FieldChoice):
+    FREIGHT_BUYER = None
+    FREIGHT_SELLER = None
+
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
+freight_payer_choice = _FreightPayerChoice()

@@ -10,7 +10,7 @@ from base.exceptions import WLException
 from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
-from demandsys.model_choices.demand_enum import t_demand_choice, unit_choice
+from demandsys.model_choices.demand_enum import t_demand_choice, unit_choice, freight_payer_choice
 from demandsys.util.unit_converter import UnitQuantityMetric, UnitPriceMetric
 
 
@@ -44,6 +44,10 @@ class ProductDemand(models.Model):
     comment = models.TextField(blank=True, null=True)
     match = models.BooleanField(default=False)
     create_datetime = models.DateTimeField(auto_now_add=True)
+    freight_payer = models.IntegerField(
+        choices=freight_payer_choice.choice,
+        default=freight_payer_choice.FREIGHT_SELLER
+    )
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):

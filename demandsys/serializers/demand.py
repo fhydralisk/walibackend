@@ -43,7 +43,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
         model = ProductDemand
         fields = (
             'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'end_time',
-            'is_expired', 'description',
+            'freight_payer', 'is_expired', 'description',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
@@ -86,7 +86,8 @@ class DemandPublishSerializer(serializers.ModelSerializer):
         fields = (
             'qid', 'wcid', 'quantity', 'min_quantity',
             'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
-            'street', 'description', 'comment', 'match', 'comment'
+            'street', 'description', 'comment', 'match', 'comment',
+            'freight_payer',
         )
         validators = [
             AddressChoiceValidator()
@@ -108,7 +109,7 @@ class DemandEditSerializer(serializers.ModelSerializer):
         fields = (
             'quantity', 'min_quantity',
             'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
-            'street', 'description', 'comment', 'match', 'comment',
+            'street', 'description', 'comment', 'match', 'comment', 'freight_payer'
         )
         validators = [
             AddressChoiceValidator()

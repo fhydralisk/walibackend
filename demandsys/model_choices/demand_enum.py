@@ -20,5 +20,13 @@ class _TDemandChoice(FieldChoice):
     )
 
 
+class _FreightPayerChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _("Seller pay freight."), "FREIGHT_BUYER"),
+        (2, _("Buyer pay freight"), "FREIGHT_SELLER"),
+    )
+
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
+freight_payer_choice = _FreightPayerChoice()
