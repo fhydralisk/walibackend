@@ -45,7 +45,8 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
             'satisfied',
-            'demand_photos', 'demand_photo_ids'
+            'demand_photos', 'demand_photo_ids',
+            'qid', 'wcid', 'pmid', 'aid',
         )
 
     def get_satisfied(self, obj):
