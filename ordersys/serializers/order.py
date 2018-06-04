@@ -23,8 +23,8 @@ class BuyerAddressSerializer(serializers.ModelSerializer):
 
 class OrderProtocolSubmitSerializer(serializers.ModelSerializer):
 
-    price = serializers.FloatField(min_value=0.01)
-    change_type = serializers.ChoiceField(choices=change_type_choice.choice)
+    price = serializers.FloatField(min_value=0.01, required=False)
+    change_type = serializers.ChoiceField(choices=change_type_choice.choice, required=False)
 
     class Meta:
         model = OrderProtocol
