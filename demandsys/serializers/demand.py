@@ -22,8 +22,11 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
     t_user = serializers.ReadOnlyField(source='uid.user_validate.t_user')
 
     tname1 = serializers.ReadOnlyField(source='qid.t3id.t2id.t1id.tname1')
+    t1id = serializers.ReadOnlyField(source='qid.t3id.t2id.t1id.id')
     tname2 = serializers.ReadOnlyField(source='qid.t3id.t2id.tname2')
+    t2id = serializers.ReadOnlyField(source='qid.t3id.t2id.id')
     tname3 = serializers.ReadOnlyField(source='qid.t3id.tname3')
+    t3id = serializers.ReadOnlyField(source='qid.t3id.id')
     pqdesc = serializers.ReadOnlyField(source='qid.pqdesc')
     pwcdesc = serializers.ReadOnlyField(source='wcid.pwcdesc')
     pmdesc = serializers.ReadOnlyField(source='pmid.opmdesc')
@@ -46,7 +49,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
             'area', 'city', 'province',
             'satisfied',
             'demand_photos', 'demand_photo_ids',
-            'qid', 'wcid', 'pmid', 'aid',
+            'qid', 't3id', 't2id', 't1id', 'wcid', 'pmid', 'aid',
         )
 
     def get_satisfied(self, obj):
