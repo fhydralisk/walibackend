@@ -121,6 +121,13 @@ class _OPPlatformActionChoice(FieldChoice):
     )
 
 
+class _ChangeTypeChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _(""), "REFUND_EARNEST"),
+        (2, _(""), "ADJUST_FINAL"),
+    )
+
+
 o_status_choice = _OStatusChoice()
 op_type_choice = _OPTypeChoice()
 p_status_choice = _PStatusChoice()
@@ -132,3 +139,4 @@ op_seller_action_choice = _OPSellerActionChoice()
 opf_feedback_choice = _OPFeedbackChoice()
 op_platform_action_choice = _OPPlatformActionChoice()
 order_type_choice = _OTypeChoice()
+change_type_choice = _ChangeTypeChoice()

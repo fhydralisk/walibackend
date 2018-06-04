@@ -3,6 +3,7 @@ from usersys.serializers.validate_api import ValidationInfoInvoiceSerializer
 from invitesys.models import InviteInfo
 from invitesys.serializers.invite_display import InviteReadableDetailDisplaySerializer
 from ordersys.models import OrderProtocol, OrderInfo
+from ordersys.model_choices.order_enum import change_type_choice
 from paymentsys.serializers.receipt import PaymentReceiptSerializer
 from .distribution import OrderLogisticsInfoSerializer
 
@@ -22,9 +23,12 @@ class BuyerAddressSerializer(serializers.ModelSerializer):
 
 class OrderProtocolSubmitSerializer(serializers.ModelSerializer):
 
+    price = serializers.FloatField(min_value=0.01)
+    change_type = serializers.ChoiceField(choices=change_type_choice.choice)
+
     class Meta:
         model = OrderProtocol
-        fields = ('op_type', 'c_price', "description")
+        fields = ('op_type', 'price', 'change_type', "description")
 
 
 class OrderProtocolDisplaySerializer(serializers.ModelSerializer):

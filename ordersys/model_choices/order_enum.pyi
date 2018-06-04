@@ -92,6 +92,11 @@ class _OPPlatformActionChoice(FieldChoice):
     PLATFORM_CONFIRM_REFUND = None
 
 
+class _ChangeTypeChoice(FieldChoice):
+    REFUND_EARNEST = None
+    ADJUST_FINAL = None
+
+
 o_status_choice = _OStatusChoice()
 op_type_choice = _OPTypeChoice()
 p_status_choice = _PStatusChoice()
@@ -102,4 +107,5 @@ op_buyer_action_choice = _OPBuyerActionChoice()
 op_seller_action_choice = _OPSellerActionChoice()
 opf_feedback_choice = _OPFeedbackChoice()
 op_platform_action_choice = _OPPlatformActionChoice()
-order_type_choice = _OTypeChoice
+order_type_choice = _OTypeChoice()
+change_type_choice = _ChangeTypeChoice()
