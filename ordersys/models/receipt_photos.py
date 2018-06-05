@@ -7,7 +7,7 @@ from ordersys.model_choices.photo_enum import photo_type_choice
 from . import OrderInfo
 
 
-class OrderReceiptPhotos(models.Model):
+class OrderReceiptPhoto(models.Model):
     oid = models.ForeignKey(
         OrderInfo,
         verbose_name=_("Order"),
@@ -16,5 +16,5 @@ class OrderReceiptPhotos(models.Model):
     )
     photo_type = models.IntegerField(choices=photo_type_choice.choice)
     update_datetime = models.DateTimeField(auto_now_add=True)
-    path = models.ImageField(upload_to=settings.UPLOAD_ORDER_PHOTO)
+    receipt_photo = models.ImageField(upload_to=settings.UPLOAD_ORDER_PHOTO)
     in_use = models.BooleanField(default=True)

@@ -10,8 +10,10 @@ import ordersys.funcs.state_machines.order_se
 from base.util.state_machine import StateMachine
 from ordersys.model_choices.distribution_enum import l_type_choice
 from ordersys.model_choices.order_enum import (
-    o_status_choice, o_buyer_action_choice, o_seller_action_choice, opf_feedback_choice, op_platform_action_choice
+    o_status_choice, o_buyer_action_choice, o_seller_action_choice,
+    opf_feedback_choice, op_platform_action_choice
 )
+from ordersys.model_choices.photo_enum import photo_type_choice
 from paymentsys.model_choices.receipt_enum import receipt_type_choice
 
 
@@ -62,10 +64,12 @@ class OrderInfoStateMachine(StateMachine):
                     o_seller_action_choice.SELLER_SUBMIT_LOGISTICS_INFO: {
                         StateMachine.K_NEXT_STATE: o_status_choice.WAIT_PRODUCT_CONFIRM,
                         StateMachine.K_PRE_SE: [
+                            ordersys.funcs.state_machines.distribution_se.check_order_receipt_photo,
                             ordersys.funcs.state_machines.distribution_se.append_order_logistics_info,
                         ],
                         StateMachine.K_SE_CONTEXT: {
-                            "l_type": l_type_choice.FORWARD
+                            "l_type": l_type_choice.FORWARD,
+                            "chk_type": photo_type_choice.RECEIPT_FORWARD,
                         }
                     }
                     # TODO: Seller close order
@@ -94,12 +98,21 @@ class OrderInfoStateMachine(StateMachine):
                         # FIXME: the state is not exactly what it means
                         StateMachine.K_NEXT_STATE: o_status_choice.WAIT_DEFAULT_ADJUSTMENT_COMPLETE,
                         StateMachine.K_PRE_SE: [
+                            ordersys.funcs.state_machines.distribution_se.check_order_receipt_photo,
                             ordersys.funcs.state_machines.order_se.append_default_order_protocol_info,
                         ],
+                        StateMachine.K_SE_CONTEXT: {
+                            "chk_type": photo_type_choice.RECEIPT_CHECK,
+                        }
                     },
                     o_buyer_action_choice.BUYER_CHECK_RESULT_BAD: {
                         StateMachine.K_NEXT_STATE: o_status_choice.WAIT_ADJUSTMENT,
-                        StateMachine.K_PRE_SE: []
+                        StateMachine.K_PRE_SE: [
+                            ordersys.funcs.state_machines.distribution_se.check_order_receipt_photo,
+                        ],
+                        StateMachine.K_SE_CONTEXT: {
+                            "chk_type": photo_type_choice.RECEIPT_CHECK,
+                        }
                     }
                 }
             },

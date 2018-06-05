@@ -3,6 +3,7 @@ from base.exceptions import WLException
 from base.util.serializer_helper import errors_summery
 from ordersys.models import OrderLogisticsInfo, OrderInfo
 from ordersys.serializers.distribution import OrderLogisticsInfoSubmitSerializer
+from ordersys.model_choices.photo_enum import photo_type_choice
 
 
 def append_order_logistics_info(ctx, extra_ctx, **kwargs):
@@ -30,3 +31,20 @@ def append_order_logistics_info(ctx, extra_ctx, **kwargs):
         logistics.l_type = ctx["l_type"]
 
     logistics.save()
+
+
+def check_order_receipt_photo(ctx, extra_ctx, **kwargs):
+    """
+
+    :param ctx:
+    :param extra_ctx:
+    :param kwargs:
+    :return:
+    """
+
+    chk_type = ctx["chk_type"]
+    assert(chk_type in photo_type_choice.get_choices())
+
+    order = extra_ctx["order"]  # type: OrderInfo
+    if not order.order_receipt_photos.filter(in_use=True, photo_type=chk_type).exists():
+        raise WLException(403, "Please upload photos.")
