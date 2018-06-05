@@ -19,7 +19,7 @@ class OrderLogisticsInfo(models.Model):
     )
     dmid = models.ForeignKey(
         CoreDistributionMethod,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name=_("Distribution Method")
     )
     l_type = models.IntegerField(_("logistics type"), choices=l_type_choice.choice)

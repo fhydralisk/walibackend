@@ -36,7 +36,7 @@ class InviteInfo(models.Model):
     )
     dmid_s = models.ForeignKey(
         ProductDemand,
-        on_delete=models.PROTECT,  # Do not allow?
+        on_delete=models.CASCADE,  # Do not allow?
         related_name="demand_invite_src",
         verbose_name=_("inviter's demand"),
         null=True,
@@ -44,15 +44,15 @@ class InviteInfo(models.Model):
     )
     dmid_t = models.ForeignKey(
         ProductDemand,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="demand_invite_dst",
         verbose_name=_("invitee's demand")
     )
     quantity = models.FloatField()
     price = models.FloatField()
     unit = models.IntegerField(max_length=unit_choice.MAX_LENGTH, choices=unit_choice.choice)
-    pmid = models.ForeignKey(CorePaymentMethod, on_delete=models.PROTECT, verbose_name=_("Pay method"))
-    disid = models.ForeignKey(CoreDistributionMethod, on_delete=models.PROTECT, verbose_name=_("Distribution Method"))
+    pmid = models.ForeignKey(CorePaymentMethod, on_delete=models.CASCADE, verbose_name=_("Pay method"))
+    disid = models.ForeignKey(CoreDistributionMethod, on_delete=models.CASCADE, verbose_name=_("Distribution Method"))
     dis_duration = models.IntegerField(verbose_name=_("Distribution duration"))
     i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
     reason_class = models.ForeignKey(

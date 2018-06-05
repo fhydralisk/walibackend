@@ -11,7 +11,7 @@ class OrderInfo(models.Model):
     ivid = models.OneToOneField(
         InviteInfo,
         verbose_name=_("Invite"),
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="invite_order"
     )
     o_status = models.IntegerField(_("order status"), choices=o_status_choice.choice)
