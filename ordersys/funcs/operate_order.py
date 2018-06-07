@@ -1,15 +1,50 @@
 from base.exceptions import WLException, default_exception, Error500, Error404
+from base.util.statemachine.exceptions import ActionError, SideEffectError
 from usersys.funcs.utils.usersid import user_from_sid
 from usersys.model_choices.user_enum import role_choice
-from ordersys.models import OrderInfo
+from ordersys.models import OrderInfo, OrderProtocol
 from invitesys.models import InviteInfo
 from ordersys.model_choices.order_enum import (
     o_buyer_action_choice, o_seller_action_choice,
     op_buyer_action_choice, op_seller_action_choice,
     o_status_choice
 )
-from ordersys.funcs.state_machines.order_sm_executer import execute_order_state_machine
-from ordersys.funcs.state_machines.order_protocol_sm_executer import execute_order_protocol_state_machine
+
+
+def _execute_order_protocol_state_machine(user, order, action, parameter):
+
+    try:
+        protocol = order.current_protocol
+    except OrderProtocol.DoesNotExist:
+        raise WLException(403, "Protocol does not exist")
+    except OrderProtocol.MultipleObjectsReturned:
+        raise AssertionError("Multiple processing protocol")
+
+    context = {
+        "order": order,
+        "user": user,
+        "parameter": parameter,
+    }
+    try:
+        protocol.execute_transition('p_operate_status', action, context, True)
+    except ActionError:
+        raise WLException(403, "Invalid action")
+    except SideEffectError as e:
+        raise WLException(500, message=str(e))
+
+
+def _execute_order_state_machine(user, order, action, parameter):
+
+    context = {
+        "user": user,
+        "parameter": parameter,
+    }
+    try:
+        order.execute_transition('o_status', action, context, True)
+    except ActionError:
+        raise WLException(403, "Invalid action")
+    except SideEffectError as e:
+        raise WLException(500, message=str(e))
 
 
 def create_order(invite):
@@ -28,7 +63,7 @@ def operate_order_role(user, oid, action, parameter):
     except OrderInfo.DoesNotExist:
         raise WLException(404, "No such oid")
 
-    execute_order_state_machine(user, order, action, parameter)
+    _execute_order_state_machine(user, order, action, parameter)
     return order
 
 
@@ -59,7 +94,7 @@ def operate_order_protocol_role(user, oid, action, parameter):
     except OrderInfo.DoesNotExist:
         raise WLException(404, "No such oid")
 
-    execute_order_protocol_state_machine(user, order, action, parameter)
+    _execute_order_protocol_state_machine(user, order, action, parameter)
     return order
 
 
@@ -78,3 +113,5 @@ def operate_order_protocol(user, oid, action, parameter):
         raise WLException(403, "Invalid user")
 
     return operate_order_protocol_role(user, oid, action, parameter)
+
+

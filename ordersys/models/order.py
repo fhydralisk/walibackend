@@ -2,12 +2,15 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
+from base.util.statemachine import ActionBasedStateMachineMixin
 from invitesys.models import InviteInfo
 
 from ordersys.model_choices.order_enum import o_status_choice, op_type_choice, p_status_choice, p_operate_status_choice
+from ordersys.statemachine.order_sm import OrderInfoStateMachinDef
+from ordersys.statemachine.order_protocol_sm import OrderProtocolStateMachineDef
 
 
-class OrderInfo(models.Model):
+class OrderInfo(models.Model, ActionBasedStateMachineMixin):
     ivid = models.OneToOneField(
         InviteInfo,
         verbose_name=_("Invite"),
@@ -16,6 +19,8 @@ class OrderInfo(models.Model):
     )
     o_status = models.IntegerField(_("order status"), choices=o_status_choice.choice)
     final_price = models.FloatField(null=True, blank=True)
+
+    o_status_sm = OrderInfoStateMachinDef('o_status')
 
     @property
     def current_protocol(self):
@@ -39,7 +44,7 @@ class OrderInfo(models.Model):
         return "Order from %s" % str(self.ivid)
 
 
-class OrderProtocol(models.Model):
+class OrderProtocol(models.Model, ActionBasedStateMachineMixin):
     oid = models.ForeignKey(
         OrderInfo,
         verbose_name=_("Order"),
@@ -53,6 +58,8 @@ class OrderProtocol(models.Model):
     description = models.TextField(blank=True, null=True)
     reason = models.TextField(blank=True, null=True)
     op_datetime = models.DateTimeField(auto_now_add=True)
+
+    p_operate_status_sm = OrderProtocolStateMachineDef(attr='p_operate_status')
 
     @property
     def terminated(self):
