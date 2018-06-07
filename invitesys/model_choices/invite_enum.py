@@ -13,6 +13,8 @@ class _IStatusChoice(FieldChoice):
         (3, _("Cancelled by inviter"), "CANCELED"),
         (4, _("Rejected by invitee"), "REJECTED"),
         (5, _("Contract did not meet an agreement"), "CONTRACT_NOT_AGREE"),
+        (6, _("Inviter negotiating"), "INVITER_NEGOTIATE"),
+        (7, _("Invitee negotiating"), "INVITEE_NEGOTIATE"),
     )
 
 
@@ -35,6 +37,7 @@ class _HandleMethodChoice(FieldChoice):
         (1, _(""), "ACCEPT"),
         (2, _(""), "REJECT"),
         (3, _(""), "CANCEL"),
+        (4, _(""), "NEGOTIATE"),
     )
 
 

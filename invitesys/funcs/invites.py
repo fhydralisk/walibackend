@@ -11,6 +11,8 @@ from .contracts import create_contract, get_current_template
 MAP_TINVITE_INVITE_STATUS = {
     t_invite_choice.PROCEEDING_INVITES: (
         i_status_choice.STARTED,
+        i_status_choice.INVITER_NEGOTIATE,
+        i_status_choice.INVITEE_NEGOTIATE,
         i_status_choice.CONFIRMED,
     ),
     t_invite_choice.CLOSED_INVITES: (
@@ -147,71 +149,111 @@ def publish(user, invite):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def handle(user, ivid, handle_method, reason=None, reason_class=None):
+def handle(user, ivid, handle_method, price, reason=None, reason_class=None):
     """
 
     :param user:
     :param ivid:
     :param handle_method:
+    :param price:
     :param reason:
     :param reason_class
     :return: invite object
     """
 
-    def check(u, i, hm, r):
-        try:
-            i_obj = InviteInfo.objects.get(id=i)
-            if u != i_obj.uid_s and u != i_obj.uid_t:
-                raise InviteInfo.DoesNotExist
+    def _real_handle():
+        if iv_obj.i_status == i_status_choice.STARTED:
+            if user == iv_obj.uid_t:
+                if handle_method == handle_method_choice.NEGOTIATE:
+                    iv_obj.i_status = i_status_choice.INVITEE_NEGOTIATE
+                    iv_obj.price = price
+                    return
 
-        except InviteInfo.DoesNotExist:
-            raise WLException(404, "No such invite.")
+                if handle_method == handle_method_choice.ACCEPT:
+                    iv_obj.i_status = i_status_choice.CONFIRMED
+                    return
 
-        if hm == handle_method_choice.ACCEPT or hm == handle_method_choice.REJECT:
-            if i_obj.i_status != i_status_choice.STARTED:
-                raise WLException(403, "Cannot Accept or reject invite of status %d" % i_obj.i_status)
+                if handle_method == handle_method_choice.REJECT:
+                    iv_obj.i_status = i_status_choice.REJECTED
+                    iv_obj.reason_class = reason_class
+                    iv_obj.reason = reason
+                    return
 
-            if u != i_obj.uid_t:
-                raise WLException(403, "Inviter cannot accept or reject the invite.")
+            elif user == iv_obj.uid_s:
+                if handle_method == handle_method_choice.CANCEL:
+                    iv_obj.i_status = i_status_choice.CANCELED
+                    iv_obj.reason_class = reason_class
+                    iv_obj.reason = reason
+                    return
+            else:
+                raise AssertionError("user is neither inviter nor invitee.")
 
-        if hm == handle_method_choice.CANCEL:
-            if u != i_obj.uid_s:
-                raise WLException(400, "Invitee cannot cancel the invite, use Reject instead.")
+        elif iv_obj.i_status in (i_status_choice.INVITEE_NEGOTIATE, i_status_choice.INVITER_NEGOTIATE):
+            if handle_method == handle_method_choice.NEGOTIATE:
+                iv_obj.price = price
+                if user == iv_obj.uid_t:
+                    iv_obj.i_status = i_status_choice.INVITEE_NEGOTIATE
+                elif user == iv_obj.uid_s:
+                    iv_obj.i_status = i_status_choice.INVITER_NEGOTIATE
+                else:
+                    raise AssertionError("user is neither inviter nor invitee.")
+                return
 
-        if hm == handle_method_choice.REJECT or hm == handle_method_choice.CANCEL:
-            if i_obj.i_status not in (i_status_choice.STARTED, i_status_choice.CONFIRMED):
-                raise WLException(403, "Cannot cancel invite of status %d" % i_obj.i_status)
+            if handle_method == handle_method_choice.ACCEPT:
+                if (
+                    user == iv_obj.uid_s and iv_obj.i_status == i_status_choice.INVITEE_NEGOTIATE
+                    or
+                    user == iv_obj.uid_t and iv_obj.i_status == i_status_choice.INVITER_NEGOTIATE
+                ):
+                    iv_obj.i_status = i_status_choice.CONFIRMED
+                    create_contract(iv_obj, get_current_template())
+                    return
 
-            if not validators.validate(r, "reason"):
-                raise WLException(400, "Validation on reason field does not passed.")
+            if handle_method == handle_method_choice.REJECT:
+                if (
+                    user == iv_obj.uid_s and iv_obj.i_status == i_status_choice.INVITEE_NEGOTIATE
+                    or
+                    user == iv_obj.uid_t and iv_obj.i_status == i_status_choice.INVITER_NEGOTIATE
+                ):
+                    iv_obj.i_status = i_status_choice.REJECTED
+                    iv_obj.reason_class = reason_class
+                    iv_obj.reason = reason
+                    return
 
-        return i_obj
+            if handle_method == handle_method_choice.CANCEL:
+                if (
+                        user == iv_obj.uid_t and iv_obj.i_status == i_status_choice.INVITEE_NEGOTIATE
+                        or
+                        user == iv_obj.uid_s and iv_obj.i_status == i_status_choice.INVITER_NEGOTIATE
+                ):
+                    iv_obj.i_status = i_status_choice.CANCELED
+                    iv_obj.reason_class = reason_class
+                    iv_obj.reason = reason
+                    return
 
-    # Check ivid and the relationship
-    iv_obj = check(user, ivid, handle_method, reason)
+        elif iv_obj.i_status == i_status_choice.CONFIRMED:
+            pass
+        elif iv_obj.i_status in {
+            i_status_choice.CANCELED,
+            i_status_choice.REJECTED,
+            i_status_choice.SIGNED,
+            i_status_choice.CONTRACT_NOT_AGREE
+        }:
+            pass
+
+        raise WLException(403, "Action Error")
 
     # TODO: Log here
+    try:
+        iv_obj = InviteInfo.objects.get(id=ivid)
+        if user != iv_obj.uid_s and user != iv_obj.uid_t:
+            raise InviteInfo.DoesNotExist
 
-    if handle_method == handle_method_choice.ACCEPT:
-        create_contract(iv_obj, get_current_template())
-        iv_obj.i_status = i_status_choice.CONFIRMED
-        iv_obj.save()
-        return iv_obj
+    except InviteInfo.DoesNotExist:
+        raise WLException(404, "No such invite.")
 
-    elif handle_method == handle_method_choice.REJECT:
-        iv_obj.i_status = i_status_choice.REJECTED
-        iv_obj.reason_class = reason_class
-        iv_obj.reason = reason
-        iv_obj.save()
-
-    elif handle_method == handle_method_choice.CANCEL:
-        iv_obj.i_status = i_status_choice.CANCELED
-        iv_obj.reason_class = reason_class
-        iv_obj.reason = reason
-        iv_obj.save()
-
-    else:
-        raise AssertionError("Handle method is invalid")
+    _real_handle()
+    iv_obj.save()
 
 
 @default_exception(Error500)

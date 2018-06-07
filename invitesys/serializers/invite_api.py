@@ -12,14 +12,19 @@ class FlowHandleSerializer(serializers.Serializer):
     handle_method = serializers.ChoiceField(choices=handle_method_choice.get_choices())
     reason = serializers.CharField(required=False)
     reason_class = serializers.PrimaryKeyRelatedField(queryset=InviteCancelReason.objects.all(), required=False)
+    price = serializers.FloatField(min_value=0.01, required=False)
     ivid = serializers.IntegerField()
 
     def validate(self, attrs):
-        if attrs["handle_method"] != handle_method_choice.ACCEPT:
+        handle_method = attrs["handle_method"]
+        if handle_method in (handle_method_choice.CANCEL, handle_method_choice.REJECT):
             if "reason" not in attrs or attrs["reason"] is None:
                 raise ValidationError({"reason": "Reason field cannot be null."}, 400)
             if "reason_class" not in attrs or attrs["reason_class"] is None:
                 raise ValidationError({"reason_class": "Reason class field cannot be null."}, 400)
+        elif handle_method == handle_method_choice.NEGOTIATE:
+            if "price" not in attrs or attrs["price"] is None:
+                raise ValidationError({"price": "Price field cannot be null."}, 400)
 
         return attrs
 

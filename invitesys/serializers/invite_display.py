@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from invitesys.models import InviteInfo
+from invitesys.model_choices.invite_enum import i_status_choice
 from usersys.models import UserBase
 from usersys.model_choices.user_enum import role_choice
 from .contract import ContractInfoSerializer
@@ -48,7 +49,15 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
     reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
 
     def to_representation(self, instance):
+        # type: (InviteInfo) -> dict
         ret = super(InviteReadableDisplaySerializer, self).to_representation(instance)
+
+        if instance.i_status == i_status_choice.INVITEE_NEGOTIATE:
+            ret["invitee"]["is_negotiator"] = True
+            ret["inviter"]["is_negotiator"] = False
+        elif instance.i_status == i_status_choice.INVITER_NEGOTIATE:
+            ret["invitee"]["is_negotiator"] = False
+            ret["inviter"]["is_negotiator"] = True
 
         if instance.uid_s.role == role_choice.BUYER:
             ret["buyer"] = ret.pop("inviter")
