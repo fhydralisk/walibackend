@@ -11,6 +11,7 @@ class _PhotoTypeChoice(FieldChoice):
         (1, _("发货单"), "RECEIPT_FORWARD"),
         (2, _("验货单"), "RECEIPT_CHECK"),
         (3, _("退货单"), "RECEIPT_RETURN"),
+        (4, _("发货货品单"), "PHOTO_PRODUCTS"),
     )
 
 

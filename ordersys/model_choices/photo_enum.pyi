@@ -7,6 +7,7 @@ class _PhotoTypeChoice(FieldChoice):
     RECEIPT_FORWARD = None
     RECEIPT_CHECK = None
     RECEIPT_RETURN = None
+    PHOTO_PRODUCTS = None
 
 
 photo_type_choice = _PhotoTypeChoice()

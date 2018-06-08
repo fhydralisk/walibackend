@@ -20,6 +20,18 @@ def check_role(user, photo_type):
         return False
 
 
+def check_photo_type(o_status, t_photo):
+    if o_status == o_status_choice.WAIT_PRODUCT_CHECK:
+        if t_photo == photo_type_choice.RECEIPT_CHECK:
+            return True
+
+    elif o_status == o_status_choice.WAIT_PRODUCT_DELIVER:
+        if t_photo in (photo_type_choice.RECEIPT_FORWARD, photo_type_choice.PHOTO_PRODUCTS):
+            return True
+
+    return False
+
+
 def get_photo_obj(user, photo_id):
     # type: (UserBase, int) -> OrderReceiptPhoto
     try:
@@ -35,35 +47,29 @@ def get_photo_obj(user, photo_id):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def upload_order_photo(user, order, photo_files_form_obj):
-    # type: (UserBase, OrderInfo, object) -> int
+def upload_order_photo(user, order, t_photo, photo_files_form_obj):
+    # type: (UserBase, OrderInfo, int, object) -> int
     invite = order.ivid
     if invite.uid_s != user and invite.uid_t != user:
         raise WLException(404, "No such order")
 
-    if order.o_status not in (o_status_choice.WAIT_PRODUCT_CHECK, o_status_choice.WAIT_PRODUCT_DELIVER):
-        raise WLException(403, "Cannot submit photo at this time.")
+    # Check photo type and user role permissions
+    if not check_photo_type(order.o_status, t_photo):
+        raise WLException(403, "Cannot submit this photo")
 
-    photo_type = (
-        photo_type_choice.RECEIPT_FORWARD
-        if order.o_status == o_status_choice.WAIT_PRODUCT_DELIVER
-        else photo_type_choice.RECEIPT_CHECK
-    )
-    
-    # Check user role permissions
-    if check_role(user, photo_type):
-        photo = OrderReceiptPhoto(photo_type=photo_type, oid=order, in_use=True)
-        submit_form = modelform_factory(
-            OrderReceiptPhoto, fields=('receipt_photo', )
-        )(files=photo_files_form_obj, instance=photo)
-        if submit_form.is_valid():
-            submit_form.save()
-            return photo.id
-        else:
-            raise WLException(400, str(submit_form.errors))
-    
-    else:
+    if not check_role(user, t_photo):
         raise WLException(403, "User role does not match the photo submit action.")
+
+    # Real submit
+    photo = OrderReceiptPhoto(photo_type=t_photo, oid=order, in_use=True)
+    submit_form = modelform_factory(
+        OrderReceiptPhoto, fields=('receipt_photo', )
+    )(files=photo_files_form_obj, instance=photo)
+    if submit_form.is_valid():
+        submit_form.save()
+        return photo.id
+    else:
+        raise WLException(400, str(submit_form.errors))
 
 
 @default_exception(Error500)
@@ -73,11 +79,15 @@ def delete_order_photo(user, photo_id):
     photo = get_photo_obj(user, photo_id)
     
     photo_type = photo.photo_type
-    if check_role(user, photo_type):
-        photo.in_use = False
-        photo.save()
-    else:
+
+    if not check_photo_type(photo.oid.o_status, photo_type):
+        raise WLException(403, "Cannot remove this photo")
+
+    if not check_role(user, photo_type):
         raise WLException(403, "User role does not match the photo delete action.")
+
+    photo.in_use = False
+    photo.save()
     
 
 @default_exception(Error500)
