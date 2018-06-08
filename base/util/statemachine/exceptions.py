@@ -19,4 +19,4 @@ class SideEffectError(Exception):
         self.code = code
 
     def __str__(self):
-        return "SideEffectError, code=%s, exc=%s, message=%s" % (str(self.code), str(self.exc), str(self.message))
+        return "SideEffectError, code=%s, exc=%r, message=%s" % (str(self.code), self.exc, str(self.message))

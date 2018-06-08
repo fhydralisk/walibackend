@@ -200,7 +200,7 @@ class OrderInfoStateMachinDef(ActionBasedStateMachineDef):
         succeed,
     )
 
-    def transit_done_dealer(self, instance, context, state_current, state_next, raise_transition_exception):
+    def transit_done_dealer(self, instance, context, state_current, state_next, raise_side_effect_exception):
         if state_current != state_next:
             instance.save()
 

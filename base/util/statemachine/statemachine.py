@@ -35,47 +35,95 @@ class ActionBasedStateMachineDef(SideEffectContainer):
         state = self._get_state(instance)
         next_state = state.next_state(action=action)  # type: State
         
-        context = dict(self.ctx, **context)
+        # context = dict(self.ctx, **context)
+        inner_ctx = self.ctx
+
         kwargs = {
             "instance": instance,
+            "inner_ctx": inner_ctx,
             "context": context,
             "raise_side_effect_exception": raise_side_effect_exception,
+        }
+        kwargs_deal = dict({
             "state_current": self._get_state(instance),
             "state_next": next_state
-        }
+        }, **kwargs)
 
         errors = []
-        errors += self.pre_init(**kwargs)
-        errors += state.pre_transit(action=action, **kwargs)
-        errors += next_state.pre_init(**kwargs)
+        e, c = self.pre_init(**kwargs_deal)
+        errors += e
+        if not c:
+            return errors
+
+        e, c = state.pre_transit(action=action, **kwargs)
+        errors += e
+        if not c:
+            return errors
+
+        e, c = next_state.pre_init(**kwargs_deal)
+        errors += e
+        if not c:
+            return errors
+
         setattr(instance, self.attr, next_state.value)
         if deal_state:
-            self.transit_done_dealer(**kwargs)
-        errors += next_state.post_init(**kwargs)
-        errors += state.post_transit(action=action, **kwargs)
-        errors += self.post_init(**kwargs)
+            self._transit_done_dealer(**kwargs_deal)
+
+        e, c = next_state.post_init(**kwargs_deal)
+        errors += e
+        if not c:
+            return errors
+
+        e, c = state.post_transit(action=action, **kwargs)
+        errors += e
+        if not c:
+            return errors
+
+        e, c = self.post_init(**kwargs_deal)
+        errors += e
         return errors
+
+    def _transit_done_dealer(self, instance, inner_ctx, context, state_current, state_next, raise_side_effect_exception):
+        context = dict(inner_ctx, **context)
+        return self.transit_done_dealer(instance, context, state_current, state_next, raise_side_effect_exception)
     
-    def transit_done_dealer(self, instance, context, state_current, state_next, raise_transition_exception):
+    def transit_done_dealer(self, instance, context, state_current, state_next, raise_side_effect_exception):
         raise NotImplementedError
 
     def init_sm(self, instance, context, raise_side_effect_exception=False, deal_state=False):
         state = self._get_state(instance)
+        inner_ctx = self.ctx
+
         kwargs = {
             "instance": instance,
             "context": context,
+            "inner_ctx": inner_ctx,
             "raise_side_effect_exception": raise_side_effect_exception,
             "state_current": self._get_state(instance),
             "state_next": self._get_state(instance),
         }
 
         errors = []
-        errors += self.pre_init(**kwargs)
-        errors += state.pre_init(**kwargs)
+        e, c = self.pre_init(**kwargs)
+        errors += e
+        if not c:
+            return errors
+
+        e, c = state.pre_init(**kwargs)
+        errors += e
+        if not c:
+            return errors
+
         if deal_state:
             self.transit_done_dealer(**kwargs)
-        errors += state.post_init(**kwargs)
-        errors += self.post_init(**kwargs)
+
+        e, c = state.post_init(**kwargs)
+        errors += e
+        if not c:
+            return errors
+
+        e, c = self.post_init(**kwargs)
+        errors += e
         return errors
 
 
@@ -98,12 +146,14 @@ class ActionBasedStateMachineMixin(object):
 
     def execute_transition(self, attr, action, context=None, raise_side_effect_exception=False, deal_state=True):
         if context is None:
-            context = dict()
+            context = {}
 
         sm = self._get_sm(attr)
         return sm.execute_transition(self, action, context, raise_side_effect_exception, deal_state)
 
-    def init_sm(self, attr, context, raise_side_effect_exception=False, deal_state=False):
+    def init_sm(self, attr, context=None, raise_side_effect_exception=False, deal_state=False):
+        if context is None:
+            context = {}
 
         sm = self._get_sm(attr)
         return sm.init_sm(self, context, raise_side_effect_exception, deal_state)

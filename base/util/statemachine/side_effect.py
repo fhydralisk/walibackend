@@ -42,7 +42,7 @@ def bind_side_effects(obj, pre_side_effects, post_side_effects, ctx, obj_is_dict
     put_side_effects(obj, 'ctx', ctx, obj_is_dict)
     
 
-def run_side_effects(side_effects, instance, context, state_current, state_next, raise_transition_exception):
+def run_side_effects(side_effects, instance, context, state_current, state_next, raise_side_effect_exception):
     kwargs = {
         "instance": instance,
         "context": context,
@@ -51,6 +51,7 @@ def run_side_effects(side_effects, instance, context, state_current, state_next,
     }
 
     errors = []
+    continue_execute = True
     for se in side_effects:
         try:
             se.execute(**kwargs)
@@ -58,10 +59,14 @@ def run_side_effects(side_effects, instance, context, state_current, state_next,
             if se.continue_after_error:
                 errors.append((se.name, e))
             else:
-                if raise_transition_exception:
-                    raise SideEffectError("Error occurred when executing side effect %d." % se.name, exc=e)
+                if raise_side_effect_exception:
+                    raise SideEffectError("Error occurred when executing side effect %s." % se.name, exc=e)
+                else:
+                    errors.append((se.name, e))
+                    continue_execute = False
+                    break
 
-    return errors
+    return errors, continue_execute
 
 
 class SideEffect(object):
@@ -93,26 +98,26 @@ class SideEffect(object):
 
 
 class SideEffectContainer(object):
-    pre_side_effects = []
-    post_side_effects = []
-    ctx = {}
 
     def __init__(self, pre_side_effects=None, post_side_effects=None, ctx=None):
+        self.pre_side_effects = []
+        self.post_side_effects = []
+        self.ctx = {}
         bind_side_effects(self, pre_side_effects, post_side_effects, ctx, False)
 
-    def _make_ctx(self, context):
-        return dict(self.ctx, **context)
+    def _make_ctx(self, inner_ctx, context):
+        return dict(dict(inner_ctx, **self.ctx), **context)
     
-    def _run_side_effects(self, side_effects, instance, context, state_current, state_next, raise_transition_exception):
-        context = self._make_ctx(context)
-        return run_side_effects(side_effects, instance, context, state_current, state_next, raise_transition_exception)
+    def _run_side_effects(self, side_effects, instance, inner_ctx, context, state_current, state_next, raise_side_effect_exception):
+        context = self._make_ctx(inner_ctx, context)
+        return run_side_effects(side_effects, instance, context, state_current, state_next, raise_side_effect_exception)
 
-    def pre_init(self, instance, context, state_current, state_next, raise_transition_exception):
+    def pre_init(self, instance, inner_ctx, context, state_current, state_next, raise_side_effect_exception):
         return self._run_side_effects(
-            self.pre_side_effects, instance, context, state_current, state_next, raise_transition_exception
+            self.pre_side_effects, instance, inner_ctx, context, state_current, state_next, raise_side_effect_exception
         )
 
-    def post_init(self, instance, context, state_current, state_next, raise_transition_exception):
+    def post_init(self, instance, inner_ctx, context, state_current, state_next, raise_side_effect_exception):
         return self._run_side_effects(
-            self.post_side_effects, instance, context, state_current, state_next, raise_transition_exception
+            self.post_side_effects, instance, inner_ctx, context, state_current, state_next, raise_side_effect_exception
         )
