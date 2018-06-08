@@ -20,7 +20,7 @@ class OrderInfo(models.Model, ActionBasedStateMachineMixin):
     o_status = models.IntegerField(_("order status"), choices=o_status_choice.choice)
     final_price = models.FloatField(null=True, blank=True)
 
-    o_status_sm = OrderInfoStateMachinDef('o_status')
+    o_status_sm = OrderInfoStateMachinDef(attr='o_status')
 
     @property
     def current_protocol(self):

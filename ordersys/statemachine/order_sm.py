@@ -166,30 +166,30 @@ class OrderInfoStateMachinDef(ActionBasedStateMachineDef):
 
     wait_default_adjustment_complete.set_next_state(
         order_enum.opf_feedback_choice.NORMAL_FINISH,
-        order_enum.o_status_choice.WAIT_LIQUIDATE
+        wait_liquidate,
     )
 
     wait_adjustment_complete.set_next_state(
         order_enum.opf_feedback_choice.ADJUST_FINISH,
-        order_enum.o_status_choice.WAIT_LIQUIDATE,
+        wait_liquidate,
     )
     wait_adjustment_complete.set_next_state(
         order_enum.opf_feedback_choice.CANCEL_FINISH,
-        order_enum.o_status_choice.CLOSED,
+        closed,
     )
     wait_adjustment_complete.set_next_state(
         order_enum.opf_feedback_choice.NORMAL_FINISH,
-        order_enum.o_status_choice.WAIT_LIQUIDATE,
+        wait_liquidate,
     )
 
     wait_liquidate.set_next_state(
         order_enum.op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT,
-        order_enum.o_status_choice.WAIT_RECEIPT
+        wait_receipt
     )
 
     wait_receipt.set_next_state(
         order_enum.o_seller_action_choice.SELLER_APPEND_RECEIPT_LOGISTICS,
-        order_enum.o_status_choice.WAIT_RECEIPT_CHECK,
+        wait_receipt_check,
         pre_side_effects=[
             se_append_logistics_info(l_type_choice.RECEIPT)
         ]
@@ -197,7 +197,7 @@ class OrderInfoStateMachinDef(ActionBasedStateMachineDef):
 
     wait_receipt_check.set_next_state(
         order_enum.o_buyer_action_choice.BUYER_CONFIRMED_RECEIPT,
-        order_enum.o_status_choice.SUCCEEDED
+        succeed,
     )
 
     def transit_done_dealer(self, instance, context, state_current, state_next, raise_transition_exception):

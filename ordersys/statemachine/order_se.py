@@ -2,18 +2,14 @@ from base.exceptions import WLException
 from base.util.serializer_helper import errors_summery
 from ordersys.funcs.calculator.liquidation import liquidation_calculator
 from ordersys.funcs.calculator.receipt import receipt_calculator
-from ordersys.models import OrderInfo, OrderProtocol, OrderLogisticsInfo
 from ordersys.model_choices.order_enum import o_status_choice, op_type_choice, p_status_choice, change_type_choice
-from ordersys.serializers.order import OrderProtocolSubmitSerializer
 from paymentsys.funcs.liquidation_manager import manager as liquidation_manager
-from paymentsys.funcs.receipt_manager import manager as receipt_manager
-from paymentsys.models import PaymentReceipt
 from paymentsys.model_choices.receipt_enum import receipt_status_choice
 from base.util.db import update_instance_from_dict
-from ordersys.serializers.distribution import OrderLogisticsInfoSubmitSerializer
 
 
 def do_or_register_liquidation(instance, state_next, **kwargs):
+    from ordersys.models import OrderInfo
     order = instance  # type: OrderInfo
     if state_next != o_status_choice.WAIT_LIQUIDATE:
         raise AssertionError("Fatal error, registering liquidation without state WAIT_LIQUIDATE")
@@ -24,6 +20,10 @@ def do_or_register_liquidation(instance, state_next, **kwargs):
 
 
 def create_register_receipt(instance, context, **kwargs):
+    from ordersys.models import OrderInfo
+    from paymentsys.funcs.receipt_manager import manager as receipt_manager
+    from paymentsys.models import PaymentReceipt
+
     order = instance  # type: OrderInfo
     r_type = context["r_type"]
     try:
@@ -44,6 +44,7 @@ def create_register_receipt(instance, context, **kwargs):
 
 
 def _validate_and_close_existing_protocol(order):
+    from ordersys.models import OrderProtocol
     protocols = OrderProtocol.objects.filter(oid=order)
     # Check if there is a protocol in progress
     all_protocols = protocols.all()
@@ -59,6 +60,8 @@ def _validate_and_close_existing_protocol(order):
 
 
 def append_order_protocol_info(instance, context, **kwargs):
+    from ordersys.models import OrderInfo, OrderProtocol
+    from ordersys.serializers.order import OrderProtocolSubmitSerializer
     # Create default protocol, but without initialize it.
     # The initialization is done the same time when seller agree this protocol.
     parameter = context["parameter"]
@@ -93,6 +96,7 @@ def append_order_protocol_info(instance, context, **kwargs):
 def append_default_order_protocol_info(instance, **kwargs):
     # Create default protocol, but without initialize it.
     # The initialization is done the same time when seller agree this protocol.
+    from ordersys.models import OrderProtocol
     order = instance
     _validate_and_close_existing_protocol(order)
 
@@ -159,6 +163,9 @@ def append_order_logistics_info(instance, context, **kwargs):
     :param kwargs:
     :return:
     """
+
+    from ordersys.models import OrderInfo, OrderLogisticsInfo
+    from ordersys.serializers.distribution import OrderLogisticsInfoSubmitSerializer
 
     l_type = context["l_type"]
     parameter = context["parameter"]

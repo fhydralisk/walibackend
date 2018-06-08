@@ -39,7 +39,7 @@ def bind_side_effects(obj, pre_side_effects, post_side_effects, ctx, obj_is_dict
     else:
         raise TypeError("ctx shall be dict")
 
-    put_side_effects(obj, 'ctx', post_side_effects, ctx)
+    put_side_effects(obj, 'ctx', ctx, obj_is_dict)
     
 
 def run_side_effects(side_effects, instance, context, state_current, state_next, raise_transition_exception):
@@ -66,7 +66,7 @@ def run_side_effects(side_effects, instance, context, state_current, state_next,
 
 class SideEffect(object):
     def __init__(self, name, ctx=None, continue_after_error=False, handler=None):
-        if not isinstance(self.name, str):
+        if not isinstance(name, (str, unicode)):
             raise TypeError("name must be str.")
         self.name = name
 

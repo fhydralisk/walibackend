@@ -71,6 +71,6 @@ class State(SideEffectContainer):
 
         self.target_states[action][State.KEY_STATE] = state_next
         
-        state_next_dict = self.next_state_dict(state_next)
+        state_next_dict = self.next_state_dict(action)
 
         bind_side_effects(state_next_dict, pre_side_effects, post_side_effects, ctx, True)

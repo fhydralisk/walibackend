@@ -88,7 +88,7 @@ class OrderProtocolStateMachineDef(ActionBasedStateMachineDef):
     # Cancel protocol
     cancel_wait_return.set_next_state(
         order_enum.op_buyer_action_choice.CANCEL_APPEND_LOGISTICS_INFO,
-        order_enum.p_operate_status_choice.CANCEL_WAIT_CONFIRM,
+        cancel_wait_confirm,
         pre_side_effects=[
             se_append_logistics
         ]
@@ -96,18 +96,18 @@ class OrderProtocolStateMachineDef(ActionBasedStateMachineDef):
 
     cancel_wait_confirm.set_next_state(
         order_enum.op_seller_action_choice.CANCEL_CONFIRM_PRODUCT,
-        order_enum.p_operate_status_choice.CANCEL_WAIT_REFUND
+        cancel_wait_refund
     )
 
     cancel_wait_refund.set_next_state(
         order_enum.op_platform_action_choice.PLATFORM_CONFIRM_REFUND,
-        order_enum.p_operate_status_choice.CANCEL_OK
+        cancel_OK
     )
 
     # adjust protocol
     adjust_wait_final.set_next_state(
         order_enum.op_buyer_action_choice.BUYER_PAY_FINAL,
-        order_enum.p_operate_status_choice.ADJUST_CHECK_FINAL,
+        adjust_wait_final,
         post_side_effects=[
             se_pay_final
         ],
@@ -118,18 +118,18 @@ class OrderProtocolStateMachineDef(ActionBasedStateMachineDef):
 
     adjust_check_final.set_next_state(
         order_enum.op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT,
-        order_enum.p_operate_status_choice.ADJUST_OK,
+        adjust_ok,
     )
 
     adjust_check_earnest.set_next_state(
         order_enum.op_platform_action_choice.PLATFORM_CONFIRM_REFUND,
-        order_enum.p_operate_status_choice.ADJUST_OK
+        adjust_ok,
     )
 
     # normal protocol
     normal_wait_final.set_next_state(
         order_enum.op_buyer_action_choice.BUYER_PAY_FINAL,
-        order_enum.p_operate_status_choice.NORMAL_CHECK_FINAL,
+        normal_check_final,
         post_side_effects=[
             se_pay_final
         ]
@@ -137,7 +137,7 @@ class OrderProtocolStateMachineDef(ActionBasedStateMachineDef):
 
     normal_check_final.set_next_state(
         order_enum.op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT,
-        order_enum.p_operate_status_choice.NORMAL_OK
+        normal_ok,
     )
 
     def transit_done_dealer(self, instance, context, state_current, state_next, raise_transition_exception):

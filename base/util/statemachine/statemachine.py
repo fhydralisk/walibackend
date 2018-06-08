@@ -9,10 +9,10 @@ class ActionBasedStateMachineDef(SideEffectContainer):
     attr = None
     
     def __init__(self, attr=None, *args, **kwargs):
-        if self.attr is not None:
+        if attr is not None:
             self.attr = attr
 
-        if not isinstance(self.attr, str):
+        if not isinstance(self.attr, (str, unicode)):
             raise AssertionError('attr is not String but %s' % str(self.attr.__class__))
 
         self.state_map = {s.value: s for s in self._get_states()}
@@ -96,7 +96,9 @@ class ActionBasedStateMachineMixin(object):
 
         return self.attr_sm_map[attr]
 
-    def execute_transition(self, attr, action, context, raise_side_effect_exception=False, deal_state=True):
+    def execute_transition(self, attr, action, context=None, raise_side_effect_exception=False, deal_state=True):
+        if context is None:
+            context = dict()
 
         sm = self._get_sm(attr)
         return sm.execute_transition(self, action, context, raise_side_effect_exception, deal_state)

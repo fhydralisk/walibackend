@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.utils.module_loading import import_string
-from ordersys.models import OrderInfo
 from paymentsys.model_choices.receipt_enum import receipt_type_choice
 
 
@@ -14,6 +13,7 @@ class AbstractReceiptCalculator(object):
 class DummyReceiptCalculator(AbstractReceiptCalculator):
     @staticmethod
     def cal_order_receipt_amount(order, r_type, ctx):
+        from ordersys.models import OrderInfo
         # type: (OrderInfo, int, dict) -> float
         iv = order.ivid
 
