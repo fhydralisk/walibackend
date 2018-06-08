@@ -66,7 +66,7 @@ def append_order_protocol_info(extra_ctx, **kwargs):
         raise WLException(400, errors_summery(pseri))
 
     c_price = None
-    if extra_ctx["op_type"] == op_type_choice.ADJUST_PRICE:
+    if pseri.validated_data["op_type"] == op_type_choice.ADJUST_PRICE:
         if pseri.validated_data["change_type"] == change_type_choice.REFUND_EARNEST:
             if pseri.validated_data["price"] > order.ivid.earnest:
                 raise WLException(400, "price must be less than earnest")
