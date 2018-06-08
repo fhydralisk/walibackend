@@ -2,8 +2,9 @@ from rest_framework import serializers
 from usersys.serializers.validate_api import ValidationInfoInvoiceSerializer
 from invitesys.models import InviteInfo
 from invitesys.serializers.invite_display import InviteReadableDetailDisplaySerializer
-from ordersys.models import OrderProtocol, OrderInfo
+from ordersys.models import OrderProtocol, OrderInfo, OrderReceiptPhoto
 from ordersys.model_choices.order_enum import change_type_choice
+from ordersys.model_choices.photo_enum import photo_type_choice
 from paymentsys.serializers.receipt import PaymentReceiptSerializer
 from .distribution import OrderLogisticsInfoSerializer
 
@@ -45,10 +46,25 @@ class OrderInfoDisplaySerializer(serializers.ModelSerializer):
     logistics = OrderLogisticsInfoSerializer(source='order_logistics', read_only=True, many=True)
     invoice = ValidationInfoInvoiceSerializer(source='buyer_invoice_info', read_only=True)
     buyer_address = BuyerAddressSerializer(source='ivid')
+    photo_forward = serializers.PrimaryKeyRelatedField(
+        source='order_receipt_photos',
+        queryset=OrderReceiptPhoto.objects.filter(photo_type=photo_type_choice.RECEIPT_FORWARD),
+        many=True
+    )
+    photo_product = serializers.PrimaryKeyRelatedField(
+        source='order_receipt_photos',
+        queryset=OrderReceiptPhoto.objects.filter(photo_type=photo_type_choice.PHOTO_PRODUCTS),
+        many=True
+    )
+    photo_check = serializers.PrimaryKeyRelatedField(
+        source='order_receipt_photos',
+        queryset=OrderReceiptPhoto.objects.filter(photo_type=photo_type_choice.RECEIPT_CHECK),
+        many=True
+    )
 
     class Meta:
         model = OrderInfo
         fields = (
             'id', 'o_status', 'current_protocol', 'current_receipt',
-            'invite', 'logistics', 'invoice', 'buyer_address',
+            'invite', 'logistics', 'invoice', 'buyer_address', 'photo_forward', 'photo_product', 'photo_check',
         )

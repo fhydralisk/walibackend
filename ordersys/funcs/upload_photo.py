@@ -47,21 +47,21 @@ def get_photo_obj(user, photo_id):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def upload_order_photo(user, order, t_photo, photo_files_form_obj):
+def upload_order_photo(user, oid, t_photo, photo_files_form_obj):
     # type: (UserBase, OrderInfo, int, object) -> int
-    invite = order.ivid
+    invite = oid.ivid
     if invite.uid_s != user and invite.uid_t != user:
-        raise WLException(404, "No such order")
+        raise WLException(404, "No such oid")
 
     # Check photo type and user role permissions
-    if not check_photo_type(order.o_status, t_photo):
+    if not check_photo_type(oid.o_status, t_photo):
         raise WLException(403, "Cannot submit this photo")
 
     if not check_role(user, t_photo):
         raise WLException(403, "User role does not match the photo submit action.")
 
     # Real submit
-    photo = OrderReceiptPhoto(photo_type=t_photo, oid=order, in_use=True)
+    photo = OrderReceiptPhoto(photo_type=t_photo, oid=oid, in_use=True)
     submit_form = modelform_factory(
         OrderReceiptPhoto, fields=('receipt_photo', )
     )(files=photo_files_form_obj, instance=photo)
