@@ -5,7 +5,7 @@ from ordersys.model_choices.photo_enum import photo_type_choice
 
 class UploadPhotoSerializer(serializers.Serializer):
     user_sid = serializers.CharField()
-    oid = serializers.PrimaryKeyRelatedField(queryset=OrderInfo.objects, read_only=True)
+    oid = serializers.PrimaryKeyRelatedField(queryset=OrderInfo.objects)
     t_photo = serializers.ChoiceField(choices=photo_type_choice.get_choices())
 
 
