@@ -13,7 +13,7 @@ def check_role(user, photo_type):
     if (
             user.role == role_choice.BUYER and photo_type == photo_type_choice.RECEIPT_CHECK
     ) or (
-            user.role == role_choice.SELLER and photo_type == photo_type_choice.RECEIPT_FORWARD
+            user.role == role_choice.SELLER and photo_type in (photo_type_choice.RECEIPT_FORWARD, photo_type_choice.PHOTO_PRODUCTS)
     ):
         return True
     else:
