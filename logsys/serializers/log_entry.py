@@ -6,11 +6,11 @@ class OrderLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderInfo
-        fields = ('oid', 'operator', 'log_date_time', 'o_status')
+        fields = ('id', 'operator', 'log_date_time', 'o_status')
 
 
 class OrderProtocolLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderProtocol
-        fields = ('opid', 'operator', 'log_date_time', 'p_status', 'p_operate_status')
+        fields = ('id', 'operator', 'log_date_time', 'p_status', 'p_operate_status')
