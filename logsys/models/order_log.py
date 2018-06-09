@@ -28,6 +28,7 @@ class LogOrderProtocolStatus(models.Model):
     opid = models.ForeignKey(
         OrderProtocol,
         verbose_name=_("OrderProtocol"),
+        related_name="order_protocol_log",
         on_delete=models.CASCADE
     )
     operator = models.ForeignKey(
