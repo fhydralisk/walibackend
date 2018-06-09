@@ -1,16 +1,16 @@
 from rest_framework import serializers
-from ordersys.models import OrderProtocol, OrderInfo
+from logsys.models import LogOrderStatus, LogOrderProtocolStatus
 
 
 class OrderLogSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = OrderInfo
-        fields = ('id', 'operator', 'log_date_time', 'o_status')
+        model = LogOrderStatus
+        fields = ('oid', 'operator', 'log_date_time', 'o_status')
 
 
 class OrderProtocolLogSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = OrderProtocol
-        fields = ('id', 'operator', 'log_date_time', 'p_status', 'p_operate_status')
+        model = LogOrderProtocolStatus
+        fields = ('opid', 'operator', 'log_date_time', 'p_status', 'p_operate_status')
