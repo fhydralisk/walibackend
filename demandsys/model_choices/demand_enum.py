@@ -27,6 +27,15 @@ class _FreightPayerChoice(FieldChoice):
     )
 
 
+class _MatchOrderChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _(""), "SCORE"),
+        (2, _(""), "PRICE"),
+        (3, _(""), "QUANTITY"),
+    )
+
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
 freight_payer_choice = _FreightPayerChoice()
+match_order_choice = _MatchOrderChoice()

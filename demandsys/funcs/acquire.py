@@ -1,4 +1,5 @@
 from demandsys.models import ProductDemand, ProductDemandPhoto
+from demandsys.model_choices.demand_enum import match_order_choice
 from base.exceptions import default_exception, Error500, Error404, Error400
 from base.util.timestamp import now
 from base.util.pages import get_page_info, get_page_info_list
@@ -63,11 +64,13 @@ def get_my_demand(user, page, count_per_page):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def get_matched_demand(user, id, page, count_per_page):
+def get_matched_demand(user, id, page, order, asc, count_per_page):
     """
     :param user:
     :param id:
     :param page:
+    :param order:
+    :param count_per_page:
     :return:
     """
 
@@ -75,8 +78,14 @@ def get_matched_demand(user, id, page, count_per_page):
         # type: (ProductDemand, ProductDemand) -> bool
         return self.quantity_metric() > other.min_quantity_metric()
 
-    def match_key(m):
-        return demand.match_score(m)["score_overall"]
+    def match_key(m_obj):
+        # type: (ProductDemand) -> object
+        if order == match_order_choice.SCORE:
+            return demand.match_score(m_obj)["score_overall"]
+        elif order == match_order_choice.QUANTITY:
+            return m_obj.quantity_left()
+        elif order == match_order_choice.PRICE:
+            return m_obj.price_metric().scaled_value()
 
     try:
         demand = ProductDemand.objects.select_related(
@@ -110,7 +119,7 @@ def get_matched_demand(user, id, page, count_per_page):
     matches_list = [
         m for m in matches if confirm_satisfied(demand, m)
     ]
-    matches_list.sort(key=match_key, reverse=True)
+    matches_list.sort(key=match_key, reverse=not asc)
 
     st, ed, n_pages = get_page_info_list(
         matches_list, count_per_page, page, index_error_excepiton=Error400("Page out of range")

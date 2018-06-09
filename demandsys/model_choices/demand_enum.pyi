@@ -16,6 +16,13 @@ class _FreightPayerChoice(FieldChoice):
     FREIGHT_SELLER = None
 
 
+class _MatchOrderChoice(FieldChoice):
+    SCORE = None
+    PRICE = None
+    QUANTITY = None
+
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
 freight_payer_choice = _FreightPayerChoice()
+match_order_choice = _MatchOrderChoice()

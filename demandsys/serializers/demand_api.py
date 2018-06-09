@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from usersys.model_choices.user_enum import role_choice
+from demandsys.model_choices.demand_enum import match_order_choice
 from .demand import DemandPublishSerializer, DemandEditSerializer
 
 
@@ -21,6 +22,8 @@ class ObtainDemandDetailSerializer(serializers.Serializer):
 class ObtainDemandMatchSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     id = serializers.IntegerField()
+    order = serializers.ChoiceField(choices=match_order_choice.get_choices())
+    asc = serializers.BooleanField()
     page = serializers.IntegerField(min_value=0, default=0)
 
 
