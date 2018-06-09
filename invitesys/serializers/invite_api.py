@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from coresys.models import CorePaymentMethod
 from usersys.funcs.utils.sid_management import sid_getuser
 from usersys.model_choices.user_enum import role_choice
 from invitesys.model_choices.invite_enum import handle_method_choice, t_invite_choice
@@ -7,19 +8,29 @@ from invitesys.models import InviteCancelReason
 from .invite import BuyerInviteInfoSubmitSerializer, SellerInviteInfoSubmitSerializer
 
 
+def check_attr_exist(attrs, field, err_message, err_code):
+    if field not in attrs or attrs[field] is None:
+        raise ValidationError({field: err_message}, err_code)
+
+
 class FlowHandleSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     handle_method = serializers.ChoiceField(choices=handle_method_choice.get_choices())
     reason = serializers.CharField(required=False)
     reason_class = serializers.PrimaryKeyRelatedField(queryset=InviteCancelReason.objects.all(), required=False)
+    price = serializers.FloatField(min_value=0.01, required=False)
+    pmid = serializers.PrimaryKeyRelatedField(queryset=CorePaymentMethod.objects.filter(in_use=True), required=False)
     ivid = serializers.IntegerField()
 
     def validate(self, attrs):
-        if attrs["handle_method"] != handle_method_choice.ACCEPT:
-            if "reason" not in attrs or attrs["reason"] is None:
-                raise ValidationError({"reason": "Reason field cannot be null."}, 400)
-            if "reason_class" not in attrs or attrs["reason_class"] is None:
-                raise ValidationError({"reason_class": "Reason class field cannot be null."}, 400)
+        handle_method = attrs["handle_method"]
+        if handle_method in (handle_method_choice.CANCEL, handle_method_choice.REJECT):
+            check_attr_exist(attrs, "reason", "This filed is required", 400)
+            check_attr_exist(attrs, "reason_class", "This field is required", 400)
+
+        elif handle_method == handle_method_choice.NEGOTIATE:
+            check_attr_exist(attrs, "price", "This field is required", 400)
+            check_attr_exist(attrs, "pmid", "This field is required", 400)
 
         return attrs
 
