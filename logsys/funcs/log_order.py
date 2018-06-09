@@ -36,7 +36,7 @@ def obtain_order_log(user, oid):
     if invite.uid_s != user and invite.uid_t != user:
         raise WLException(404, "No such order")
 
-    return LogOrderStatus.objects.filter(oid=oid)
+    return LogOrderStatus.objects.filter(oid=oid).order_by('id')
 
 
 @default_exception(Error500)
@@ -47,4 +47,4 @@ def obtain_order_protocol_log(user, opid):
     if invite.uid_s != user and invite.uid_t != user:
         raise WLException(404, "No such order")
 
-    return LogOrderProtocolStatus.objects.filter(opid=opid)
+    return LogOrderProtocolStatus.objects.filter(opid=opid).order_by('id')
