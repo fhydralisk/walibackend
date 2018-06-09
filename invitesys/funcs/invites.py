@@ -149,13 +149,14 @@ def publish(user, invite):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def handle(user, ivid, handle_method, price, reason=None, reason_class=None):
+def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason_class=None):
     """
 
     :param user:
     :param ivid:
     :param handle_method:
     :param price:
+    :param pmid:
     :param reason:
     :param reason_class
     :return: invite object
@@ -166,7 +167,10 @@ def handle(user, ivid, handle_method, price, reason=None, reason_class=None):
             if user == iv_obj.uid_t:
                 if handle_method == handle_method_choice.NEGOTIATE:
                     iv_obj.i_status = i_status_choice.INVITEE_NEGOTIATE
-                    iv_obj.price = price
+                    if price is not None:
+                        iv_obj.price = price
+                    if pmid is not None:
+                        iv_obj.pmid = pmid
                     return
 
                 if handle_method == handle_method_choice.ACCEPT:
@@ -190,7 +194,10 @@ def handle(user, ivid, handle_method, price, reason=None, reason_class=None):
 
         elif iv_obj.i_status in (i_status_choice.INVITEE_NEGOTIATE, i_status_choice.INVITER_NEGOTIATE):
             if handle_method == handle_method_choice.NEGOTIATE:
-                iv_obj.price = price
+                if price is not None:
+                    iv_obj.price = price
+                if pmid is not None:
+                    iv_obj.pmid = pmid
                 if user == iv_obj.uid_t:
                     iv_obj.i_status = i_status_choice.INVITEE_NEGOTIATE
                 elif user == iv_obj.uid_s:
