@@ -261,6 +261,7 @@ def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason
 
     _real_handle()
     iv_obj.save()
+    return iv_obj
 
 
 @default_exception(Error500)
