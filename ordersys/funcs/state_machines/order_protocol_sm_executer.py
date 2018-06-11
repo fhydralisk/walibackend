@@ -7,6 +7,8 @@ def execute_order_protocol_state_machine(user, order, action, parameter):
 
     def state_dealer(state_next, **kwargs):
         protocol.p_operate_status = state_next
+        # Let log system aware of operator
+        protocol.operator = user
         protocol.save()
 
     try:

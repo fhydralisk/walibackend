@@ -5,6 +5,8 @@ from ordersys.funcs.state_machines.order_sm import order_sm
 def execute_order_state_machine(user, order, action, parameter):
     def state_dealer(state_next, **kwargs):
         order.o_status = state_next
+        # Let log system aware of operator
+        order.operator = user
         order.save()
 
     try:

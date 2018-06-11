@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'invitesys',
     'ordersys',
     'paymentsys',
+    'logsys',
 ]
 
 MIDDLEWARE = [
