@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for walibackend project.
 
@@ -236,6 +237,13 @@ DEFAULT_FILE_STORAGE = 'base.util.WLFileStorage.UUIDFileStorage'
 # Phone Validator
 
 PHONE_VALIDATOR = "base.util.phone_validator.validator.DummyPhoneValidator"
+
+# Lazy loading app key and secret
+SK_ALISMS = {}
+SK_FILE_PATH = os.path.join(BASE_DIR, 'sk.csv')
+ALYSMS_TEMPLATE_CODE = "SMS_137170133"
+ALYSMS_SIGN_NAME = "保保回收"
+
 
 # String Validators
 
