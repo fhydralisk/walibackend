@@ -96,12 +96,12 @@ class ProductQualityFDictSerializer(serializers.ModelSerializer):
 class ProductTypeL3FDictSerializer(serializers.ModelSerializer):
     code = serializers.ReadOnlyField(source='id')
     name = serializers.ReadOnlyField(source='tname3')
-    sub = ProductQualityFDictSerializer(source='quality', many=True)
+    qualities = ProductQualityFDictSerializer(source='quality', many=True)
 
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = ProductTypeL3
-        fields = ('code', 'name', 'sub')
+        fields = ('code', 'name', 'qualities')
 
 
 class ProductTypeL2FDictSerializer(serializers.ModelSerializer):
