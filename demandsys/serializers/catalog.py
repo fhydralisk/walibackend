@@ -81,3 +81,46 @@ class ProductTypeSerializer(serializers.ModelSerializer):
         list_serializer_class = FilteredListSerializer
         model = ProductTypeL1
         fields = ('value', 'label', 'product_types_l2')
+
+
+class ProductQualityFDictSerializer(serializers.ModelSerializer):
+    code = serializers.ReadOnlyField(source='id')
+    name = serializers.ReadOnlyField(source='pqdesc')
+
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = ProductQuality
+        fields = ('code', 'name')
+
+
+class ProductTypeL3FDictSerializer(serializers.ModelSerializer):
+    code = serializers.ReadOnlyField(source='id')
+    name = serializers.ReadOnlyField(source='tname3')
+    sub = ProductQualityFDictSerializer(source='quality', many=True)
+
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = ProductTypeL3
+        fields = ('code', 'name', 'sub')
+
+
+class ProductTypeL2FDictSerializer(serializers.ModelSerializer):
+    code = serializers.ReadOnlyField(source='id')
+    name = serializers.ReadOnlyField(source='tname2')
+    sub = ProductTypeL3FDictSerializer(source='product_l3', many=True)
+
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = ProductTypeL2
+        fields = ('code', 'name', 'sub')
+
+
+class ProductTypeFDictSerializer(serializers.ModelSerializer):
+    code = serializers.ReadOnlyField(source='id')
+    name = serializers.ReadOnlyField(source='tname1')
+    sub = ProductTypeL2FDictSerializer(source='product_l2', many=True)
+
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = ProductTypeL1
+        fields = ('code', 'name', 'sub')
