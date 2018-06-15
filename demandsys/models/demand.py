@@ -108,7 +108,7 @@ class ProductDemand(models.Model):
 
     @property
     def expired_after_days(self):
-        return max(((self.end_time - now() + datetime.timedelta(days=0.5)).days, datetime.timedelta(days=0)))
+        return max((self.end_time - now() + datetime.timedelta(days=0.5)).days, 0)
 
     @duration.setter
     def duration(self, value):
