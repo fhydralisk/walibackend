@@ -50,6 +50,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
             'satisfied',
             'demand_photos', 'demand_photo_ids',
             'qid', 't3id', 't2id', 't1id', 'wcid', 'pmid', 'aid',
+            'street', 'expired_after_days',
         )
 
     def get_satisfied(self, obj):
@@ -60,7 +61,7 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
 class DemandReadableDisplaySelfSerializer(DemandReadableDisplaySerializer):
 
     class Meta(DemandReadableDisplaySerializer.Meta):
-        fields = DemandReadableDisplaySerializer.Meta.fields + ('comment', 'street',)
+        fields = DemandReadableDisplaySerializer.Meta.fields + ('comment',)
 
 
 class DemandReadableDisplayMatchSerializer(DemandReadableDisplaySerializer):
