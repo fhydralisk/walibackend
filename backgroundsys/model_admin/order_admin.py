@@ -12,7 +12,7 @@ from paymentsys.models import PaymentReceipt
 from logsys.models import LogOrderStatus
 
 
-class OrderLogInline(admin.StackedInline):
+class OrderLogInline(admin.TabularInline):
     model = LogOrderStatus
     readonly_fields = ('oid', 'operator', 'log_date_time', 'o_status', 'context')
     verbose_name = "订单日志"
