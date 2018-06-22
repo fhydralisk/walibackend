@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -14,7 +15,7 @@ class OrderInfo(models.Model):
         on_delete=models.CASCADE,
         related_name="invite_order"
     )
-    o_status = models.IntegerField(_("order status"), choices=o_status_choice.choice)
+    o_status = models.IntegerField(_("订单状态"), choices=o_status_choice.choice)
     final_price = models.FloatField(null=True, blank=True)
 
     @property

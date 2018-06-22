@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
@@ -9,21 +10,21 @@ from base.util.field_choice import FieldChoice
 class _OStatusChoice(FieldChoice):
     MAX_LENGTH = 4
     CHOICE_DISPLAY = (
-        (1, _("Waiting for buyer to pay earnest"), "WAIT_EARNEST"),
-        (2, _("Buyer paid earnest, waiting for platform to check."), "WAIT_EARNEST_CHECK"),
-        (3, _("Waiting for seller to deliver"), "WAIT_PRODUCT_DELIVER"),
-        (4, _("Seller has delivered, waiting for buyer's confirmation"), "WAIT_PRODUCT_CONFIRM"),
-        (5, _("Buyer has got the product, waiting for checking result"), "WAIT_PRODUCT_CHECK"),
+        (1, _("等待选择支付平台（定金）"), "WAIT_EARNEST"),
+        (2, _("等待平台核验买家款项"), "WAIT_EARNEST_CHECK"),
+        (3, _("等待卖家发货"), "WAIT_PRODUCT_DELIVER"),
+        (4, _("卖家已发货，等待买家确认"), "WAIT_PRODUCT_CONFIRM"),
+        (5, _("买家已确认收货，等待验货"), "WAIT_PRODUCT_CHECK"),
         (6, _("Product quality does not match the demand, waiting for adjustment protocol"), "WAIT_ADJUSTMENT"),
         (7, _("Protocol quality matches the demand, waiting for final payment"), "WAIT_FINAL_PAYMENT"),
         (8, _("Buyer has submitted the adjustment protocol, waiting for confirmation from seller"), "WAIT_ADJUSTMENT_CONFIRM"),
         (9, _("Adjustment protocol has been confirmed, waiting for completion"), "WAIT_ADJUSTMENT_COMPLETE"),
         (10, _("Good Product, waiting for default adjustment's completion"), "WAIT_DEFAULT_ADJUSTMENT_COMPLETE"),
-        (11, _("Adjustment has been completed, wait for liquidating"), "WAIT_LIQUIDATE"),
-        (16, _("Liquidated, no receipt needed, order closed"), "CLOSED"),
-        (18, _("Liquidated, waiting for seller to send receipt"), "WAIT_RECEIPT"),
-        (19, _("Receipt has been send, waiting for buyer's confirmation"), "WAIT_RECEIPT_CHECK"),
-        (21, _("Order succeeded"), "SUCCEEDED"),
+        (11, _("协议已达成，等待平台清算"), "WAIT_LIQUIDATE"),
+        (16, _("交易关闭"), "CLOSED"),
+        (18, _("已清算，等待卖家发送发票"), "WAIT_RECEIPT"),
+        (19, _("发票已邮寄，等待买家确认"), "WAIT_RECEIPT_CHECK"),
+        (21, _("订单完成"), "SUCCEEDED"),
     )
 
 
