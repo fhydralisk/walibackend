@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
+from django.conf import settings
 from usersys.models import UserBase, UserAddressBook
 
 from demandsys.models import ProductDemand
@@ -104,3 +105,23 @@ class InviteInfo(models.Model):
     @property
     def final_price(self):
         return self.total_price - self.earnest
+
+
+class InviteProductPhoto(models.Model):
+    ivid = models.ForeignKey(
+        InviteInfo,
+        verbose_name=_("Invite"),
+        on_delete=models.SET_NULL,
+        related_name="invite_photo",
+        db_index=True,
+        null=True,
+        blank=True
+    )
+    invite_photo = models.ImageField(upload_to=settings.UPLOAD_INVITE_PHOTO)
+    invite_photo_snapshot = models.FilePathField(null=True, blank=True)
+    inuse = models.BooleanField(default=False)
+    upload_date = models.DateTimeField(auto_now_add=True)
+    photo_desc = models.TextField(blank=True, null=True)
+
+    def __unicode__(self):
+        return "%s: %s" % (self.ivid.__unicode__(), self.photo_desc if self.photo_desc is not None else "-")

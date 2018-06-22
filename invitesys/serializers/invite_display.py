@@ -48,6 +48,8 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
     related_order = serializers.PrimaryKeyRelatedField(source='invite_order', read_only=True)
     reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
 
+    invite_photo = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     def to_representation(self, instance):
         # type: (InviteInfo) -> dict
         ret = super(InviteReadableDisplaySerializer, self).to_representation(instance)
@@ -77,7 +79,8 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
             'price', 'unit', 'pmid', 'disid', 'dis_duration', 'i_status',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc', 'disdesc',
             'deposit_scale',
-            'earnest', 'final_price', 'total_price', 'related_order'
+            'earnest', 'final_price', 'total_price', 'related_order',
+            'invite_photo',
         )
 
 
