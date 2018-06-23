@@ -316,7 +316,7 @@ def upload_invite_photo(user, photo_desc, photo_files_form_obj, ivid=None):
         raise WLException(403, "Only seller can submit invite photos.")
 
     # Real submit
-    photo = InviteProductPhoto(ivid=ivid, photo_desc=photo_desc, in_use=True, uploader=user)
+    photo = InviteProductPhoto(ivid=ivid, photo_desc=photo_desc, inuse=True, uploader=user)
     submit_form = modelform_factory(
         InviteProductPhoto, fields=('invite_photo', )
     )(files=photo_files_form_obj, instance=photo)
