@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
+from backgroundsys.admin_site import admin_site
 import usersys.urls
 import coresys.urls
 import invitesys.urls
@@ -33,4 +34,5 @@ urlpatterns = [
     url(r'^order/', include(ordersys.urls.url_pattern)),
     url(r'^payment/', include(paymentsys.urls.url_patterns)),
     url(r'^log/', include(logsys.urls.url_patterns)),
+    url(r'^admin/', include(admin_site.urls))
 ]
