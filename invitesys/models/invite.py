@@ -108,6 +108,13 @@ class InviteInfo(models.Model):
 
 
 class InviteProductPhoto(models.Model):
+    uploader = models.ForeignKey(
+        UserBase,
+        verbose_name=_("Photo uploader"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     ivid = models.ForeignKey(
         InviteInfo,
         verbose_name=_("Invite"),

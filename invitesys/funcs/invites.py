@@ -115,11 +115,12 @@ def detail(user, ivid):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def publish(user, invite):
+def publish(user, invite, invite_photos):
     """
 
     :param user: user object
     :param invite: invite data
+    :param invite_photos
     :return:
     """
     # First check if the user is validated
@@ -147,18 +148,35 @@ def publish(user, invite):
     # publish invite
     invite_obj.save()
 
-    # create invite photos
     if user.role == role_choice.SELLER:
+        # create invite photos
         if invite_obj.dmid_s is not None:
             dm_photos = invite_obj.dmid_s.demand_photo.filter(inuse=True)
             for dm_photo in dm_photos:
                 InviteProductPhoto.objects.create(
                     ivid=invite_obj,
+                    uploader=user,
                     invite_photo=dm_photo.demand_photo,
                     invite_photo_snapshot=dm_photo.demand_photo_snapshot,
                     inuse=True,
                     photo_desc=dm_photo.photo_desc
                 )
+
+        exc = WLException(400, "invite_photos contains invalid photo id.")
+        if invite_photos is not None:
+            photo_objs = InviteProductPhoto.objects.select_related('ivid').filter(id__in=invite_photos, inuse=True)
+            if photo_objs.count() != len(invite_photos):
+                raise exc
+
+            # validate photo first
+            for photo_obj in photo_objs:
+                if photo_obj.ivid is not None:
+                    raise exc
+                if photo_obj.uploader != user:
+                    raise exc
+
+            # do real update
+            photo_objs.update(ivid=invite)
 
     return invite_obj
 
@@ -288,16 +306,17 @@ def get_reason_classes():
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def upload_invite_photo(user, ivid, photo_desc, photo_files_form_obj):
-    # type: (UserBase, InviteInfo, str, object) -> int
-    if ivid.seller != user:
-        raise WLException(404, "No such invite.")
+def upload_invite_photo(user, photo_desc, photo_files_form_obj, ivid=None):
+    # type: (UserBase, str, object, InviteInfo) -> int
+    if ivid is not None:
+        if ivid.seller != user:
+            raise WLException(404, "No such invite.")
 
     if user.role != role_choice.SELLER:
         raise WLException(403, "Only seller can submit invite photos.")
 
     # Real submit
-    photo = InviteProductPhoto(ivid=ivid, photo_desc=photo_desc, in_use=True)
+    photo = InviteProductPhoto(ivid=ivid, photo_desc=photo_desc, in_use=True, uploader=user)
     submit_form = modelform_factory(
         InviteProductPhoto, fields=('invite_photo', )
     )(files=photo_files_form_obj, instance=photo)
@@ -316,16 +335,17 @@ def delete_invite_photo(user, photo_id):
     except InviteProductPhoto.DoesNotExist:
         raise WLException(404, "No such photo.")
 
-    if photo.ivid is None:
+    if photo.uploader != user:
         raise WLException(404, "No such photo.")
 
-    if photo.ivid.seller != user:
-        raise WLException(404, "No such photo.")
+    if photo.ivid is not None:
+        if photo.ivid.seller != user:
+            raise WLException(404, "No such photo.")
 
-    if photo.ivid.i_status not in {
-        i_status_choice.STARTED,
-    }:
-        raise WLException(403, "Cannot delete photo with status %d" % photo.ivid.i_status)
+        if photo.ivid.i_status not in {
+            i_status_choice.STARTED,
+        }:
+            raise WLException(403, "Cannot delete photo with status %d" % photo.ivid.i_status)
 
     photo.inuse = False
     photo.save()
@@ -340,7 +360,11 @@ def get_invite_photo(user, photo_id):
     except InviteProductPhoto.DoesNotExist:
         raise WLException(404, "No such photo.")
 
-    if photo.ivid.uid_s != user and photo.ivid.uid_t != user:
-        raise WLException(404, "No such photo.")
+    if photo.ivid is not None:
+        if photo.ivid.uid_s != user and photo.ivid.uid_t != user:
+            raise WLException(404, "No such photo.")
+    else:
+        if photo.uploader != user:
+            raise WLException(404, "No such photo.")
 
     return photo.invite_photo.path
