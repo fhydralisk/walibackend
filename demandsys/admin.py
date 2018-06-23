@@ -4,9 +4,17 @@ from .models import ProductWaterContent, ProductQuality, ProductTypeL2, ProductT
 # Register your models here.
 
 
-class ShowIdAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
+class ProductDemandPhotoInline(admin.TabularInline):
+    model = ProductDemandPhoto
+    extra = 1
 
 
-admin.site.register([ProductWaterContent, ProductQuality, ProductTypeL2, ProductTypeL1, ProductTypeL3, ProductDemandPhoto])
-admin.site.register(ProductDemand, ShowIdAdmin)
+class ProductDemandAdmin(admin.ModelAdmin):
+    inlines = [ProductDemandPhotoInline]
+    list_display = ('id', '__unicode__')
+    list_display_links = ('id', '__unicode__')
+
+
+admin.site.register([ProductWaterContent, ProductQuality,
+                     ProductTypeL2, ProductTypeL1, ProductTypeL3, ProductDemandPhoto])
+admin.site.register(ProductDemand, ProductDemandAdmin)
