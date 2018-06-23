@@ -115,7 +115,7 @@ def detail(user, ivid):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def publish(user, invite, invite_photos):
+def publish(user, invite, invite_photos=None):
     """
 
     :param user: user object
