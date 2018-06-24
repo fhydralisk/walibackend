@@ -3,7 +3,7 @@ from .views import banner
 
 
 url_banner_patterns = [
-    url(r'^banner.jpg$', banner.ObtainBannerView.as_view()),
+    url(r'^banner(?P<seq>\d+).jpg$', banner.ObtainBannerView.as_view()),
 ]
 
 
