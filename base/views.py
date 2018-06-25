@@ -4,6 +4,8 @@ import traceback
 import logging
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+from rest_framework.exceptions import MethodNotAllowed
+from django.http.response import HttpResponseNotAllowed
 from django.conf import settings
 from django.http.response import HttpResponse
 from base.exceptions import WLException
@@ -72,6 +74,8 @@ class WLAPIView(object):
             reason = exc.message
             code = exc.code
             django_logger.info("WLException: %d, %s" % (code, reason))
+        elif isinstance(exc, MethodNotAllowed):
+            return HttpResponseNotAllowed(self.http_method_names)
         else:
             if settings.DEBUG:
                 dbg = traceback.format_exc()
