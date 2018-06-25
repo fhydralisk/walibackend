@@ -176,7 +176,7 @@ def publish(user, invite, invite_photos=None):
                     raise exc
 
             # do real update
-            photo_objs.update(ivid=invite)
+            photo_objs.update(ivid=invite_obj)
 
     return invite_obj
 
