@@ -131,4 +131,4 @@ class InviteProductPhoto(models.Model):
     photo_desc = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
-        return "%s: %s" % (self.ivid.__unicode__(), self.photo_desc if self.photo_desc is not None else "-")
+        return "%s: %s" % (self.ivid.__unicode__() if self.ivid is not None else "Null", self.photo_desc if self.photo_desc is not None else "-")
