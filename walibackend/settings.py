@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'logsys',
     'backgroundsys',
     'apperancesys',
+    'pushsys',
 ]
 
 MIDDLEWARE = [
