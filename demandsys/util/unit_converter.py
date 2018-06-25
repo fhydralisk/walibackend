@@ -39,9 +39,13 @@ class UnitMetric(object):
     def scaled_value(self):
         raise NotImplementedError
 
-    @staticmethod
-    def from_scaled_value(value, unit):
-        return UnitMetric(float(value) / UnitMetric.SCALE[unit], unit)
+    @classmethod
+    def from_scaled_value(cls, value, unit):
+        return cls(float(value) / UnitMetric.SCALE[unit], unit)
+
+    @classmethod
+    def zero(cls, unit):
+        return cls(0, unit)
 
     def __cmp__(self, other):
         if not isinstance(other, self.__class__):
@@ -71,19 +75,19 @@ class UnitMetric(object):
 
     def __add__(self, other):
         if isinstance(other, self.__class__):
-            return UnitMetric.from_scaled_value(self.scaled_value() + other.scaled_value(), self._unit)
+            return self.__class__.from_scaled_value(self.scaled_value() + other.scaled_value(), self._unit)
         else:
             raise TypeError("Cannot operate with %s." % str(other.__class__))
 
     def __sub__(self, other):
         if isinstance(other, self.__class__):
-            return UnitMetric.from_scaled_value(self.scaled_value() - other.scaled_value(), self._unit)
+            return self.__class__.from_scaled_value(self.scaled_value() - other.scaled_value(), self._unit)
         else:
             raise TypeError("Cannot operate with %s." % str(other.__class__))
 
     def __mul__(self, other):
         if isinstance(other, Number):
-            return UnitMetric(self._quantity * other, self._unit)
+            return self.__class__(self._quantity * other, self._unit)
         elif (isinstance(other, UnitPriceMetric) and isinstance(self, UnitQuantityMetric))\
                 or (isinstance(self, UnitPriceMetric) and isinstance(other, UnitQuantityMetric)):
             # Self is price, other is quantity

@@ -9,6 +9,7 @@ from demandsys.models import ProductDemand
 from coresys.models import CoreDistributionMethod, CorePaymentMethod, CoreAddressArea
 from invitesys.model_choices.invite_enum import i_status_choice
 from demandsys.model_choices.demand_enum import unit_choice
+from demandsys.util.unit_converter import UnitQuantityMetric, UnitPriceMetric
 from usersys.model_choices.user_enum import role_choice
 
 
@@ -105,6 +106,12 @@ class InviteInfo(models.Model):
     @property
     def final_price(self):
         return self.total_price - self.earnest
+
+    def price_metric(self):
+        return UnitPriceMetric(self.price, self.unit)
+
+    def quantity_metric(self):
+        return UnitQuantityMetric(self.quantity, self.unit)
 
 
 class InviteProductPhoto(models.Model):

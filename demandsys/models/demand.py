@@ -92,8 +92,24 @@ class ProductDemand(models.Model):
         return
 
     def quantity_left(self):
-        # TODO: Implement this
-        return UnitQuantityMetric(self.quantity, self.unit)
+        from ordersys.models.order import OrderInfo
+        from ordersys.model_choices.order_enum import o_status_choice
+
+        orders_with_this_demand = OrderInfo.objects.select_related('ivid__dmid_s', 'ivid__dmid_t').filter(
+            models.Q(ivid__dmid_t=self) | models.Q(ivid__dmid_s=self),
+        ).exclude(
+            o_status=o_status_choice.CLOSED
+        )
+
+        count_order_quantity = UnitQuantityMetric.zero(self.unit)
+        for order in orders_with_this_demand:
+            count_order_quantity += order.ivid.quantity_metric()
+
+        return (
+            self.quantity_metric() - count_order_quantity
+            if count_order_quantity < self.quantity_metric()
+            else UnitQuantityMetric.zero(self.unit)
+        )
 
     def min_quantity_metric(self):
         return UnitQuantityMetric(self.min_quantity, self.unit)
