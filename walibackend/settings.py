@@ -180,6 +180,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 UPLOAD_ORDER_PHOTO = 'upload/order/receipt/%Y/%m/%d/'
 UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/%Y/%m/%d/'
 UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/%Y/%m/%d/'
+UPLOAD_INVITE_PHOTO = 'upload/invite/origin/%Y/%m/%d/'
 UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/%Y/%m/%d/'
 CONTRACTS_GENERATE = 'contract/%Y/%m/%d/'
 CONTRACTS_TEMPLATE = 'contract_template/'

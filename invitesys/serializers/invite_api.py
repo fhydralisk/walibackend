@@ -49,6 +49,7 @@ class ObtainInviteDetailSerializer(serializers.Serializer):
 class PublishInviteSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     invite = serializers.JSONField()
+    invite_photos = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
 
     def validate(self, attrs):
         user = sid_getuser(attrs["user_sid"])

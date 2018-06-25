@@ -1,11 +1,13 @@
+from django.forms import modelform_factory
 from base.exceptions import WLException, default_exception, Error500, Error404
 from base.util.misc_validators import validators
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
 from usersys.model_choices.user_enum import role_choice
+from usersys.models import UserBase
 from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
-from invitesys.models import InviteInfo, InviteCancelReason
+from invitesys.models import InviteInfo, InviteCancelReason, InviteProductPhoto
 from .contracts import create_contract, get_current_template
 
 MAP_TINVITE_INVITE_STATUS = {
@@ -113,11 +115,12 @@ def detail(user, ivid):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def publish(user, invite):
+def publish(user, invite, invite_photos=None):
     """
 
     :param user: user object
     :param invite: invite data
+    :param invite_photos
     :return:
     """
     # First check if the user is validated
@@ -144,6 +147,37 @@ def publish(user, invite):
 
     # publish invite
     invite_obj.save()
+
+    if user.role == role_choice.SELLER:
+        # create invite photos
+        if invite_obj.dmid_s is not None:
+            dm_photos = invite_obj.dmid_s.demand_photo.filter(inuse=True)
+            for dm_photo in dm_photos:
+                InviteProductPhoto.objects.create(
+                    ivid=invite_obj,
+                    uploader=user,
+                    invite_photo=dm_photo.demand_photo,
+                    invite_photo_snapshot=dm_photo.demand_photo_snapshot,
+                    inuse=True,
+                    photo_desc=dm_photo.photo_desc
+                )
+
+        exc = WLException(400, "invite_photos contains invalid photo id.")
+        if invite_photos is not None:
+            photo_objs = InviteProductPhoto.objects.select_related('ivid').filter(id__in=invite_photos, inuse=True)
+            if photo_objs.count() != len(invite_photos):
+                raise exc
+
+            # validate photo first
+            for photo_obj in photo_objs:
+                if photo_obj.ivid is not None:
+                    raise exc
+                if photo_obj.uploader != user:
+                    raise exc
+
+            # do real update
+            photo_objs.update(ivid=invite_obj)
+
     return invite_obj
 
 
@@ -268,3 +302,69 @@ def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason
 @default_exception(Error500)
 def get_reason_classes():
     return InviteCancelReason.objects.filter(in_use=True).all()
+
+
+@default_exception(Error500)
+@user_from_sid(Error404)
+def upload_invite_photo(user, photo_desc, photo_files_form_obj, ivid=None):
+    # type: (UserBase, str, object, InviteInfo) -> int
+    if ivid is not None:
+        if ivid.seller != user:
+            raise WLException(404, "No such invite.")
+
+    if user.role != role_choice.SELLER:
+        raise WLException(403, "Only seller can submit invite photos.")
+
+    # Real submit
+    photo = InviteProductPhoto(ivid=ivid, photo_desc=photo_desc, inuse=True, uploader=user)
+    submit_form = modelform_factory(
+        InviteProductPhoto, fields=('invite_photo', )
+    )(files=photo_files_form_obj, instance=photo)
+    if submit_form.is_valid():
+        submit_form.save()
+        return photo.id
+    else:
+        raise WLException(400, str(submit_form.errors))
+
+
+@default_exception(Error500)
+@user_from_sid(Error404)
+def delete_invite_photo(user, photo_id):
+    try:
+        photo = InviteProductPhoto.objects.filter(id=photo_id, inuse=True).get()
+    except InviteProductPhoto.DoesNotExist:
+        raise WLException(404, "No such photo.")
+
+    if photo.uploader != user:
+        raise WLException(404, "No such photo.")
+
+    if photo.ivid is not None:
+        if photo.ivid.seller != user:
+            raise WLException(404, "No such photo.")
+
+        if photo.ivid.i_status not in {
+            i_status_choice.STARTED,
+        }:
+            raise WLException(403, "Cannot delete photo with status %d" % photo.ivid.i_status)
+
+    photo.inuse = False
+    photo.save()
+
+
+@default_exception(Error500)
+@user_from_sid(Error404)
+def get_invite_photo(user, photo_id):
+    # type: (UserBase, int) -> str
+    try:
+        photo = InviteProductPhoto.objects.filter(id=photo_id, inuse=True).get()
+    except InviteProductPhoto.DoesNotExist:
+        raise WLException(404, "No such photo.")
+
+    if photo.ivid is not None:
+        if photo.ivid.uid_s != user and photo.ivid.uid_t != user:
+            raise WLException(404, "No such photo.")
+    else:
+        if photo.uploader != user:
+            raise WLException(404, "No such photo.")
+
+    return photo.invite_photo.path
