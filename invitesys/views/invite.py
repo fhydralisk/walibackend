@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
-from invitesys.serializers.invite_display import InviteReadableDisplaySerializer, InviteReadableDetailDisplaySerializer
+from invitesys.serializers.invite_display import InviteReadableDisplaySerializer
 from invitesys.serializers.invite_api import (
     FlowHandleSerializer, ObtainInviteSerializer, ObtainInviteDetailSerializer,
     PublishInviteSerializer, InviteCancelReasonDisplaySerializer
@@ -17,7 +17,7 @@ class FlowHandleView(WLAPIView, APIView):
         invite = handle(**seri.validated_data)
 
         if invite is not None:
-            return_result = {"invite": InviteReadableDetailDisplaySerializer(invite).data}
+            return_result = {"invite": InviteReadableDisplaySerializer(invite).data}
         else:
             return_result = {}
 
@@ -51,7 +51,7 @@ class ObtainInviteDetailView(WLAPIView, APIView):
         seri = ObtainInviteDetailSerializer(data=data)
         self.validate_serializer(seri)
         iv = detail(**seri.data)
-        seri_invite = InviteReadableDetailDisplaySerializer(iv)
+        seri_invite = InviteReadableDisplaySerializer(iv)
 
         return self.generate_response(
             data={
@@ -68,7 +68,7 @@ class PublishInviteView(WLAPIView, APIView):
         seri = PublishInviteSerializer(data=data)
         self.validate_serializer(seri)
         iv = publish(**seri.validated_data)
-        seri_invite = InviteReadableDetailDisplaySerializer(iv)
+        seri_invite = InviteReadableDisplaySerializer(iv)
 
         return self.generate_response(
             data={

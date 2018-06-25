@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from usersys.serializers.validate_api import ValidationInfoInvoiceSerializer
 from invitesys.models import InviteInfo
-from invitesys.serializers.invite_display import InviteReadableDetailDisplaySerializer
+from invitesys.serializers.invite_display import InviteReadableDisplaySerializer
 from ordersys.models import OrderProtocol, OrderInfo, OrderReceiptPhoto
 from ordersys.model_choices.order_enum import change_type_choice
 from ordersys.model_choices.photo_enum import photo_type_choice
@@ -42,7 +42,7 @@ class OrderProtocolDisplaySerializer(serializers.ModelSerializer):
 class OrderInfoDisplaySerializer(serializers.ModelSerializer):
     current_protocol = OrderProtocolDisplaySerializer(read_only=True)
     current_receipt = PaymentReceiptSerializer(read_only=True)
-    invite = InviteReadableDetailDisplaySerializer(source='ivid', read_only=True)
+    invite = InviteReadableDisplaySerializer(source='ivid', read_only=True)
     logistics = OrderLogisticsInfoSerializer(source='order_logistics', read_only=True, many=True)
     invoice = ValidationInfoInvoiceSerializer(source='buyer_invoice_info', read_only=True)
     buyer_address = BuyerAddressSerializer(source='ivid')
