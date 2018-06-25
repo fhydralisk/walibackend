@@ -10,18 +10,21 @@ from usersys.models import UserSid
 from django.utils.timezone import now
 
 
-def get_sid(sidstr):
+def get_sid(sidstr, ignore_expire=False):
     try:
-        sid = UserSid.objects.get(sid=sidstr, is_login=True, expire_datetime__gte=now())
+        if ignore_expire:
+            sid = UserSid.objects.get(sid=sidstr, is_login=True)
+        else:
+            sid = UserSid.objects.get(sid=sidstr, is_login=True, expire_datetime__gte=now())
     except UserSid.DoesNotExist:
         return None
 
     return sid
 
 
-def sid_to_user(sid):
+def sid_to_user(sid, ignore_expire=False):
     # TODO: Cache sid-user map
-    sidobj = get_sid(sid)
+    sidobj = get_sid(sid, ignore_expire)
 
     return sidobj.uid if sidobj is not None else None
 
@@ -67,11 +70,12 @@ def sid_destroy(sid):
         raise KeyError("Sid not exist")
 
 
-def sid_getuser(sid):
+def sid_getuser(sid, ignore_expire=False):
     """
     Get the corresponded user object.
     :param sid:
+    :param ignore_expire:
     :return: corresponded user object
     """
-    return sid_to_user(sid)
+    return sid_to_user(sid, ignore_expire)
 

@@ -33,7 +33,7 @@ def login(pn, password, role, ipaddr):
 
 @default_exception(Error500)
 def logout(user_sid, pn):
-    user = sid_getuser(user_sid)
+    user = sid_getuser(user_sid, ignore_expire=True)
     if user is None:
         raise Error404("user_id do not exist")
 
