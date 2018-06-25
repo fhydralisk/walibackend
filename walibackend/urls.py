@@ -24,6 +24,8 @@ import demandsys.urls
 import ordersys.urls
 import paymentsys.urls
 import logsys.urls
+import apperancesys.urls
+
 
 urlpatterns = [
     url(r'^bg/', admin.site.urls),
@@ -34,5 +36,6 @@ urlpatterns = [
     url(r'^order/', include(ordersys.urls.url_pattern)),
     url(r'^payment/', include(paymentsys.urls.url_patterns)),
     url(r'^log/', include(logsys.urls.url_patterns)),
-    url(r'^admin/', include(admin_site.urls))
+    url(r'^admin/', include(admin_site.urls)),
+    url(r'^appearance/', include(apperancesys.urls.url_patterns)),
 ]

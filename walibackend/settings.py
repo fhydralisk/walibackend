@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'paymentsys',
     'logsys',
     'backgroundsys',
+    'apperancesys',
 ]
 
 MIDDLEWARE = [
@@ -177,6 +178,7 @@ STATIC_URL = '/static/'
 # FIXME: this path shall be changed
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+UPLOAD_APPEARANCE_BANNER = 'upload/base/banner/%Y/%m/%d/'
 UPLOAD_ORDER_PHOTO = 'upload/order/receipt/%Y/%m/%d/'
 UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/%Y/%m/%d/'
 UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/%Y/%m/%d/'
