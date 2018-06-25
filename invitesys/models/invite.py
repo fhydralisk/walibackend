@@ -86,6 +86,24 @@ class InviteInfo(models.Model):
             raise AssertionError("Either inviter or invitee should be buyer")
 
     @property
+    def buyer_demand(self):
+        if self.buyer == self.uid_s:
+            return self.dmid_s
+        elif self.buyer == self.uid_t:
+            return self.dmid_t
+        else:
+            raise AssertionError("Either inviter or invitee should be buyer")
+
+    @property
+    def seller_demand(self):
+        if self.seller == self.uid_s:
+            return self.dmid_s
+        elif self.seller == self.uid_t:
+            return self.dmid_t
+        else:
+            raise AssertionError("Either inviter or invitee should be buyer")
+
+    @property
     def seller(self):
         if self.uid_s.role == role_choice.SELLER:
             return self.uid_s

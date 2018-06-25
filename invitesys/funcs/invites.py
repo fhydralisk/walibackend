@@ -148,20 +148,22 @@ def publish(user, invite, invite_photos=None):
     # publish invite
     invite_obj.save()
 
-    if user.role == role_choice.SELLER:
-        # create invite photos
-        if invite_obj.dmid_s is not None:
-            dm_photos = invite_obj.dmid_s.demand_photo.filter(inuse=True)
-            for dm_photo in dm_photos:
-                InviteProductPhoto.objects.create(
-                    ivid=invite_obj,
-                    uploader=user,
-                    invite_photo=dm_photo.demand_photo,
-                    invite_photo_snapshot=dm_photo.demand_photo_snapshot,
-                    inuse=True,
-                    photo_desc=dm_photo.photo_desc
-                )
+    # create invite photos
+    if invite_obj.seller_demand is not None:
+        dm_photos = invite_obj.seller_demand.demand_photo.filter(inuse=True)
+        for dm_photo in dm_photos:
+            InviteProductPhoto.objects.create(
+                ivid=invite_obj,
+                uploader=user,
+                invite_photo=dm_photo.demand_photo,
+                invite_photo_snapshot=dm_photo.demand_photo_snapshot,
+                inuse=True,
+                photo_desc=dm_photo.photo_desc
+            )
 
+    if user.role == role_choice.SELLER:
+
+        # bind invite photo
         exc = WLException(400, "invite_photos contains invalid photo id.")
         if invite_photos is not None:
             photo_objs = InviteProductPhoto.objects.select_related('ivid').filter(id__in=invite_photos, inuse=True)
