@@ -18,6 +18,7 @@ class WLAPIView(object):
     parser_classes = (JSONParser, )
     DEFAULT_VALIDATE_EXC_CODE = 400
     ERROR_HTTP_STATUS = False
+    http_method_names = ['get', 'post', 'options']
 
     def generate_response(self, data, context):
         return Response(data={
