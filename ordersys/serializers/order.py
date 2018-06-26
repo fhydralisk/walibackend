@@ -1,9 +1,10 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from usersys.serializers.validate_api import ValidationInfoInvoiceSerializer
 from invitesys.models import InviteInfo
 from invitesys.serializers.invite_display import InviteReadableDisplaySerializer
 from ordersys.models import OrderProtocol, OrderInfo, OrderReceiptPhoto
-from ordersys.model_choices.order_enum import change_type_choice
+from ordersys.model_choices.order_enum import op_type_choice
 from ordersys.model_choices.photo_enum import photo_type_choice
 from paymentsys.serializers.receipt import PaymentReceiptSerializer
 from .distribution import OrderLogisticsInfoSerializer
@@ -24,12 +25,20 @@ class BuyerAddressSerializer(serializers.ModelSerializer):
 
 class OrderProtocolSubmitSerializer(serializers.ModelSerializer):
 
-    price = serializers.FloatField(min_value=0.01, required=False)
-    change_type = serializers.ChoiceField(choices=change_type_choice.choice, required=False)
+    c_price = serializers.FloatField(min_value=0.01, required=False)
 
     class Meta:
         model = OrderProtocol
-        fields = ('op_type', 'price', 'change_type', "description")
+        fields = ('op_type', 'c_price', "description")
+
+    def validate(self, attrs):
+        if attrs['op_type'] == op_type_choice.ADJUST_PRICE:
+            if 'c_price' not in attrs:
+                raise ValidationError({
+                    u'c_price': ["This field is required."]
+                }, code=400)
+
+        return attrs
 
 
 class OrderProtocolDisplaySerializer(serializers.ModelSerializer):

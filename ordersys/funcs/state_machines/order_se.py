@@ -65,25 +65,12 @@ def append_order_protocol_info(extra_ctx, **kwargs):
     if not pseri.is_valid():
         raise WLException(400, errors_summery(pseri))
 
-    c_price = None
-    if pseri.validated_data["op_type"] == op_type_choice.ADJUST_PRICE:
-        if pseri.validated_data["change_type"] == change_type_choice.REFUND_EARNEST:
-            if pseri.validated_data["price"] > order.ivid.earnest:
-                raise WLException(400, "price must be less than earnest")
-            else:
-                c_price = order.ivid.earnest - pseri.validated_data["price"]
-
-        elif pseri.validated_data["change_type"] == change_type_choice.ADJUST_FINAL:
-            c_price = order.ivid.earnest + pseri.validated_data["price"]
-        else:
-            raise AssertionError("Unexpected change type.")
-
     _validate_and_close_existing_protocol(order)
 
     new_protocol = OrderProtocol()
     new_protocol.op_type = pseri.validated_data["op_type"]
     new_protocol.description = pseri.validated_data["description"]
-    new_protocol.c_price = c_price
+    new_protocol.c_price = pseri.validated_data.get("c_price", None)
     new_protocol.oid = order
     new_protocol.p_status = p_status_choice.CREATED
     new_protocol.init_p_operate_status()
