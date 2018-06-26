@@ -72,7 +72,7 @@ class WLAPIView(object):
         if isinstance(exc, WLException):
             reason = exc.message
             code = exc.code
-            logger.warn("WLException: %d, %s" % (code, reason))
+            logger.warn("WLException: %d, %s" % (code, reason), extra={"request": self.request})
         elif isinstance(exc, MethodNotAllowed):
             return HttpResponseNotAllowed(self.http_method_names)
         else:
