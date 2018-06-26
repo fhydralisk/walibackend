@@ -1,10 +1,13 @@
 import hashlib
 import jpush
+import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from pushsys.models import JPushSecret, PushTemplate
 from pushsys.exceptions import *
 
+
+logger = logging.getLogger(__name__)
 
 jpush_secret_obj = JPushSecret.objects.last()  # type: JPushSecret
 if jpush_secret_obj is None:
@@ -57,13 +60,13 @@ def send_push_to(content, registration_id=None, alias=None, tags=None, raise_exc
         push.notification = jpush.notification(alert=content)
         push.send()
 
-    except Exception as e:
+    except Exception:
+        logger.exception(
+            "Exception occured when sending JPush: content=%s, reg_id=%s, alias=%s, tags=%s"
+            % (str(content), str(registration_id), str(alias), str(tags))
+        )
         if raise_exception:
             raise
-        else:
-            # TODO: How to log this?
-
-            pass
 
 
 def send_push_to_phones(content, pns, raise_exception):
