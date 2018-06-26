@@ -123,19 +123,61 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'usersys.UserBase'
 
-# TODO: Add LOG
+# Add LOG
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'stream': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'debug_stream': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(pathname)s'
+                      ' %(lineno)d %(message)s',
+        },
+        'request_stream': {
+            '()': 'base.util.log.RequestDetailFormatter',
+            'format':  '%(asctime)s %(name)-12s %(levelname)-8s'
+                       ' %(request_method)s %(request_uri)s %(request_body)s'
+                       ' %(message)s',
+        },
+    },
     'handlers': {
-        'console': {
+        'stream': {
             'class': 'logging.StreamHandler',
+            'formatter': 'stream',
+        },
+        'debug_stream': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'debug_stream',
+            'filters': ['require_debug_true'],
+        },
+        'request_stream': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'request_stream',
         },
     },
     'loggers': {
         'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'handlers': ['debug_stream'],
+            'level': 'DEBUG',
+        },
+        '': {
+            'level': 'WARNING',
+            'handlers': ['stream', ],
+        },
+        'base': {
+            'level': 'WARNING',
+            'handlers': ['request_stream', ],
+            'propagate': False,
         },
     },
 }

@@ -1,6 +1,5 @@
 import urllib
 import json
-import traceback
 import logging
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
@@ -12,7 +11,7 @@ from base.exceptions import WLException
 from base.util.serializer_helper import errors_summery
 
 
-django_logger = logging.getLogger("django.server")
+logger = logging.getLogger(__name__)
 
 
 class WLAPIView(object):
@@ -73,22 +72,18 @@ class WLAPIView(object):
         if isinstance(exc, WLException):
             reason = exc.message
             code = exc.code
-            django_logger.info("WLException: %d, %s" % (code, reason))
+            logger.warn("WLException: %d, %s" % (code, reason))
         elif isinstance(exc, MethodNotAllowed):
             return HttpResponseNotAllowed(self.http_method_names)
         else:
-            if settings.DEBUG:
-                dbg = traceback.format_exc()
-                django_logger.error(dbg)
-                # traceback.print_exc()
-
             if settings.DEBUG:
                 reason = "%s %s" % (str(exc.__class__), str(exc))
             else:
                 reason = "Internal Error"
 
             code = 500
-            # TODO: Log the detailed exception
+            # Log the detailed exception
+            logger.exception("Exception not handled", extra={"request": self.request})
 
         if self.ERROR_HTTP_STATUS:
             return HttpResponse(content=reason, status=code)
