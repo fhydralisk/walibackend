@@ -9,6 +9,7 @@ class JPushSecret(models.Model):
     app_key = models.CharField(max_length=256)
     master_secret = models.CharField(max_length=256)
     upload_date = models.DateTimeField(auto_now_add=True)
+    production = models.BooleanField(default=True)
 
 
 class PushTemplate(models.Model):

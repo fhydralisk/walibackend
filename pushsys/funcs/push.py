@@ -12,16 +12,19 @@ logger = logging.getLogger(__name__)
 jpush_secret_obj = JPushSecret.objects.last()  # type: JPushSecret
 if jpush_secret_obj is None:
     _jpush = None
+    production = False
 else:
     _jpush = jpush.JPush(jpush_secret_obj.app_key, jpush_secret_obj.master_secret)
     _jpush.set_logging("DEBUG")
+    production = jpush_secret_obj.production
 
 
 @receiver(post_save, sender=JPushSecret)
 def change_jpush_secret(instance, **kwargs):
-    global jpush_secret_obj, _jpush
+    global jpush_secret_obj, _jpush, production
     jpush_secret_obj = instance
     _jpush = jpush.JPush(jpush_secret_obj.app_key, jpush_secret_obj.master_secret)
+    production = jpush_secret_obj.production
 
 
 def get_jpush():
@@ -31,8 +34,8 @@ def get_jpush():
     return _jpush
 
 
-def send_push_to(content, registration_id=None, alias=None, tags=None, raise_exception=False):
-    # type: (str, list, list, list) -> None
+def send_push_to(content, all_devices=False, registration_id=None, alias=None, tags=None, raise_exception=False):
+    # type: (str, bool, list, list, list) -> None
 
     def append_audience(a_type, container, audience_list):
         if isinstance(audience_list, (list, tuple)):
@@ -44,18 +47,22 @@ def send_push_to(content, registration_id=None, alias=None, tags=None, raise_exc
 
     try:
         jp = get_jpush()
-
-        audience = []
-        append_audience(jpush.registration_id, audience, registration_id)
-        append_audience(jpush.alias, audience, alias)
-        append_audience(jpush.tag, audience, tags)
-
-        if len(audience) == 0:
-            raise JPushValueError("No audience")
-
         push = jp.create_push()
+        push.options = {"apns_production": production, }
 
-        push.audience = jpush.audience(*audience)
+        if all_devices:
+            push.audience = jpush.all_
+        else:
+            audience = []
+            append_audience(jpush.registration_id, audience, registration_id)
+            append_audience(jpush.alias, audience, alias)
+            append_audience(jpush.tag, audience, tags)
+
+            if len(audience) == 0:
+                raise JPushValueError("No audience")
+
+            push.audience = jpush.audience(*audience)
+
         push.platform = jpush.all_
         push.notification = jpush.notification(alert=content)
         push.send()
