@@ -1,7 +1,11 @@
+import sys
 from django.contrib import admin
 import models
-import pushsys.funcs.push  # Don't remove, for trigger.
-
+from .funcs.utils.push import initialize
 
 # Register your models here.
 admin.site.register([models.JPushSecret, models.PushTemplate])
+
+# Avoid accessing models when migrate at application start
+if 'migrat' not in ''.join(sys.argv):
+    initialize()

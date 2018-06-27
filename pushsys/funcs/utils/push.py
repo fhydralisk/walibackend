@@ -3,20 +3,14 @@ import jpush
 import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from pushsys.models import JPushSecret, PushTemplate
+from pushsys.models import JPushSecret
 from pushsys.exceptions import *
 
 
 logger = logging.getLogger(__name__)
-
-jpush_secret_obj = JPushSecret.objects.last()  # type: JPushSecret
-if jpush_secret_obj is None:
-    _jpush = None
-    production = False
-else:
-    _jpush = jpush.JPush(jpush_secret_obj.app_key, jpush_secret_obj.master_secret)
-    _jpush.set_logging("DEBUG")
-    production = jpush_secret_obj.production
+jpush_secret_obj = None
+_jpush = None
+production = False
 
 
 @receiver(post_save, sender=JPushSecret)
@@ -28,14 +22,15 @@ def change_jpush_secret(instance, **kwargs):
 
 
 def get_jpush():
+    # type: () -> jpush.JPush
     if _jpush is None:
-        raise JPushNoAppException
+        raise JPushNoAppException()
 
     return _jpush
 
 
 def send_push_to(content, all_devices=False, registration_id=None, alias=None, tags=None, raise_exception=False):
-    # type: (str, bool, list, list, list) -> None
+    # type: (str, bool, list, list, list, bool) -> None
 
     def append_audience(a_type, container, audience_list):
         if isinstance(audience_list, (list, tuple)):
@@ -76,7 +71,7 @@ def send_push_to(content, all_devices=False, registration_id=None, alias=None, t
             raise
 
 
-def send_push_to_phones(content, pns, raise_exception):
+def send_push_to_phones(content, pns, raise_exception=False):
 
     def to_md5(pn):
         h1 = hashlib.md5()
@@ -85,3 +80,17 @@ def send_push_to_phones(content, pns, raise_exception):
 
     pns_md5 = map(to_md5, pns)
     send_push_to(content, alias=pns_md5, raise_exception=raise_exception)
+
+
+def initialize():
+    # prevent pycharm from removing this import
+    global jpush_secret_obj, _jpush, production
+    jpush_secret_obj = JPushSecret.objects.last()  # type: JPushSecret
+    if jpush_secret_obj is None:
+        _jpush = None
+        production = False
+    else:
+        _jpush = jpush.JPush(jpush_secret_obj.app_key, jpush_secret_obj.master_secret)
+        _jpush.set_logging("DEBUG")
+        production = jpush_secret_obj.production
+

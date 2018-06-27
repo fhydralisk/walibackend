@@ -9,6 +9,12 @@ from ordersys.model_choices.order_enum import o_status_choice, op_type_choice, p
 
 
 class OrderInfo(models.Model):
+
+    def __init__(self, *args, **kwargs):
+        super(OrderInfo, self).__init__(*args, **kwargs)
+
+        self.initial_o_status = self.o_status
+
     ivid = models.OneToOneField(
         InviteInfo,
         verbose_name=_("Invite"),
