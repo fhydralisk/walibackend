@@ -3,7 +3,7 @@ import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from invitesys.models import InviteInfo
-from .utils.template import get_system_template
+from .utils.template import get_state_change_template
 from .utils.push import send_push_to_phones
 from pushsys.choice.push_state_choice import push_state_choice
 from pushsys.exceptions import JPushNoAppException
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=InviteInfo)
 def order_push(instance, *args, **kwargs):
     # type: (InviteInfo, list, dict) -> None
-    template, ctx = get_system_template(
+    template, ctx = get_state_change_template(
         push_state_choice.INVITEINFO_I_STATUS, instance.initial_i_status, instance.i_status
     )
 

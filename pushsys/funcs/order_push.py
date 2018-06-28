@@ -3,7 +3,7 @@ import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from ordersys.models import OrderInfo
-from .utils.template import get_system_template
+from .utils.template import get_state_change_template
 from .utils.push import send_push_to_phones
 from pushsys.choice.push_state_choice import push_state_choice
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=OrderInfo)
 def order_push(instance, *args, **kwargs):
     # type: (OrderInfo, list, dict) -> None
-    template, ctx = get_system_template(
+    template, ctx = get_state_change_template(
         push_state_choice.ORDERINFO_O_STATUS, instance.initial_o_status, instance.o_status
     )
 
