@@ -30,7 +30,7 @@ def get_jpush():
     return _jpush
 
 
-def send_push_to(content, all_devices=False, registration_id=None, alias=None, tags=None, raise_exception=False):
+def send_push_to(content, extra, all_devices=False, registration_id=None, alias=None, tags=None, raise_exception=False):
     # type: (str, bool, list, list, list, bool) -> None
 
     def append_audience(a_type, container, audience_list):
@@ -60,7 +60,11 @@ def send_push_to(content, all_devices=False, registration_id=None, alias=None, t
             push.audience = jpush.audience(*audience)
 
         push.platform = jpush.all_
-        push.notification = jpush.notification(alert=content)
+        push.notification = jpush.notification(
+            alert=content,
+            ios=jpush.ios(alert=content, extras=extra),
+            android=jpush.android(alert=content, extras=extra)
+        )
         push.send()
 
     except Exception:
@@ -72,7 +76,7 @@ def send_push_to(content, all_devices=False, registration_id=None, alias=None, t
             raise
 
 
-def send_push_to_phones(content, pns, raise_exception=False):
+def send_push_to_phones(content, extra, pns, raise_exception=False):
 
     def to_md5(pn):
         h1 = hashlib.md5()
@@ -80,7 +84,7 @@ def send_push_to_phones(content, pns, raise_exception=False):
         return h1.hexdigest()
 
     pns_md5 = map(to_md5, pns)
-    send_push_to(content, alias=pns_md5, raise_exception=raise_exception)
+    send_push_to(content, extra, alias=pns_md5, raise_exception=raise_exception)
     logger.debug("Push sent to %s" % str(pns))
 
 
