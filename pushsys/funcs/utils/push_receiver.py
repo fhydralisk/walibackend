@@ -33,6 +33,7 @@ def push_receiver(instance, logger, template_state_name,
                        "initial=%s, target=%s" % (template_state_name, str(initial_status), str(status)))
         return
 
+    # Conditional Push. checks ctx["condition_func"]
     if "condition_func" in ctx:
         cond_func_str = ctx["condition_func"]
         try:
@@ -51,6 +52,7 @@ def push_receiver(instance, logger, template_state_name,
             return
 
     try:
+        # receivers: [ '13800138000', '15505505555', ... ]
         receivers = [operator.attrgetter("%s.pn" % x)(instance) for x in ctx['receivers']]
         # TODO: Move this into celery
         try:
