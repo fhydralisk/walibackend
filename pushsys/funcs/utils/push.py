@@ -81,6 +81,7 @@ def send_push_to_phones(content, pns, raise_exception=False):
 
     pns_md5 = map(to_md5, pns)
     send_push_to(content, alias=pns_md5, raise_exception=raise_exception)
+    logger.debug("Push sent to %s" % str(pns))
 
 
 def initialize():

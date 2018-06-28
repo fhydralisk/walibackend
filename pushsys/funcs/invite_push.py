@@ -13,14 +13,19 @@ logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=InviteInfo)
-def order_push(instance, *args, **kwargs):
+def invite_push(instance, *args, **kwargs):
     # type: (InviteInfo, list, dict) -> None
+    logger.debug("OrderInfo change detected, from %s to %s. getting templates."
+                 % (str(instance.initial_i_status), str(instance.i_status)))
+
     template, ctx = get_state_change_template(
         push_state_choice.INVITEINFO_I_STATUS, instance.initial_i_status, instance.i_status
     )
 
     if template is None:
         return
+
+    logger.debug("Template: %s" % template.__unicode__())
 
     if ctx is None:
         logger.warning("Trying to make a invite push without push_ctx field in the template row."
