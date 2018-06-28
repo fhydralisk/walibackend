@@ -19,6 +19,7 @@ def change_jpush_secret(instance, **kwargs):
     jpush_secret_obj = instance
     _jpush = jpush.JPush(jpush_secret_obj.app_key, jpush_secret_obj.master_secret)
     production = jpush_secret_obj.production
+    logger.info("JPushSecret updated.")
 
 
 def get_jpush():
