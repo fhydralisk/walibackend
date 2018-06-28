@@ -1,5 +1,6 @@
 import logging
 import operator
+from django.utils.module_loading import import_string
 from .template import get_state_change_template
 from .push import send_push_to_phones
 from pushsys.exceptions import *
@@ -31,6 +32,23 @@ def push_receiver(instance, logger, template_state_name,
         logger.warning("Trying to make a %s push without push_ctx field in the template row."
                        "initial=%s, target=%s" % (template_state_name, str(initial_status), str(status)))
         return
+
+    if "condition_func" in ctx:
+        cond_func_str = ctx["condition_func"]
+        try:
+            condition_func = import_string(cond_func_str)
+            if not condition_func(instance, ctx):
+                logger.debug("Do not send push %s %s->%s, because it does not meets the condition."
+                             % (template_state_name, str(initial_status), str(status)))
+                return
+        except ImportError:
+            logger.exception("Trying to call condition_func of %s %s->%s. but cannot import this function %s."
+                             % (template_state_name, str(initial_status), str(status), cond_func_str))
+            return
+        except TypeError:
+            logger.exception("Trying to call condition_func of %s %s->%s. but cannot call this function %s."
+                             % (template_state_name, str(initial_status), str(status), cond_func_str))
+            return
 
     try:
         receivers = [operator.attrgetter("%s.pn" % x)(instance) for x in ctx['receivers']]

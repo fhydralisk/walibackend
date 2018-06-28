@@ -22,3 +22,8 @@ def order_push(instance, *args, **kwargs):
         {'oid': instance.id}
     )
 
+
+# Conditional function for pushing when order is created.
+def cond_func_order_create_push(instance, ctx):
+    # type: (OrderInfo, dict) -> bool
+    return instance.operator == instance.ivid.seller

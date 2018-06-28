@@ -128,7 +128,7 @@ def sign_contract(user, cid, sign_method):
         contract.save()
         if create_order:
             # TODO: Log
-            create_order_func(contract.ivid)
+            create_order_func(user, contract.ivid)
 
     return contract
 
