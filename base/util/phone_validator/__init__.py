@@ -1,1 +1,2 @@
-from .validator import ConsolePhoneValidator, AliyunPhoneValidator, phone_validator
+from .validator import ConsolePhoneValidator, phone_validator
+from .ali_validator import AliyunPhoneValidator

@@ -236,7 +236,7 @@ DEFAULT_FILE_STORAGE = 'base.util.WLFileStorage.UUIDFileStorage'
 
 # Phone Validator
 
-PHONE_VALIDATOR = "base.util.phone_validator.validator.DummyPhoneValidator"
+PHONE_VALIDATOR = "base.util.phone_validator.ali_validator.AliyunPhoneValidator"
 
 # Lazy loading app key and secret
 SK_ALISMS = {}
