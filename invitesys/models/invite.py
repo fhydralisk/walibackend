@@ -21,6 +21,12 @@ class InviteCancelReason(models.Model):
 
 
 class InviteInfo(models.Model):
+
+    def __init__(self, *args, **kwargs):
+        super(InviteInfo, self).__init__(*args, **kwargs)
+
+        self.initial_i_status = self.i_status
+
     uid_s = models.ForeignKey(
         UserBase,
         on_delete=models.CASCADE,
