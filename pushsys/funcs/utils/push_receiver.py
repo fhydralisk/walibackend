@@ -2,7 +2,7 @@ import logging
 import operator
 from django.utils.module_loading import import_string
 from .template import get_state_change_template
-from pushsys.funcs import default_pusher
+from pushsys.funcs.default_pusher import default_pusher
 
 
 def push_receiver(instance, logger, template_state_name,
