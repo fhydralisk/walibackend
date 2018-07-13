@@ -53,6 +53,17 @@ def push_receiver(instance, logger, template_state_name,
     try:
         # receivers: [ '13800138000', '15505505555', ... ]
         receivers = [operator.attrgetter("%s.pn" % x)(instance) for x in ctx['receivers']]
+
+    except KeyError:
+        logger.error("%s push_ctx does not have receivers key."
+                     " initial=%s, target=%s" % (template_state_name, str(initial_status), str(status)))
+        return
+    except AttributeError:
+        logger.error("%s push_ctx's receiver field is not valid. order info object don't have that attributes"
+                     " initial=%s, target=%s" % (template_state_name, str(initial_status), str(status)))
+        return
+
+    try:
         # TODO: Move this into celery
         pusher.send_push_to_phones(
             template.template,
@@ -60,10 +71,5 @@ def push_receiver(instance, logger, template_state_name,
             receivers,
             False
         )
-
-    except KeyError:
-        logger.error("%s push_ctx does not have receivers key."
-                     "initial=%s, target=%s" % (template_state_name, str(initial_status), str(status)))
-    except AttributeError:
-        logger.error("%s push_ctx's receiver field is not valid. order info object don't have that attributes"
-                     "initial=%s, target=%s" % (template_state_name, str(initial_status), str(status)))
+    except Exception:
+        logger.exception("Error while sending push notifications")
