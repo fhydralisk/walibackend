@@ -261,6 +261,12 @@ STRING_VALIDATORS = [
 # User_Sid duration
 SID_DURATION = datetime.timedelta(days=10)
 
+# Pusher
+PUSHER = {
+    "clz": "pushsys.funcs.pusher.jpusher.jpusher.JPusher",
+    "kwargs": {}
+}
+
 # CORS Staffs
 
 CORS_ALLOW_CREDENTIALS = True

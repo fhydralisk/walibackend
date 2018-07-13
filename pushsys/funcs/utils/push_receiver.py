@@ -2,8 +2,7 @@ import logging
 import operator
 from django.utils.module_loading import import_string
 from .template import get_state_change_template
-from .push import send_push_to_phones
-from pushsys.exceptions import *
+from pushsys.funcs import pusher
 
 
 def push_receiver(instance, logger, template_state_name,
@@ -55,15 +54,12 @@ def push_receiver(instance, logger, template_state_name,
         # receivers: [ '13800138000', '15505505555', ... ]
         receivers = [operator.attrgetter("%s.pn" % x)(instance) for x in ctx['receivers']]
         # TODO: Move this into celery
-        try:
-            send_push_to_phones(
-                template.template,
-                {"type": extra_type, "content": extra_content},
-                receivers,
-                False
-            )
-        except JPushNoAppException:
-            logger.error("JPush cannot start because master key and app label do not exist in database.")
+        pusher.send_push_to_phones(
+            template.template,
+            {"type": extra_type, "content": extra_content},
+            receivers,
+            False
+        )
 
     except KeyError:
         logger.error("%s push_ctx does not have receivers key."
