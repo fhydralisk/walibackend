@@ -12,3 +12,8 @@ def _get_pusher():
 
 
 pusher = _get_pusher()
+
+
+def initialize():
+    # Avoid PyCharm from removing this import.
+    pass
