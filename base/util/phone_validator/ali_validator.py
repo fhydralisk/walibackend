@@ -5,48 +5,20 @@ from aliyunsdkdysmsapi.request.v20170525 import SendSmsRequest
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.profile import region_provider
 from .validator import BasePhoneValidator
-from django.db.models.signals import post_save, post_delete
 from base.models import PhoneValidatorMasterKey
+from base.util.db import LastLineConfigManager
 
 
 logger = logging.getLogger(__name__)
 
 
-class MasterKeyManager(object):
-
+class MasterKeyManager(LastLineConfigManager):
+    cls_logger = logger
     CLZ_MODEL = PhoneValidatorMasterKey
-    _instance = None
-
-    def __init__(self, reload_callback=None):
-        if callable(reload_callback):
-            self.reload_callback = reload_callback
-        elif reload_callback is not None:
-            raise TypeError("reload callback must be None or callable")
-        else:
-            self.reload_callback = None
-
-        post_save.connect(self.reload, sender=self.CLZ_MODEL)
-        post_delete.connect(self.reload, sender=self.CLZ_MODEL)
-
-    def reload(self, **kwargs):
-        logger.info("%s is reloading due to signals", self.CLZ_MODEL.__name__)
-        self.do_load()
-        if self.reload_callback is not None:
-            self.reload_callback(self._instance)
-
-    def do_load(self):
-        self._instance = self.extra_filter(self.CLZ_MODEL.objects).last()
 
     @staticmethod
     def extra_filter(qs):
         return qs.filter(in_use=True)
-
-    @property
-    def instance(self):
-        if self._instance is None:
-            self.do_load()
-
-        return self._instance
 
 
 class AliyunPhoneValidator(BasePhoneValidator):
