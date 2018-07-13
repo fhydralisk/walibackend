@@ -2,7 +2,7 @@ import logging
 import operator
 from django.utils.module_loading import import_string
 from .template import get_state_change_template
-from pushsys.funcs import pusher
+from pushsys.funcs import default_pusher
 
 
 def push_receiver(instance, logger, template_state_name,
@@ -65,7 +65,7 @@ def push_receiver(instance, logger, template_state_name,
 
     try:
         # TODO: Move this into celery
-        pusher.send_push_to_phones(
+        default_pusher.send_push_to_phones(
             template.template,
             {"type": extra_type, "content": extra_content},
             receivers,

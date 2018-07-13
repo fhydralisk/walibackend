@@ -11,7 +11,7 @@ def _get_pusher():
     return import_string(pusher_clz)(**pusher_kwargs)
 
 
-pusher = _get_pusher()
+default_pusher = _get_pusher()
 
 
 def initialize():
