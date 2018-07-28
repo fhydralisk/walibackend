@@ -48,6 +48,7 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     pn = models.CharField(_('phone number'), max_length=25, unique=True, validators=[
         validators.get_validator("phone number")
     ])
+    gender = models.BooleanFiels(default=True)
     role = models.IntegerField(_("user role"), choices=role_choice.choice)
     register_date = models.DateTimeField(_("register date"), auto_now_add=True)
     is_active = models.BooleanField(default=True)
