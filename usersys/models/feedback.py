@@ -23,3 +23,4 @@ class UserFeedback(models.Model):
         choices=handle_choice.choice,
         default=handle_choice.HANDLE_NONE
     )
+    reward = models.FloatField()
