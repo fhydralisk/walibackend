@@ -1,10 +1,11 @@
 from .admin_site import admin_site
-from model_admin import core_admin, order_admin
+from model_admin import core_admin, order_admin, user_admin
 
 
 managed = [
     core_admin,
     order_admin,
+    user_admin,
 ]
 
 

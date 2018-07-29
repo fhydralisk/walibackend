@@ -12,7 +12,7 @@ class UserFeedback(models.Model):
         UserBase,
         on_delete=models.CASCADE,
         related_name="feedback",
-        verbose_name=_("User id"),
+        verbose_name=_("User"),
     )
 
     wechat_id = models.CharField(max_length=255)
