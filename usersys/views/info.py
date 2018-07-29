@@ -14,3 +14,9 @@ class UserInfoView(WLAPIView, APIView):
         user = get_user_info(user_sid=data["user_sid"])
         useri = UserInfoSerialzier(user)
         return self.generate_response(data=useri.data, context=context)
+
+
+class UserFeedbackView(WLAPIView, APIView):
+    def post(self, request):
+        # TODO: Implement this view. Please reference views such as those in invitesys/views/invite.py
+        pass
