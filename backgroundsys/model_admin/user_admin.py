@@ -7,7 +7,7 @@ from usersys.models import UserFeedback
 
 
 class UserFeedbackAdmin(admin.ModelAdmin):
-    list_display = ('id', 'uid', 'wechat_id', 'content', 'handle', 'feedback_date')
+    list_display = ('id', 'uid', 'wechat_id', 'reward', 'content', 'handle', 'feedback_date')
     list_display_links = ('id', 'uid')
     list_editable = ('handle', )
     date_hierarchy = 'feedback_date'
