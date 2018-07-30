@@ -22,5 +22,6 @@ class UserFeedbackView(WLAPIView, APIView):
     def post(self, request):
         data, context = self.get_request_obj(request)
         seri = FeedbackApiSerializer(data=data)
+        self.validate_serializer(seri)
         reward = post_feedback(**seri.validated_data)
         return self.generate_response(data={"reward": reward}, context=context)
