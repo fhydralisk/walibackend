@@ -3,9 +3,9 @@ from rest_framework.views import APIView
 from rest_framework_extensions.etag.decorators import etag
 from django.conf import settings
 from django.http.response import FileResponse
-from base.exceptions import WLException
 from base.views import WLAPIView
 from apperancesys.funcs.banner import get_banner
+from apperancesys.funcs.placeholder2exceptions import get_placeholder2exception
 
 
 class ObtainBannerView(WLAPIView, APIView):
@@ -29,4 +29,4 @@ class ObtainBannerView(WLAPIView, APIView):
         try:
             return '"%d"' % self.banner_photos[seq].id
         except IndexError:
-            raise WLException(404, "No banner")
+            raise get_placeholder2exception("appearance/banner/ : no banner in  get_banner_etag")
