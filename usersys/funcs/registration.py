@@ -13,7 +13,7 @@ from base.util.phone_validator import phone_validator
 from base.util.misc_validators import validators
 from base.util.temp_session import create_session, update_session_dict, \
     destroy_session, get_session_dict, get_session, update_session
-
+from usersys.funcs.placeholder2exceptions import get_placeholder2exception
 from .session import RegistrationSessionKeys, ValidateStatus
 
 User = get_user_model()
@@ -23,7 +23,7 @@ User = get_user_model()
 def get_sid_by_phonenumber(pn):
     # validate phone number format
     if not validators.validate(pn, "phone number"):
-        raise Error401("Format of phone number is incorrect.")
+        raise get_placeholder2exception("user/register/pn/pn/ : format of phone number is incorrect")
 
     # Ensure that user did not access this api recently.
     sid_reverse = RegistrationSessionKeys.PN_2_SID % pn
@@ -80,13 +80,13 @@ def validate_sid(sid, pn, vcode):
     try:
         session = get_session_dict(sid)
     except KeyError:
-        raise Error404("Sid does not exist")
+        raise get_placeholder2exception("user/register/pn/validate/ : sid error")
 
     if pn != session.get(RegistrationSessionKeys.PHONE_NUMBER):
-        raise Error409("pn conflicts with sid")
+        raise get_placeholder2exception("user/register/pn/validate/ : sid conflicts with pn")
 
     if session.get(RegistrationSessionKeys.VALIDATE_STATUS) == ValidateStatus.VALIDATE_FAILED:
-        raise Error401("Validate code not match")
+        raise get_placeholder2exception("user/register/pn/validate/ :  Validation error")
 
     if session.get(RegistrationSessionKeys.VALIDATE_STATUS) == ValidateStatus.VALIDATE_SUCCEEDED:
         return
@@ -95,7 +95,7 @@ def validate_sid(sid, pn, vcode):
         # should not happen but cleanup in case
         destroy_session(sid)
         destroy_session(RegistrationSessionKeys.PN_2_SID % pn)
-        raise Error404("Sid does not exist")
+        raise get_placeholder2exception("user/register/pn/validate/ : sid error")
 
     if session.get(RegistrationSessionKeys.VALIDATE_STATUS) == ValidateStatus.VALIDATE_SENT:
         if session.get(RegistrationSessionKeys.VCODE) == vcode:
@@ -105,9 +105,9 @@ def validate_sid(sid, pn, vcode):
         else:
             session[RegistrationSessionKeys.VALIDATE_STATUS] = ValidateStatus.VALIDATE_FAILED
             update_session_dict(sid, session)
-            raise Error401("Validate code not match")
+            raise get_placeholder2exception("user/register/pn/validate/ :  Validation error")
 
-    raise Error500("Unexpected fork")
+    raise get_placeholder2exception("user/register/pn/validate/ : unexpected fork")
 
 
 @default_exception(Error500)
@@ -115,14 +115,14 @@ def register(sid, pn, password, role):
     try:
         session = get_session_dict(sid)
     except KeyError:
-        raise Error404("Sid does not exist")
+        raise get_placeholder2exception("user/register/pn/password/ : sid error")
 
     if pn != session.get(RegistrationSessionKeys.PHONE_NUMBER):
-        raise Error409("Phone number and sid do not match.")
+        raise get_placeholder2exception("user/register/pn/password/ : sid conflicts with pn")
 
     if session.get(RegistrationSessionKeys.VALIDATE_STATUS) == ValidateStatus.VALIDATE_SUCCEEDED:
         if len(User.objects.filter(pn=pn)) != 0:
-            raise Error401("User exists")
+            raise get_placeholder2exception('user/register/pn/password/ : user exists')
 
         # Validation is moved to serializers, Below is discarded
         # if not validators.validate(password, "user password"):
@@ -136,4 +136,4 @@ def register(sid, pn, password, role):
         destroy_session(sid)
 
     else:
-        raise Error405("Not validated")
+        raise get_placeholder2exception("user/register/pn/password/ : not validated")

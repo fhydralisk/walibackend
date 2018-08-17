@@ -1,5 +1,6 @@
-from base.exceptions import default_exception, Error500, Error404
+from base.exceptions import default_exception, Error500
 from apperancesys.models import Banner
+from apperancesys.funcs.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)
@@ -9,4 +10,4 @@ def get_banner(count):
         photos = Banner.objects.filter(in_use=True).order_by('-id')[:3]
         return photos
     except Banner.DoesNotExist:
-        raise Error404("No banner")
+        raise get_placeholder2exception("appearance/banner/ : no banner in get_banner")

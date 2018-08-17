@@ -15,7 +15,7 @@ class ObtainHotDemandSerializer(ObtainDemandSerializer):
 
 
 class ObtainDemandDetailSerializer(serializers.Serializer):
-    user_sid = serializers.CharField(max_length=60)
+    user_sid = serializers.CharField(max_length=60, required=False)
     id = serializers.IntegerField()
 
 

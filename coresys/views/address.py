@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
-from base.exceptions import WLException
-from coresys.models import CoreAddressArea, CoreAddressCity, CoreAddressProvince
+from coresys.models import CoreAddressCity, CoreAddressProvince
 from coresys.serializers.address_serializers import \
     CoreAddressAreaSerializer, CoreAddressCitySerializer, CoreAddressProvinceSerializer, CoreAddressProvinceFSerializer
+from coresys.funcs.placeholder2exceptions import get_placeholder2exception
 
 
 class GetProvinceView(WLAPIView, APIView):
@@ -17,26 +17,28 @@ class GetCityView(WLAPIView, APIView):
     def get(self, request):
         data, context = self.get_request_obj(request)
         try:
-            cseri = CoreAddressCitySerializer(CoreAddressCity.objects.filter(
+            cseri = CoreAddressCitySerializer(CoreAddressProvince.objects.get(id=int(data["pid"])).city.filter(
                 in_use=True,
-                pid=int(data["pid"])
             ), many=True)
             return self.generate_response(data={"cities": cseri.data}, context=context)
         except (KeyError, ValueError):
-            raise WLException(message="Expect pid", code=400)
+            raise get_placeholder2exception("core/address/city/ : expect pid")
+        except CoreAddressProvince.DoesNotExist:
+            raise get_placeholder2exception("core/address/city/ : pid not exist")
 
 
 class GetAreaView(WLAPIView, APIView):
     def get(self, request):
         data, context = self.get_request_obj(request)
         try:
-            cseri = CoreAddressAreaSerializer(CoreAddressArea.objects.filter(
-                in_use=True,
-                cid=int(data["cid"])
+            cseri = CoreAddressAreaSerializer(CoreAddressCity.objects.get(id=int(data["cid"])).area.filter(
+                in_use=True
             ), many=True)
             return self.generate_response(data={"areas": cseri.data}, context=context)
         except (KeyError, ValueError):
-            raise WLException(message="Expect cid", code=400)
+            raise get_placeholder2exception("core/address/area/ : expect cid")
+        except CoreAddressCity.DoesNotExist:
+            raise get_placeholder2exception("core/address/area/ : cit not exist")
 
 
 class GetAllFView(WLAPIView, APIView):

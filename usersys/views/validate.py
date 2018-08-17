@@ -5,12 +5,12 @@ from django.http.response import FileResponse
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 
-from base.exceptions import WLException
 from base.views import WLAPIView
 from usersys.funcs.validate import get_validate_photo, submit_validate_photo, \
     get_validate, save_validate, delete_validate_photo
 from usersys.serializers.validate_api import \
     ValidationPhotoSerializer, ValidationSubmitSerializer, ValidationInfoDisplaySeralizer
+from usersys.funcs.placeholder2exceptions import get_placeholder2exception
 
 
 class FetchPhotoView(WLAPIView, APIView):
@@ -41,7 +41,8 @@ class SubmitPhotoView(WLAPIView, APIView):
                 photo_files_form_obj=request.FILES
             )
         except KeyError:
-            raise WLException(message="Bad Request", code=400)
+            raise get_placeholder2exception("user/validate/submit_photo/ : bad request")
+
         else:
             return self.generate_response(data={"photo_id": photo_id}, context=context)
 
@@ -86,8 +87,4 @@ class ObtainValidateInfoView(WLAPIView, APIView):
             })
             return self.generate_response(data=seri_return.data, context=context)
         except KeyError:
-            raise WLException(message="Bad Request", code=400)
-
-
-
-
+            raise get_placeholder2exception("user/validate/fetch_info/ : bad request")

@@ -13,29 +13,8 @@ class WLException(Exception):
         self.code = code
         self.message = message
 
-
-def Error400(message):
-    return WLException(code=400, message=message)
-
-
-def Error401(message):
-    return WLException(code=401, message=message)
-
-
-def Error403(message):
-    return WLException(code=403, message=message)
-
-
-def Error404(message):
-    return WLException(code=404, message=message)
-
-
-def Error405(message):
-    return WLException(code=405, message=message)
-
-
-def Error409(message):
-    return WLException(code=409, message=message)
+    def __call__(self, *args, **kwargs):
+        return self
 
 
 def Error500(message):

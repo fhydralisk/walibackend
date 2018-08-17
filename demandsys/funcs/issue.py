@@ -1,15 +1,15 @@
 from django.db import transaction
 
-from base.exceptions import default_exception, Error500, Error404, Error403, Error400, WLException
+from base.exceptions import default_exception, Error500
 from base.util.db import update_instance_from_dict
 from demandsys.forms import UploadPhotoForm
 from demandsys.models import ProductDemand, ProductDemandPhoto
 from demandsys.models.translaters import t_demand_translator
 from usersys.funcs.utils.usersid import user_from_sid
-
+from demandsys.funcs.placeholder2exceptions import get_placeholder2exception, change_error_message
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("demand/publish/submit_photo/ : user_sid error"))
 def upload_photo(user, photo_from_object, dmid=None):
     """
 
@@ -20,7 +20,7 @@ def upload_photo(user, photo_from_object, dmid=None):
     """
 
     if not user.is_validated:
-        raise WLException(410, "User's validation does not passed, cannot publish.")
+        raise get_placeholder2exception("demand/publish/submit_photo/ : user is not validated")
 
     # user exits
     photo = ProductDemandPhoto()
@@ -28,9 +28,9 @@ def upload_photo(user, photo_from_object, dmid=None):
         try:
             demand = ProductDemand.objects.get(id=dmid)
             if demand.uid != user:
-                raise Error404("No such demand")
+                raise get_placeholder2exception("demand/publish/submit_photo/ : no such demand")
         except ProductDemand.DoesNotExist:
-            raise Error404("No such demand")
+            raise get_placeholder2exception("demand/publish/submit_photo/ : no such demand")
         
         photo.dmid = demand
         photo.inuse = True
@@ -43,11 +43,12 @@ def upload_photo(user, photo_from_object, dmid=None):
         form.save()
         return photo.id
     else:
-        raise Error403(str(form.errors))
+        change_error_message("demand/publish/submit_photo/ : photo error", 403, str(form.errors))
+        raise get_placeholder2exception("demand/publish/submit_photo/ : photo error")
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("demand/publish/remove_photo/ : user_sid error"))
 def delete_photo(user, id):
     """
     
@@ -59,9 +60,9 @@ def delete_photo(user, id):
     try:
         photo_to_delete = ProductDemandPhoto.objects.get(id=id, inuse=True)
         if photo_to_delete.dmid.uid != user:
-            raise ProductDemandPhoto.DoesNotExist
+            raise get_placeholder2exception("demand/publish/remove_photo/ : no access")
     except ProductDemandPhoto.DoesNotExist:
-        raise Error404("No such photo")
+        raise get_placeholder2exception("demand/publish/remove_photo/ : no such photo")
 
     photo_to_delete.dmid = None
     photo_to_delete.inuse = False
@@ -79,7 +80,7 @@ def append_photo(demand_object, photo_ids, do_cleanup=False):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("demand/publish/publish_demand/ : user_sid error"))
 def publish_demand(user, demand, photo_ids=None):
     """
     
@@ -89,10 +90,10 @@ def publish_demand(user, demand, photo_ids=None):
     :return: 
     """
     if not user.is_validated:
-        raise WLException(410, "User's validation does not passed, cannot publish.")
+        raise get_placeholder2exception("demand/publish/publish_demand/ : user is not validated")
 
     if demand["min_quantity"] > demand["quantity"]:
-        raise Error400("min_quantity must equal to or less than quantity")
+        raise get_placeholder2exception("demand/publish/publish_demand/ : quantity error")
 
     demand_instance = ProductDemand(**demand)
 
@@ -109,12 +110,12 @@ def publish_demand(user, demand, photo_ids=None):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("demand/publish/edit_demand/ : user_sid error"))
 def edit_demand(user, id, demand, photo_ids=None):
     """
     
     :param user:
-    :param id: 
+    :param id:
     :param demand: 
     :param photo_ids: 
     :return: 
@@ -122,12 +123,12 @@ def edit_demand(user, id, demand, photo_ids=None):
     try:
         demand_object = ProductDemand.objects.get(id=id, uid=user, in_use=True)
     except ProductDemand.DoesNotExist:
-        raise Error404("No such demand")
+        raise get_placeholder2exception("demand/publish/edit_demand/ : no such demand")
 
     update_instance_from_dict(instance=demand_object, dic=demand, save=False)
 
     if demand_object.min_quantity > demand_object.quantity:
-        raise Error400("min_quantity must equal to or less than quantity")
+        raise get_placeholder2exception("demand/publish/edit_demand/ : quantity error")
 
     # TODO: check
 
@@ -140,7 +141,7 @@ def edit_demand(user, id, demand, photo_ids=None):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception('demand/publish/close_demand/ : user_sid error'))
 def shut_demand(user, id):
     """
 
@@ -154,11 +155,11 @@ def shut_demand(user, id):
         demand_object.match = False
         demand_object.save()
     except ProductDemand.DoesNotExist:
-        raise Error404("No such demand")
+        raise get_placeholder2exception("demand/publish/close_demand/ : no such demand")
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception('demand/publish/remove_demand/ : user_sid error'))
 def delete_demand(user, id):
     """
 
@@ -173,5 +174,4 @@ def delete_demand(user, id):
         demand_object.in_use = False
         demand_object.save()
     except ProductDemand.DoesNotExist:
-        raise Error404("No such demand")
-
+        raise get_placeholder2exception('demand/publish/remove_demand/ : no such demand')
