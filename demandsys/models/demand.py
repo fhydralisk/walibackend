@@ -6,7 +6,6 @@ from base.util.timestamp import now
 
 from django.db import models
 from django.conf import settings
-from base.exceptions import WLException
 from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
