@@ -4,6 +4,6 @@ import models
 
 
 # Register your models here.
-admin.site.register([models.JPushSecret, models.PushTemplate])
+#admin.site.register([models.JPushSecret, models.PushTemplate])
 
 initialize()

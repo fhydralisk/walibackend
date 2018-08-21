@@ -192,7 +192,7 @@ CACHES = {
     },
     'sessions': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'unix:/tmp/memcached.sock',
+        'LOCATION': '127.0.0.1:11211',
         'KEY_PREFIX': 'SESSION'
     }
 }
@@ -200,9 +200,9 @@ CACHES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

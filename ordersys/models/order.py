@@ -24,6 +24,10 @@ class OrderInfo(models.Model):
     o_status = models.IntegerField(_("订单状态"), choices=o_status_choice.choice)
     final_price = models.FloatField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "订单信息"
+        verbose_name_plural = "订单信息"
+
     @property
     def current_protocol(self):
         return self.order_protocol.exclude(
@@ -60,6 +64,10 @@ class OrderProtocol(models.Model):
     description = models.TextField(blank=True, null=True)
     reason = models.TextField(blank=True, null=True)
     op_datetime = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "订单协议"
+        verbose_name_plural = "订单协议"
 
     @property
     def terminated(self):

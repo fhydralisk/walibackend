@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -23,6 +24,10 @@ class LogOrderStatus(models.Model):
     o_status = models.IntegerField(choices=o_status_choice.choice)
     context = models.TextField(blank=True, null=True)
 
+    class Meta:
+        verbose_name = '订单状态日志'
+        verbose_name_plural = verbose_name
+
 
 class LogOrderProtocolStatus(models.Model):
     opid = models.ForeignKey(
@@ -40,3 +45,7 @@ class LogOrderProtocolStatus(models.Model):
     p_status = models.IntegerField(choices=p_status_choice.choice)
     p_operate_status = models.IntegerField(choices=p_operate_status_choice.choice)
     context = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = '合同状态日志'
+        verbose_name_plural = verbose_name
