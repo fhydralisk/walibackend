@@ -192,7 +192,7 @@ CACHES = {
     },
     'sessions': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'unix:/tmp/memcached.sock',
+        'LOCATION': '127.0.0.1:11211',
         'KEY_PREFIX': 'SESSION'
     }
 }
@@ -200,9 +200,9 @@ CACHES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -227,8 +227,6 @@ UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/%Y/%m/%d/'
 UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/%Y/%m/%d/'
 UPLOAD_INVITE_PHOTO = 'upload/invite/origin/%Y/%m/%d/'
 UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/%Y/%m/%d/'
-CONTRACTS_GENERATE = 'contract/%Y/%m/%d/'
-CONTRACTS_TEMPLATE = 'contract_template/'
 
 
 # File Storage
@@ -298,9 +296,8 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
     'Pragma',
 )
-
 # Protocol Path
-USE_PROTOCOL = os.path.join(BASE_DIR, 'protocol/testprotocol.txt')
+# USE_PROTOCOL = os.path.join(BASE_DIR, 'protocol/testprotocol.txt')
 
 # Payment
 PAYMENT = {

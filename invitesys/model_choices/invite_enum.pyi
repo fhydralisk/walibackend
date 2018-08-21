@@ -7,7 +7,6 @@ class _IStatusChoice(FieldChoice):
     SIGNED = None
     CANCELED = None
     REJECTED = None
-    CONTRACT_NOT_AGREE = None
     INVITER_NEGOTIATE = None
     INVITEE_NEGOTIATE = None
 

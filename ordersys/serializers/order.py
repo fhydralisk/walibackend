@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from usersys.serializers.validate_api import ValidationInfoInvoiceSerializer
 from invitesys.models import InviteInfo
 from invitesys.serializers.invite_display import InviteReadableDisplaySerializer
 from ordersys.models import OrderProtocol, OrderInfo, OrderReceiptPhoto
@@ -53,7 +52,6 @@ class OrderInfoDisplaySerializer(serializers.ModelSerializer):
     current_receipt = PaymentReceiptSerializer(read_only=True)
     invite = InviteReadableDisplaySerializer(source='ivid', read_only=True)
     logistics = OrderLogisticsInfoSerializer(source='order_logistics', read_only=True, many=True)
-    invoice = ValidationInfoInvoiceSerializer(source='buyer_invoice_info', read_only=True)
     buyer_address = BuyerAddressSerializer(source='ivid')
     photo_forward = serializers.PrimaryKeyRelatedField(
         source='order_receipt_photos',
@@ -75,5 +73,5 @@ class OrderInfoDisplaySerializer(serializers.ModelSerializer):
         model = OrderInfo
         fields = (
             'id', 'o_status', 'current_protocol', 'current_receipt',
-            'invite', 'logistics', 'invoice', 'buyer_address', 'photo_forward', 'photo_product', 'photo_check',
+            'invite', 'logistics', 'buyer_address', 'photo_forward', 'photo_product', 'photo_check',
         )

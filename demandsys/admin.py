@@ -11,15 +11,15 @@ class ProductDemandPhotoInline(admin.TabularInline):
 
 class ProductDemandAdmin(admin.ModelAdmin):
     inlines = [ProductDemandPhotoInline]
-    list_display = ('id', '__unicode__')
-    list_display_links = ('id', '__unicode__')
+    list_display = ('id', '__unicode__','pid')
+    list_display_links = ('id', '__unicode__','pid')
 
 
 class ProductDemandPhotoAdmin(admin.ModelAdmin):
     list_display = ('id', 'demand_photo', 'photo_desc')
 
 
-admin.site.register([ProductWaterContent, ProductQuality,
-                     ProductTypeL2, ProductTypeL1, ProductTypeL3])
+# admin.site.register([ProductWaterContent, ProductQuality,
+#                      ProductTypeL2])
 admin.site.register(ProductDemand, ProductDemandAdmin)
 admin.site.register(ProductDemandPhoto, ProductDemandPhotoAdmin)

@@ -35,17 +35,15 @@ class AbstractReceiptManager(object):
 class DummyReceiptManager(AbstractReceiptManager):
     def generate(self, order, r_type, amount, context):
 
-        # if r_type in (receipt_type_choice.EARNEST_PAYMENT, receipt_type_choice.FINAL_PAYMENT):
+        # if r_type in ( receipt_type_choice.FINAL_PAYMENT):
         #     self.callback.pay_confirm(order, None)
         # else:
         #     self.callback.refund_confirm(order, None)
 
-        if r_type in (receipt_type_choice.EARNEST_REFUND, receipt_type_choice.FINAL_REFUND):
+        if r_type in receipt_type_choice.FINAL_REFUND:
             rs = receipt_status_choice.WAIT_REFUND
             r_type_payment = (
-                receipt_type_choice.EARNEST_PAYMENT
-                if r_type == receipt_type_choice.EARNEST_REFUND
-                else receipt_type_choice.FINAL_PAYMENT
+                receipt_type_choice.FINAL_PAYMENT
             )
             try:
                 related_payment = PaymentReceipt.objects.get(
@@ -78,7 +76,8 @@ class DummyReceiptManager(AbstractReceiptManager):
             receipt.save()
             self.get_callback().refund_confirm(response["oid"], None)
         else:
-            if receipt.receipt_status not in (receipt_status_choice.WAIT_PAYMENT, receipt_status_choice.NOT_PAYED_WAIT_PLATFORM):
+            if receipt.receipt_status not in (
+            receipt_status_choice.WAIT_PAYMENT, receipt_status_choice.NOT_PAYED_WAIT_PLATFORM):
                 raise WLException(400, "Unexpected receipt status")
             receipt.receipt_status = receipt_status_choice.PAYED
             receipt.save()

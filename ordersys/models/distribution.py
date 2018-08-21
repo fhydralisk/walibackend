@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -30,6 +31,10 @@ class OrderLogisticsInfo(models.Model):
     contact_pn = models.CharField(max_length=50)
     attach_datetime = models.DateTimeField(auto_now_add=True)
     delivery_days = models.IntegerField(validators=[MinValueValidator(0)])
+
+    class Meta:
+        verbose_name = "物流信息"
+        verbose_name_plural = "物流信息"
 
     @property
     def expected_delivery_time(self):

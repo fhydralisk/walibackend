@@ -8,7 +8,6 @@ from usersys.models import UserBase
 from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
 from invitesys.models import InviteInfo, InviteCancelReason, InviteProductPhoto
-from .contracts import create_contract, get_current_template
 
 MAP_TINVITE_INVITE_STATUS = {
     t_invite_choice.PROCEEDING_INVITES: (
@@ -20,7 +19,6 @@ MAP_TINVITE_INVITE_STATUS = {
     t_invite_choice.CLOSED_INVITES: (
         i_status_choice.CANCELED,
         i_status_choice.REJECTED,
-        i_status_choice.CONTRACT_NOT_AGREE,
     ),
     t_invite_choice.FINISHED_INVITES: (
         i_status_choice.SIGNED,
@@ -95,7 +93,7 @@ def detail(user, ivid):
 
     :param user:
     :param ivid:
-    :return: invite, contracts
+    :return: invite
     """
     try:
         iv = InviteInfo.objects.select_related(
@@ -211,7 +209,6 @@ def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason
 
                 if handle_method == handle_method_choice.ACCEPT:
                     iv_obj.i_status = i_status_choice.CONFIRMED
-                    create_contract(iv_obj, get_current_template())
                     return
 
                 if handle_method == handle_method_choice.REJECT:
@@ -250,7 +247,6 @@ def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason
                     user == iv_obj.uid_t and iv_obj.i_status == i_status_choice.INVITER_NEGOTIATE
                 ):
                     iv_obj.i_status = i_status_choice.CONFIRMED
-                    create_contract(iv_obj, get_current_template())
                     return
 
             if handle_method == handle_method_choice.REJECT:
@@ -281,7 +277,6 @@ def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason
             i_status_choice.CANCELED,
             i_status_choice.REJECTED,
             i_status_choice.SIGNED,
-            i_status_choice.CONTRACT_NOT_AGREE
         }:
             pass
 

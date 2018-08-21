@@ -3,4 +3,4 @@ from .models import LogOrderProtocolStatus, LogOrderStatus
 
 # Register your models here.
 
-admin.site.register([LogOrderProtocolStatus, LogOrderStatus])
+#admin.site.register([LogOrderProtocolStatus, LogOrderStatus])

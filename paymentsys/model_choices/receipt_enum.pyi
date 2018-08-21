@@ -2,8 +2,6 @@ from base.util.field_choice import FieldChoice
 
 
 class _ReceiptTypeChoice(FieldChoice):
-    EARNEST_PAYMENT = None
-    EARNEST_REFUND = None
     FINAL_PAYMENT = None
     FINAL_REFUND = None
 

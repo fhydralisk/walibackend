@@ -4,8 +4,6 @@ from base.util.field_choice import FieldChoice
 # TODO: Translate codes into verbose names and identifiers!
 
 class _OStatusChoice(FieldChoice):
-    WAIT_EARNEST = None
-    WAIT_EARNEST_CHECK = None
     WAIT_PRODUCT_DELIVER = None
     WAIT_PRODUCT_CONFIRM = None
     WAIT_PRODUCT_CHECK = None
@@ -22,7 +20,6 @@ class _OStatusChoice(FieldChoice):
 
 
 class _OBuyerActionChoice(FieldChoice):
-    BUYER_PAY_EARNEST = None
     BUYER_CHECK_PRODUCT = None
     BUYER_CHECK_RESULT_BAD = None
     BUYER_CHECK_RESULT_GOOD = None
@@ -58,7 +55,6 @@ class _POperateStatusChoice(FieldChoice):
     CANCEL_OK = None
     ADJUST_WAIT_FINAL = None
     ADJUST_CHECK_FINAL = None
-    ADJUST_CHECK_EARNEST = None
     ADJUST_OK = None
     NORMAL_WAIT_FINAL = None
     NORMAL_CHECK_FINAL = None
@@ -93,7 +89,6 @@ class _OPPlatformActionChoice(FieldChoice):
 
 
 class _ChangeTypeChoice(FieldChoice):
-    REFUND_EARNEST = None
     ADJUST_FINAL = None
 
 

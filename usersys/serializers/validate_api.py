@@ -80,9 +80,3 @@ class ValidationInfoDisplaySeralizer(serializers.Serializer):
     validate_areas = ValidationAreaSerializer(many=True, read_only=True)
     validate_photos_uploaded = serializers.SlugRelatedField(slug_field='t_photo', many=True, read_only=True)
 
-
-class ValidationInfoInvoiceSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = UserValidate
-        fields = ('company', 'phonenum', 'address', 'texno', 'obank', 'bankcard')

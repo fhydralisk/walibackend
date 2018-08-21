@@ -25,10 +25,10 @@ import ordersys.urls
 import paymentsys.urls
 import logsys.urls
 import apperancesys.urls
-
+import backgroundsys.urls
 
 urlpatterns = [
-    url(r'^bg/', admin.site.urls),
+    url(r'^bg/', include(backgroundsys.urls.urlpatterns)),
     url(r'^core/', include(coresys.urls.urlpatterns)),
     url(r'^user/', include(usersys.urls.urlpatterns)),
     url(r'^demand/', include(demandsys.urls.urlpatterns)),

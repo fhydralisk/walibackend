@@ -10,27 +10,19 @@ from base.util.field_choice import FieldChoice
 class _OStatusChoice(FieldChoice):
     MAX_LENGTH = 4
     CHOICE_DISPLAY = (
-        (1, _("等待选择支付平台（定金）"), "WAIT_EARNEST"),
-        (2, _("等待平台核验买家款项"), "WAIT_EARNEST_CHECK"),
         (3, _("等待卖家发货"), "WAIT_PRODUCT_DELIVER"),
         (4, _("卖家已发货，等待买家确认"), "WAIT_PRODUCT_CONFIRM"),
         (5, _("买家已确认收货，等待验货"), "WAIT_PRODUCT_CHECK"),
-        (6, _("货品与合同不符，等待买家提交变更协议"), "WAIT_ADJUSTMENT"),
-        (7, _("货品与合同相符"), "WAIT_FINAL_PAYMENT"),
         (8, _("买家已提交变更协议，等待卖家确认"), "WAIT_ADJUSTMENT_CONFIRM"),
         (9, _("变更协议已被卖家确认，等待变更协议执行完毕"), "WAIT_ADJUSTMENT_COMPLETE"),
-        (10, _("货品与合同相符，等待缺省协议执行完毕"), "WAIT_DEFAULT_ADJUSTMENT_COMPLETE"),
         (11, _("协议已达成，等待平台清算"), "WAIT_LIQUIDATE"),
         (16, _("交易关闭"), "CLOSED"),
-        (18, _("已清算，等待卖家发送发票"), "WAIT_RECEIPT"),
-        (19, _("发票已邮寄，等待买家确认"), "WAIT_RECEIPT_CHECK"),
         (21, _("订单完成"), "SUCCEEDED"),
     )
 
 
 class _OBuyerActionChoice(FieldChoice):
     CHOICE_DISPLAY = (
-        (1, _(""), "BUYER_PAY_EARNEST"),
         (5, _(""), "BUYER_CHECK_PRODUCT"),
         (6, _(""), "BUYER_CHECK_RESULT_BAD"),
         (7, _(""), "BUYER_CHECK_RESULT_GOOD"),
@@ -73,11 +65,8 @@ class _POperateStatusChoice(FieldChoice):
     CHOICE_DISPLAY = (
         (10, _("Cancel protocol is executing, waiting for return of goods"), "CANCEL_WAIT_RETURN"),
         (11, _("Goods returned, waiting for confirmation"), "CANCEL_WAIT_CONFIRM"),
-        (12, _("Return has been confirmed, waiting for platform to return the earnest"), "CANCEL_WAIT_REFUND"),
-        (13, _("Platform has returned the earnest"), "CANCEL_OK"),
         (200, _("Adjust price protocol is executing, waiting for final payment"), "ADJUST_WAIT_FINAL"),
         (201, _("Final payment is paid, waiting for platform to transfer the payment"), "ADJUST_CHECK_FINAL"),
-        (210, _("Adjust price protocol is executing, waiting for platform to return the earnest"), "ADJUST_CHECK_EARNEST"),
         (22, _("All payment has transferred by platform"), "ADJUST_OK"),
         (30, _("Normal protocol is executing, waiting for final payment from buyer"), "NORMAL_WAIT_FINAL"),
         (31, _("Final payment has been paid by buyer, waiting for platform to check"), "NORMAL_CHECK_FINAL"),
@@ -124,7 +113,6 @@ class _OPPlatformActionChoice(FieldChoice):
 
 class _ChangeTypeChoice(FieldChoice):
     CHOICE_DISPLAY = (
-        (1, _(""), "REFUND_EARNEST"),
         (2, _(""), "ADJUST_FINAL"),
     )
 

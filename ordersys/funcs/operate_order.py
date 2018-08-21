@@ -14,7 +14,7 @@ from ordersys.funcs.state_machines.order_protocol_sm_executer import execute_ord
 
 def create_order(operator, invite):
     # type: (InviteInfo) -> None
-    o_status = o_status_choice.WAIT_EARNEST if invite.earnest > 0 else o_status_choice.WAIT_PRODUCT_DELIVER
+    o_status = o_status_choice.WAIT_PRODUCT_DELIVER
     new_order = OrderInfo(ivid=invite, o_status=o_status)
     new_order.operator = operator
     new_order.save()

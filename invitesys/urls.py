@@ -3,7 +3,6 @@ from views.invite import (
     ObtainInviteView, ObtainInviteDetailView, PublishInviteView,
     FlowHandleView, ObtainInviteCancelReasonClassView
 )
-from views.contract import RetrieveContractInfoView, ObtainContractContentView, SignContractView
 from views.photo import DeleteInvitePhotoView, ObtainInvitePhotoView, UploadInvitePhotoView
 
 
@@ -21,11 +20,6 @@ flow_urlpatterns = [
     url(r'^handle/$', FlowHandleView.as_view()),
 ]
 
-contract_urlpatterns = [
-    url(r'^info/', RetrieveContractInfoView.as_view()),
-    url(r'^content/', ObtainContractContentView.as_view()),
-    url(r'^sign/$', SignContractView.as_view()),
-]
 
 photo_urlpatterns = [
     url(r'^upload/', UploadInvitePhotoView.as_view()),
@@ -37,6 +31,5 @@ urlpatterns = [
     url(r'^flow/', include(flow_urlpatterns)),
     url(r'^obtain/', include(obtain_urlpatterns)),
     url(r'^launch/', include(launch_urlpatterns)),
-    url(r'^contract/', include(contract_urlpatterns)),
     url(r'^photo/', include(photo_urlpatterns)),
 ]

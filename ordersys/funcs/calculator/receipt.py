@@ -17,21 +17,13 @@ class DummyReceiptCalculator(AbstractReceiptCalculator):
         # type: (OrderInfo, int, dict) -> float
         iv = order.ivid
 
-        if r_type == receipt_type_choice.EARNEST_PAYMENT:
-            return iv.earnest
-        elif r_type == receipt_type_choice.FINAL_PAYMENT:
+        if r_type == receipt_type_choice.FINAL_PAYMENT:
             # Check if the price is adjusted
             if ctx.get("with_adjustment", False):
                 adjusted_price = order.current_protocol.c_price
                 return iv.final_price - (iv.total_price - adjusted_price)
             else:
                 return iv.final_price
-        elif r_type == receipt_type_choice.EARNEST_REFUND:
-            if ctx.get("with_adjustment", False):
-                adjusted_price = order.current_protocol.c_price
-                return iv.earnest - adjusted_price
-            else:
-                return iv.earnest
 
 
 receipt_calculator = import_string(

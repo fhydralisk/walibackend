@@ -24,6 +24,10 @@ class OrderInfo(models.Model):
     o_status = models.IntegerField(_("订单状态"), choices=o_status_choice.choice)
     final_price = models.FloatField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = "订单信息"
+        verbose_name_plural = "订单信息"
+
     @property
     def current_protocol(self):
         return self.order_protocol.exclude(
@@ -37,10 +41,6 @@ class OrderInfo(models.Model):
         return self.order_receipt.exclude(
             receipt_status__in=PaymentReceipt.current_status_set()
         ).get()
-
-    @property
-    def buyer_invoice_info(self):
-        return self.ivid.buyer.user_validate
 
     def __unicode__(self):
         return "Order from %s" % str(self.ivid)
@@ -61,6 +61,10 @@ class OrderProtocol(models.Model):
     reason = models.TextField(blank=True, null=True)
     op_datetime = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = "订单协议"
+        verbose_name_plural = "订单协议"
+
     @property
     def terminated(self):
         return self.p_status in (p_status_choice.REJECTED, p_status_choice.EXECUTED, p_status_choice.CANCELED)
@@ -74,10 +78,6 @@ class OrderProtocol(models.Model):
 
             self.p_operate_status = (
                 p_operate_status_choice.ADJUST_WAIT_FINAL
-                if self.c_price > self.oid.ivid.earnest
-                else p_operate_status_choice.ADJUST_CHECK_EARNEST
-                if self.c_price < self.oid.ivid.earnest
-                else p_operate_status_choice.ADJUST_OK
             )
 
         else:
