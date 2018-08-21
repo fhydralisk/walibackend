@@ -9,7 +9,6 @@ class _LTypeChoice(FieldChoice):
     CHOICE_DISPLAY = (
         (1, _("Forward Logistics"), "FORWARD"),
         (2, _("Backward Logistics"), "RETURN"),
-        (3, _("Receipt Logistics"), "RECEIPT"),
     )
 
 

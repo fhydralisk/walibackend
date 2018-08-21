@@ -6,8 +6,6 @@ from base.util.field_choice import FieldChoice
 
 class _ReceiptTypeChoice(FieldChoice):
     CHOICE_DISPLAY = (
-        (1, _("Earnest payment"), "EARNEST_PAYMENT"),
-        (2, _("Earnest refund"), "EARNEST_REFUND"),
         (3, _("Final payment"), "FINAL_PAYMENT"),
         (4, _("Final refund"), "FINAL_REFUND"),
     )

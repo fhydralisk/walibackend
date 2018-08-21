@@ -80,9 +80,7 @@ class OrderAdmin(admin.ModelAdmin):
             company = (
                 validate_obj.company if validate_obj.company is not None and len(validate_obj.company) > 0 else "N/A"
             )
-            contract = (
-                validate_obj.contact if validate_obj.contact is not None and len(validate_obj.contact) > 0 else "N/A"
-            )
+
 
             return format_html(
                 "<table>"
@@ -91,12 +89,10 @@ class OrderAdmin(admin.ModelAdmin):
                 "<tr><td>用户角色</td><td>{}</td></tr>"
                 "<tr><td>用户姓名</td><td>{}</td></tr>"
                 "<tr><td>用户公司</td><td>{}</td></tr>"
-                # "<tr><td><a href='{}'>协助支付定金</a></td></tr>"
                 "</table>",
                 obj.id,
                 obj.pn,
                 obj.get_role_display(),
-                _(contract),
                 _(company),
             )
         else:
@@ -134,16 +130,6 @@ class OrderAdmin(admin.ModelAdmin):
 
     def extra_action(self, obj):
         # type: (OrderInfo) -> object
-        if obj.o_status == o_status_choice.WAIT_EARNEST_CHECK:
-            try:
-                return format_html(
-                    '<a href="{}">协助支付定金</a> | <a href="{}">人工核验定金</a>',
-                    # reverse('payment:aid-payment', args=[obj.current_receipt.id])
-                    "#",
-                    "#"
-                )
-            except PaymentReceipt.DoesNotExist:
-                return "出错"
 
         if obj.o_status in {o_status_choice.WAIT_DEFAULT_ADJUSTMENT_COMPLETE, o_status_choice.WAIT_ADJUSTMENT_COMPLETE}:
             try:

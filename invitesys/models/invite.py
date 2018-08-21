@@ -133,12 +133,8 @@ class InviteInfo(models.Model):
         return self.price * self.quantity
 
     @property
-    def earnest(self):
-        return self.total_price * self.pmid.deposit_scale
-
-    @property
     def final_price(self):
-        return self.total_price - self.earnest
+        return self.total_price
 
 
 class InviteProductPhoto(models.Model):

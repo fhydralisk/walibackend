@@ -47,5 +47,5 @@ class LogOrderProtocolStatus(models.Model):
     context = models.TextField(blank=True, null=True)
 
     class Meta:
-        verbose_name = '合同状态日志'
+        verbose_name = '协议状态日志'
         verbose_name_plural = verbose_name

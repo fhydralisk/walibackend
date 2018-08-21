@@ -36,7 +36,7 @@ class PaymentReceipt(models.Model):
 
     def is_refunding(self):
         return self.receipt_status in {receipt_status_choice.WAIT_REFUND, } or (
-                self.receipt_type in {receipt_type_choice.FINAL_REFUND, receipt_type_choice.EARNEST_REFUND}
+                self.receipt_type in {receipt_type_choice.FINAL_REFUND}
                 and self.receipt_status in {receipt_status_choice.WAIT_PAYMENT, }
         )
 

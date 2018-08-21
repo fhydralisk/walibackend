@@ -3,7 +3,7 @@ from invitesys.models import InviteInfo
 from invitesys.model_choices.invite_enum import i_status_choice
 from usersys.models import UserBase
 from usersys.model_choices.user_enum import role_choice
-from .contract import ContractInfoSerializer
+
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -48,7 +48,7 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
     related_order = serializers.PrimaryKeyRelatedField(source='invite_order', read_only=True)
     reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
 
-    contracts = ContractInfoSerializer(source='invite_contract', many=True, read_only=True)
+
     invite_photo = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     def to_representation(self, instance):
@@ -79,8 +79,7 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
             'dmid_s', 'dmid_t', 'quantity', 'reason', 'reason_class',
             'price', 'unit', 'pmid', 'disid', 'dis_duration', 'i_status',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc', 'disdesc',
-            'contracts',
             'deposit_scale',
-            'earnest', 'final_price', 'total_price', 'related_order',
+            'final_price', 'total_price', 'related_order',
             'invite_photo',
         )

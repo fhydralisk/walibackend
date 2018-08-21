@@ -8,7 +8,6 @@ from django.db import models
 
 class CorePaymentMethod(models.Model):
     ord = models.IntegerField(_("Order Number"))
-    deposit_scale = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     opmdesc = models.TextField(verbose_name=_("Description"), max_length=125)
     in_use = models.BooleanField(default=True)
 

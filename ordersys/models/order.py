@@ -42,10 +42,6 @@ class OrderInfo(models.Model):
             receipt_status__in=PaymentReceipt.current_status_set()
         ).get()
 
-    @property
-    def buyer_invoice_info(self):
-        return self.ivid.buyer.user_validate
-
     def __unicode__(self):
         return "Order from %s" % str(self.ivid)
 
@@ -82,10 +78,6 @@ class OrderProtocol(models.Model):
 
             self.p_operate_status = (
                 p_operate_status_choice.ADJUST_WAIT_FINAL
-                if self.c_price > self.oid.ivid.earnest
-                else p_operate_status_choice.ADJUST_CHECK_EARNEST
-                if self.c_price < self.oid.ivid.earnest
-                else p_operate_status_choice.ADJUST_OK
             )
 
         else:

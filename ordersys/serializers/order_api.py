@@ -32,8 +32,6 @@ class OperateOrderSerializer(serializers.Serializer):
     def validate(self, data):
         action = data["action"]
         seri_class = None
-        if action == o_buyer_action_choice.BUYER_PAY_EARNEST:
-            seri_class = PaymethodSerializer
 
         if action in (
                 o_seller_action_choice.SELLER_APPEND_RECEIPT_LOGISTICS,

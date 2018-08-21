@@ -10,10 +10,8 @@ class _IStatusChoice(FieldChoice):
     CHOICE_DISPLAY = (
         (0, _("邀请发起"), "STARTED"),
         (1, _("受邀方确认"), "CONFIRMED"),
-        (2, _("合同签署完毕"), "SIGNED"),
         (3, _("发起方取消"), "CANCELED"),
         (4, _("受邀方拒绝"), "REJECTED"),
-        (5, _("合同未达成"), "CONTRACT_NOT_AGREE"),
         (6, _("受邀人讨价还价"), "INVITER_NEGOTIATE"),
         (7, _("邀请人讨价还价"), "INVITEE_NEGOTIATE"),
     )
