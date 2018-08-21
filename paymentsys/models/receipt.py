@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -26,13 +27,17 @@ class PaymentReceipt(models.Model):
     platform_number = models.CharField(max_length=256, db_index=True, unique=True, blank=True, null=True)
     context = models.TextField(blank=True, null=True)
 
+    class Meta:
+        verbose_name = '支付收据'
+        verbose_name_plural = verbose_name
+
     def is_finished(self):
         return self.receipt_status in {receipt_status_choice.PAYED, receipt_status_choice.REFUNDED}
 
     def is_refunding(self):
         return self.receipt_status in {receipt_status_choice.WAIT_REFUND, } or (
-            self.receipt_type in {receipt_type_choice.FINAL_REFUND, receipt_type_choice.EARNEST_REFUND}
-            and self.receipt_status in {receipt_status_choice.WAIT_PAYMENT, }
+                self.receipt_type in {receipt_type_choice.FINAL_REFUND, receipt_type_choice.EARNEST_REFUND}
+                and self.receipt_status in {receipt_status_choice.WAIT_PAYMENT, }
         )
 
     def can_not_change(self):

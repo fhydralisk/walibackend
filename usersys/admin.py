@@ -4,4 +4,5 @@ from usersys.models import UserBase, UserValidate, UserValidateArea, UserValidat
 
 # Register your models here.
 
-admin.site.register([UserBase, UserValidate, UserValidateArea, UserValidatePhoto, UserSid])
+# admin.site.register([UserBase, UserValidate, UserValidateArea, UserValidatePhoto, UserSid])
+admin.site.register([UserBase, UserValidatePhoto, UserSid])

@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -21,7 +22,8 @@ def calc_score_by_operator(m1, m2, score_tuple):
 class ProductDemand(models.Model):
     uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_demand")
     t_demand = models.IntegerField(verbose_name=_("demand type"), choices=t_demand_choice.choice, db_index=True)
-    pid = models.ForeignKey(ProductTypeL3, on_delete=models.CASCADE, related_name="product_demand", db_index=True)
+    pid = models.ForeignKey(ProductTypeL3, on_delete=models.CASCADE, related_name="product_demand", db_index=True,
+                            blank=True, null=True, default=1)
     qid = models.ForeignKey(ProductQuality, related_name="product_quality")
     wcid = models.ForeignKey(ProductWaterContent, related_name="product_watercontent")
     quantity = models.FloatField()
@@ -49,6 +51,10 @@ class ProductDemand(models.Model):
         default=freight_payer_choice.FREIGHT_SELLER
     )
     in_use = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "需求"
+        verbose_name_plural = "需求"
 
     def __unicode__(self):
         return self.description
@@ -132,12 +138,17 @@ class ProductDemand(models.Model):
 
 
 class ProductDemandPhoto(models.Model):
-    dmid = models.ForeignKey(ProductDemand, on_delete=models.SET_NULL, related_name="demand_photo", db_index=True, null=True, blank=True)
+    dmid = models.ForeignKey(ProductDemand, on_delete=models.SET_NULL, related_name="demand_photo", db_index=True,
+                             null=True, blank=True)
     demand_photo = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO)
     demand_photo_snapshot = models.FilePathField(null=True, blank=True)
     inuse = models.BooleanField(default=False)
     upload_date = models.DateTimeField(auto_now_add=True)
     photo_desc = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "需求相片"
+        verbose_name_plural = "需求相片"
 
     def __unicode__(self):
         return self.photo_desc

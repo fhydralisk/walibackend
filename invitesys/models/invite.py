@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -19,6 +20,10 @@ class InviteCancelReason(models.Model):
     def __unicode__(self):
         return self.reason
 
+    class Meta:
+        verbose_name = "订单取消原因"
+        verbose_name_plural = "订单取消原因"
+
 
 class InviteInfo(models.Model):
 
@@ -27,19 +32,23 @@ class InviteInfo(models.Model):
 
         self.initial_i_status = self.i_status
 
+    class Meta:
+        verbose_name = '邀请信息'
+        verbose_name_plural = _('邀请信息')
+
     uid_s = models.ForeignKey(
         UserBase,
         on_delete=models.CASCADE,
         related_name="user_invite_src",
         db_index=True,
-        verbose_name=_("inviter")
+        verbose_name=_("发起者")
     )
     uid_t = models.ForeignKey(
         UserBase,
         on_delete=models.CASCADE,
         related_name="user_invite_dst",
         db_index=True,
-        verbose_name=_("invitee")
+        verbose_name=_("接受者")
     )
     dmid_s = models.ForeignKey(
         ProductDemand,
@@ -57,11 +66,12 @@ class InviteInfo(models.Model):
     )
     quantity = models.FloatField()
     price = models.FloatField()
-    unit = models.IntegerField(max_length=unit_choice.MAX_LENGTH, choices=unit_choice.choice)
+    unit = models.IntegerField(choices=unit_choice.choice)
+    # unit = models.IntegerField(max_length=unit_choice.MAX_LENGTH, choices=unit_choice.choice)
     pmid = models.ForeignKey(CorePaymentMethod, on_delete=models.CASCADE, verbose_name=_("Pay method"))
     disid = models.ForeignKey(CoreDistributionMethod, on_delete=models.CASCADE, verbose_name=_("Distribution Method"))
     dis_duration = models.IntegerField(verbose_name=_("Distribution duration"))
-    i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
+    i_status = models.IntegerField(_("状态"), choices=i_status_choice.choice)
     reason_class = models.ForeignKey(
         InviteCancelReason,
         on_delete=models.SET_NULL,
@@ -139,6 +149,11 @@ class InviteProductPhoto(models.Model):
         null=True,
         blank=True
     )
+
+    class Meta:
+        verbose_name = "货物照片"
+        verbose_name_plural = "货物照片"
+
     ivid = models.ForeignKey(
         InviteInfo,
         verbose_name=_("Invite"),
@@ -155,4 +170,5 @@ class InviteProductPhoto(models.Model):
     photo_desc = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
-        return "%s: %s" % (self.ivid.__unicode__() if self.ivid is not None else "Null", self.photo_desc if self.photo_desc is not None else "-")
+        return "%s: %s" % (self.ivid.__unicode__() if self.ivid is not None else "Null",
+                           self.photo_desc if self.photo_desc is not None else "-")

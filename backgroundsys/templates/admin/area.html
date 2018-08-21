@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>点击切换按钮颜色</title>
+  <style>
+  #content1{
+    display:block;
+  }
+  #content2{
+    display:none;
+  }
+  </style>
+</head>
+<body>
+  <button id="btn1" onclick="btn1()"><p id="content1">你好</p><p id="content2">再见</p></button>
+  <script>
+
+    function btn1(){
+    if(document.getElementById("content2").style.display=="none")
+        {
+      document.getElementById("content1").style.display = "none";
+      document.getElementById("content2").style.display = "block";
+      }
+    else
+    {
+      document.getElementById("content2").style.display = "none";
+      document.getElementById("content1").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
