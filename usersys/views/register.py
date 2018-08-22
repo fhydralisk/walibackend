@@ -1,5 +1,4 @@
 from rest_framework.views import APIView
-# from rest_framework.exceptions import ValidationError
 
 from base.views import WLAPIView
 from usersys.serializers.register_api import PNSubmitSerializer, PNValidateSerializer, PNFinalRegisterSerializer

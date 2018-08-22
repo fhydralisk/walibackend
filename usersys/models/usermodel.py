@@ -71,12 +71,10 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    @property
     def is_validated(self):
-        try:
-            if self.user_validate.validate_status != validate_status_choice.ACCEPTED:
-                return  False
-        except UserValidate.DoesNotExist:
+        if self.user_validate is None:
+            return False
+        if self.user_validate.validate_status != validate_status_choice.ACCEPTED:
             return False
         return True
 

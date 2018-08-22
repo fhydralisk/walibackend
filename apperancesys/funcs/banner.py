@@ -1,6 +1,6 @@
 from base.exceptions import default_exception, Error500
 from apperancesys.models import Banner
-from apperancesys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)

@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+from apperancesys.funcs.placeholder2exceptions import MAP as APPRANCESYSMAP
 from coresys.funcs.placeholder2exceptions import MAP as CORESYSMAP
 from demandsys.funcs.placeholder2exceptions import MAP as DEMANDSYSMAP
 from invitesys.funcs.placeholder2exceptions import MAP as INVITESYSMAP
@@ -9,7 +10,7 @@ from usersys.funcs.placeholder2exceptions import MAP as USERSYSMAP
 from base.exceptions import WLException
 
 MAP = {}
-map(MAP.update, [CORESYSMAP, DEMANDSYSMAP, INVITESYSMAP, LOGSYSMAP, ORDERSYSMAP, USERSYSMAP])
+map(MAP.update, [APPRANCESYSMAP, CORESYSMAP, DEMANDSYSMAP, INVITESYSMAP, LOGSYSMAP, ORDERSYSMAP, USERSYSMAP])
 
 
 def get_placeholder2exception(placeholder, error_code=None, error_message=None):

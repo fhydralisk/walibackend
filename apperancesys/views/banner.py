@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http.response import FileResponse
 from base.views import WLAPIView
 from apperancesys.funcs.banner import get_banner
-from apperancesys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 class ObtainBannerView(WLAPIView, APIView):

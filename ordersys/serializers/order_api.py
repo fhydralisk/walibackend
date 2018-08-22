@@ -80,10 +80,8 @@ class OperateOrderProtocolSerializer(serializers.Serializer):
 
 class ObtainOrderListSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
-    # order_type = serializers.ChoiceField(choices=order_type_choice.get_choices())
     order_type = serializers.IntegerField()
     page = serializers.IntegerField(default=0)
-
 
 
 class ObtainOrderSerializer(serializers.Serializer):
