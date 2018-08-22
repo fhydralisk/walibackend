@@ -158,13 +158,13 @@ def get_demand_detail(user, id):
 
 
 @default_exception(Error500)
-def get_specified_photo(id, dmid):
+def get_specified_photo(id):
     """
 
     :param id: 
     :return:
     """
     try:
-        return ProductDemandPhoto.objects.filter(dmid=dmid).get(id=id).demand_photo.path
+        return ProductDemandPhoto.objects.get(id=id).demand_photo.path
     except ProductDemandPhoto.DoesNotExist:
         raise get_placeholder2exception("demand/obtain/photo/ : no such photo")
