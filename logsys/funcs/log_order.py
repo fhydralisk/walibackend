@@ -5,7 +5,7 @@ from logsys.models import LogOrderStatus, LogOrderProtocolStatus
 from base.exceptions import default_exception, Error500
 from usersys.funcs.utils.usersid import user_from_sid
 from usersys.models import UserBase
-from logsys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @receiver(post_save, sender=OrderInfo)

@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 from base.exceptions import *
 from usersys.funcs.utils.sid_management import sid_create, sid_destroy, sid_getuser
-from usersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 from django.conf import settings
 
 User = get_user_model()

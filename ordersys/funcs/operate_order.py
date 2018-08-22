@@ -10,7 +10,7 @@ from ordersys.model_choices.order_enum import (
 )
 from ordersys.funcs.state_machines.order_sm_executer import execute_order_state_machine
 from ordersys.funcs.state_machines.order_protocol_sm_executer import execute_order_protocol_state_machine
-from ordersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 def create_order(operator, invite):
     # type: (InviteInfo) -> None

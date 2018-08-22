@@ -10,7 +10,7 @@ from usersys.funcs.validate import get_validate_photo, submit_validate_photo, \
     get_validate, save_validate, delete_validate_photo
 from usersys.serializers.validate_api import \
     ValidationPhotoSerializer, ValidationSubmitSerializer, ValidationInfoDisplaySeralizer
-from usersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 class FetchPhotoView(WLAPIView, APIView):

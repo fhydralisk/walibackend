@@ -8,7 +8,7 @@ from invitesys.models import InviteContractTemplate, InviteContractSign
 from invitesys.model_choices.contract_enum import sign_status_choice
 from invitesys.model_choices.invite_enum import i_status_choice
 from ordersys.funcs.operate_order import create_order as create_order_func
-from invitesys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 def create_contract(iv_obj, template):

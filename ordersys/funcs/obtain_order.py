@@ -5,7 +5,7 @@ from usersys.funcs.utils.usersid import user_from_sid
 from ordersys.models import OrderInfo
 from ordersys.model_choices.order_enum import order_type_choice, o_status_choice
 from usersys.models import UserBase
-from ordersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)

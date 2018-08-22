@@ -12,7 +12,7 @@ from usersys.model_choices.user_enum import validate_status_choice
 from .utils.usersid import user_from_sid
 from usersys.serializers.validate import UserValidateUserSerializer, UserValidateAreaSerializer
 from usersys.forms import ValidatePhotoUploadForm
-from usersys.funcs.placeholder2exceptions import get_placeholder2exception, change_error_message
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)
@@ -63,8 +63,8 @@ def submit_validate_photo(user, t_photo, photo_files_form_obj):
     else:
         # FIXME this code will change the MAP in "placeholder2exceptions.py" to transmit the "form.errors"
         # FIXME and should be deleted if the the "form.errors" is not nessceary
-        change_error_message("user/validate/submit_photo/ : photo error", 403, str(form.errors))
-        raise get_placeholder2exception("user/validate/submit_photo/ : photo error")
+        raise get_placeholder2exception("user/validate/submit_photo/ : photo error",
+                                        error_message=str(form.errors))
 
 
 @default_exception(Error500)
@@ -130,9 +130,8 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
         seri_before_commit.is_valid(raise_exception=True)
     except ValidationError:
         exc = seri_before_commit.errors.items()[0][1][0]
-        # FIXME this code will change the MAP in "placeholder2exceptions.py" to transmit the "exc"
-        change_error_message("user/validate/submit_info/ : information is incomplete", exc.code, str(exc))
-        raise get_placeholder2exception("user/validate/submit_info/ : information is incomplete")
+        raise get_placeholder2exception("user/validate/submit_info/ : information is incomplete",
+                                        error_code=exc.code, error_message=str(exc))
 
     if validate_request != 0:
         seri_after_commit = UserValidateUserSerializer(
@@ -144,9 +143,8 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
         except ValidationError:
             seri_before_commit.save()
             exc = seri_after_commit.errors.items()[0][1][0]
-            # FIXME this code will change the MAP in "placeholder2exceptions.py" to transmit the "exc"
-            change_error_message("user/validate/submit_info/ : information is incomplete", exc.code, str(exc))
-            raise get_placeholder2exception("user/validate/submit_info/ : information is incomplete")
+            raise get_placeholder2exception("user/validate/submit_info/ : information is incomplete",
+                                            error_code=exc.code, error_message=str(exc))
         else:
             seri_after_commit.save()
     else:

@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from base.exceptions import *
 from django.utils.translation import ugettext_lazy as _
 
 MAP = {
@@ -51,7 +50,7 @@ MAP = {
     "invite/photo/upload/ : no such invite":                    # 提交照片时没有与请求中ivid相匹配的invite
     (404, _(u"没有这样的invite")),
     "invite/photo/upload/ : only seller":                       # 只有卖家能够提交照片
-    (403, _("只有卖家能够提交照片")),
+    (403, _("only seller can upload")),
     # FIXME 以下错误信息会在invitesys/funcs/invites.py/upload-invite_photo中被修改
     "invite/photo/upload/ : photo error":                       # 提交照片时图片出现某些错误
     (400, _(u"图片错误")),
@@ -80,9 +79,8 @@ MAP = {
     (404, _(u"该照片不属于任何邀请,但是该用户不是它的上传者")),
 
     # 合同获取
-    "invite/contract/ : no such contract in function get_contract_obj":
-                                                                # 不存在这样的合同
-    (404, "没有这样的合同"),
+    "invite/contract/ : no such contract in function get_contract_obj":    # 不存在这样的合同
+    (404, _(u"没有这样的合同")),
     # 获取合同信息
     "invite/contract/info/ : user_sid error":                   # 获取合同信息时user_sid不存在或者已过期
     (404, _(u"未找到user_sid")),
@@ -97,16 +95,5 @@ MAP = {
     "invite/contract/sign/ : cannot change sign status":        # 不能改变合同状态
     (403, _(u"不能改变合同的状态")),
     "invite/contract/sign/ : already signed or rejected":       # 合同已经签署或拒绝
-    (403, _(u"合同已经签署或者拒绝")),
+    (403, _(u"合同已经签署或者拒绝"))
 }
-
-
-def get_placeholder2exception(placeholder):
-    if placeholder in MAP:
-        return WLException(*MAP[placeholder])
-    else:
-        return WLException(code=500, message="%s is an undefined exception" % placeholder)
-
-
-def change_error_message(placeholder, code, message):
-    MAP[placeholder] = (code, message)

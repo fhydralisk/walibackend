@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from base.exceptions import *
 from django.utils.translation import ugettext_lazy as _
 
 MAP = {
@@ -80,14 +79,3 @@ MAP = {
     (404, _(u"没有这样的需求")),
 
 }
-
-
-def get_placeholder2exception(placeholder):
-    if placeholder in MAP:
-        return WLException(*MAP[placeholder])
-    else:
-        return WLException(code=500, message="%s is an undefined exception" % placeholder)
-
-
-def change_error_message(placeholder, code, message):
-    MAP[placeholder] = (code, message)

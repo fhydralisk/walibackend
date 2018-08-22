@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from base.exceptions import *
 from django.utils.translation import ugettext_lazy as _
 
 MAP = {
@@ -96,24 +95,5 @@ MAP = {
     (404, _(u"未找到user_sid")),
     "user/validate/fetch_info/ : bad request":                         # 获取用户认证信息时请求格式出错
     (400, _(u"请求格式错误"))
-
-
 }
 
-
-# def placeholder2exception(placeholder):
-#     if placeholder in MAP:
-#         raise WLException(*MAP[placeholder])
-#     else:
-#         raise WLException(code=500, message="%s is an undefined exception" % placeholder)
-
-
-def get_placeholder2exception(placeholder):
-    if placeholder in MAP:
-        return WLException(*MAP[placeholder])
-    else:
-        return WLException(code=500, message="%s is an undefined exception" % placeholder)
-
-
-def change_error_message(placeholder, code, message):
-    MAP[placeholder] = (code, message)

@@ -6,7 +6,7 @@ from usersys.model_choices.user_enum import role_choice
 from ordersys.models import OrderReceiptPhoto, OrderInfo
 from ordersys.model_choices.order_enum import o_status_choice
 from ordersys.model_choices.photo_enum import photo_type_choice
-from ordersys.funcs.placeholder2exceptions import get_placeholder2exception, change_error_message
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 def check_role(user, photo_type):
     # type: (UserBase, int) -> bool
@@ -69,8 +69,7 @@ def upload_order_photo(user, oid, t_photo, photo_files_form_obj):
         submit_form.save()
         return photo.id
     else:
-        change_error_message("order/photo/uoload/ : photo error", 400, str(submit_form.errors))
-        raise get_placeholder2exception("order/photo/uoload/ : photo error")
+        raise get_placeholder2exception("order/photo/uoload/ : photo error", error_message=str(submit_form.errors))
 
 
 @default_exception(Error500)

@@ -1,6 +1,6 @@
 from base.exceptions import *
 from .utils.usersid import user_from_sid
-from usersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)

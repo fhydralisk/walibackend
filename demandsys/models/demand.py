@@ -11,7 +11,7 @@ from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
 from demandsys.model_choices.demand_enum import t_demand_choice, unit_choice, freight_payer_choice
 from demandsys.util.unit_converter import UnitQuantityMetric, UnitPriceMetric
-from invitesys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 def calc_score_by_operator(m1, m2, score_tuple):
     return score_tuple[1] if m1 == m2 else score_tuple[0] if m1 < m2 else score_tuple[2]

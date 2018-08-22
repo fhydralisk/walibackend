@@ -5,7 +5,7 @@ from base.util.timestamp import now
 from base.util.pages import get_page_info, get_page_info_list
 from usersys.funcs.utils.usersid import user_from_sid
 from demandsys.models.translaters import t_demand_translator
-from demandsys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)

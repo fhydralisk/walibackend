@@ -3,7 +3,7 @@ from base.views import WLAPIView
 
 from usersys.serializers.user_info import UserInfoSerialzier
 from usersys.funcs.info import get_user_info
-from usersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 class UserInfoView(WLAPIView, APIView):

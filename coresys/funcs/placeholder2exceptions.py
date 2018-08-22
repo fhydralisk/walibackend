@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from base.exceptions import *
 from django.utils.translation import ugettext_lazy as _
 
 MAP = {
@@ -16,14 +15,3 @@ MAP = {
     "core/address/area/ : cit not exist":         # 获取区级地址时没有与请求中cid相匹配的市
     (404, _(u"未找到与cid相匹配的市")),
 }
-
-
-def get_placeholder2exception(placeholder):
-    if placeholder in MAP:
-        return WLException(*MAP[placeholder])
-    else:
-        return WLException(code=500, message="%s is an undefined exception" % placeholder)
-
-
-def change_error_message(placeholder, code, message):
-    MAP[placeholder] = (code, message)

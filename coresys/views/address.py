@@ -3,8 +3,7 @@ from base.views import WLAPIView
 from coresys.models import CoreAddressCity, CoreAddressProvince
 from coresys.serializers.address_serializers import \
     CoreAddressAreaSerializer, CoreAddressCitySerializer, CoreAddressProvinceSerializer, CoreAddressProvinceFSerializer
-from coresys.funcs.placeholder2exceptions import get_placeholder2exception
-
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 class GetProvinceView(WLAPIView, APIView):
     def get(self, request):

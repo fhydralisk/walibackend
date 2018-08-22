@@ -9,7 +9,7 @@ from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
 from invitesys.models import InviteInfo, InviteCancelReason, InviteProductPhoto
 from .contracts import create_contract, get_current_template
-from invitesys.funcs.placeholder2exceptions import get_placeholder2exception, change_error_message
+from base.util.placeholder2exceptions import get_placeholder2exception
 MAP_TINVITE_INVITE_STATUS = {
     t_invite_choice.PROCEEDING_INVITES: (
         i_status_choice.STARTED,
@@ -326,9 +326,7 @@ def upload_invite_photo(user, photo_desc, photo_files_form_obj, ivid=None):
         submit_form.save()
         return photo.id
     else:
-        # FIXME this code will change the MAP to transmit the submit_form.errors
-        change_error_message("invite/photo/upload/ : photo error", 400, str(submit_form.errors))
-        raise get_placeholder2exception("invite/photo/upload/ : photo error")
+        raise get_placeholder2exception("invite/photo/upload/ : photo error", error_message=str(submit_form.errors))
 
 
 @default_exception(Error500)
@@ -350,8 +348,8 @@ def delete_invite_photo(user, photo_id):
             i_status_choice.STARTED,
         }:
             # FIXME this code will change the MAP to transmit the photo.ivid.i_status
-            change_error_message("invite/photo/delete/ : status error", 403, "Cannot delete photo with status %d" % photo.ivid.i_status)
-            raise get_placeholder2exception("Cannot delete photo with status %d" % photo.ivid.i_status)
+            raise get_placeholder2exception("invite/photo/delete/ : status error",
+                                            error_message="Cannot delete photo with status %d" % photo.ivid.i_status)
 
     photo.inuse = False
     photo.save()

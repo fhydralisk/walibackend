@@ -13,7 +13,7 @@ from base.util.phone_validator import phone_validator
 from base.util.misc_validators import validators
 from base.util.temp_session import create_session, update_session_dict, \
     destroy_session, get_session_dict, get_session, update_session
-from usersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 from .session import RegistrationSessionKeys, ValidateStatus
 
 User = get_user_model()

@@ -14,7 +14,7 @@ from usersys.models import UserBase
 
 from .session import RegistrationSessionKeys, ValidateStatus
 from .utils.usersid import user_from_sid
-from usersys.funcs.placeholder2exceptions import get_placeholder2exception
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 User = get_user_model()
 

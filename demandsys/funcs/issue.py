@@ -6,7 +6,7 @@ from demandsys.forms import UploadPhotoForm
 from demandsys.models import ProductDemand, ProductDemandPhoto
 from demandsys.models.translaters import t_demand_translator
 from usersys.funcs.utils.usersid import user_from_sid
-from demandsys.funcs.placeholder2exceptions import get_placeholder2exception, change_error_message
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 @default_exception(Error500)
 @user_from_sid(get_placeholder2exception("demand/publish/submit_photo/ : user_sid error"))
@@ -43,8 +43,7 @@ def upload_photo(user, photo_from_object, dmid=None):
         form.save()
         return photo.id
     else:
-        change_error_message("demand/publish/submit_photo/ : photo error", 403, str(form.errors))
-        raise get_placeholder2exception("demand/publish/submit_photo/ : photo error")
+        raise get_placeholder2exception("demand/publish/submit_photo/ : photo error", error_message=str(form.errors))
 
 
 @default_exception(Error500)
