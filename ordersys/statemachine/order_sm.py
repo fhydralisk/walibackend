@@ -6,11 +6,11 @@ from ordersys.model_choices.distribution_enum import l_type_choice
 from base.util.statemachine import ActionBasedStateMachineDef, SideEffect, State
 
 
-se_create_receipt = SideEffect(
-    "create or change receipt",
-    handler=order_se.create_register_receipt,
-    ctx={"r_type": receipt_type_choice.EARNEST_PAYMENT}
-)
+# se_create_receipt = SideEffect(
+#     "create or change receipt",
+#     handler=order_se.create_register_receipt,
+#     ctx={"r_type": receipt_type_choice.EARNEST_PAYMENT}
+# )
 
 se_append_default_adjustment = SideEffect(
     "append default adjustment",
@@ -49,8 +49,8 @@ def se_append_logistics_info(l_type):
 
 
 class OrderInfoStateMachinDef(ActionBasedStateMachineDef):
-    wait_earnest = State(order_enum.o_status_choice.WAIT_EARNEST)
-    wait_earnest_check = State(order_enum.o_status_choice.WAIT_EARNEST_CHECK)
+    # wait_earnest = State(order_enum.o_status_choice.WAIT_EARNEST)
+    # wait_earnest_check = State(order_enum.o_status_choice.WAIT_EARNEST_CHECK)
     wait_product_deliver = State(order_enum.o_status_choice.WAIT_PRODUCT_DELIVER)
     wait_product_confirm = State(order_enum.o_status_choice.WAIT_PRODUCT_CHECK)
     wait_product_check = State(order_enum.o_status_choice.WAIT_PRODUCT_CHECK)
@@ -69,25 +69,25 @@ class OrderInfoStateMachinDef(ActionBasedStateMachineDef):
     succeed = State(order_enum.o_status_choice.SUCCEEDED)
     closed = State(order_enum.o_status_choice.CLOSED)
 
-    wait_earnest.set_next_state(
-        order_enum.o_buyer_action_choice.BUYER_PAY_EARNEST,
-        wait_earnest_check,
-        pre_side_effects=[
-            se_create_receipt
-        ],
-    )
-
-    wait_earnest_check.set_next_state(
-        order_enum.op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT,
-        wait_product_deliver,
-    )
-    wait_earnest_check.set_next_state(
-        order_enum.o_buyer_action_choice.BUYER_PAY_EARNEST,
-        wait_earnest_check,
-        pre_side_effects=[
-            se_create_receipt
-        ]
-    )
+    # wait_earnest.set_next_state(
+    #     order_enum.o_buyer_action_choice.BUYER_PAY_EARNEST,
+    #     wait_earnest_check,
+    #     pre_side_effects=[
+    #         se_create_receipt
+    #     ],
+    # )
+    #
+    # wait_earnest_check.set_next_state(
+    #     order_enum.op_platform_action_choice.PLATFORM_CONFIRM_PAYMENT,
+    #     wait_product_deliver,
+    # )
+    # wait_earnest_check.set_next_state(
+    #     order_enum.o_buyer_action_choice.BUYER_PAY_EARNEST,
+    #     wait_earnest_check,
+    #     pre_side_effects=[
+    #         se_create_receipt
+    #     ]
+    # )
 
     wait_product_deliver.set_next_state(
         order_enum.o_seller_action_choice.SELLER_SUBMIT_LOGISTICS_INFO,

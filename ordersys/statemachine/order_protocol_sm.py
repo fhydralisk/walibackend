@@ -5,11 +5,11 @@ from paymentsys.model_choices.receipt_enum import receipt_type_choice
 from ordersys.model_choices.distribution_enum import l_type_choice
 from base.util.statemachine import ActionBasedStateMachineDef, SideEffect, State
 
-se_earnest_refund = SideEffect(
-    "earnest refund",
-    ctx={"r_type": receipt_type_choice.EARNEST_REFUND},
-    handler=order_protocol_se.create_register_receipt
-)
+# se_earnest_refund = SideEffect(
+#     "earnest refund",
+#     ctx={"r_type": receipt_type_choice.EARNEST_REFUND},
+#     handler=order_protocol_se.create_register_receipt
+# )
 
 se_pay_final = SideEffect(
     "final payment",
@@ -38,9 +38,9 @@ class OrderProtocolStateMachineDef(ActionBasedStateMachineDef):
     cancel_wait_confirm = State(order_enum.p_operate_status_choice.CANCEL_WAIT_CONFIRM)
     cancel_wait_refund = State(
         order_enum.p_operate_status_choice.CANCEL_WAIT_REFUND,
-        post_side_effects=[
-            se_earnest_refund
-        ]
+        # post_side_effects=[
+        #     se_earnest_refund
+        # ]
     )
     cancel_OK = State(
         order_enum.p_operate_status_choice.CANCEL_OK,
@@ -54,15 +54,15 @@ class OrderProtocolStateMachineDef(ActionBasedStateMachineDef):
 
     adjust_wait_final = State(order_enum.p_operate_status_choice.ADJUST_WAIT_FINAL)
     adjust_check_final = State(order_enum.p_operate_status_choice.ADJUST_CHECK_FINAL)
-    adjust_check_earnest = State(
-        order_enum.p_operate_status_choice.ADJUST_CHECK_EARNEST,
-        pre_side_effects=[
-            se_earnest_refund
-        ],
-        ctx={
-            "with_adjustment": True
-        }
-    )
+    # adjust_check_earnest = State(
+    #     order_enum.p_operate_status_choice.ADJUST_CHECK_EARNEST,
+    #     pre_side_effects=[
+    #         se_earnest_refund
+    #     ],
+    #     ctx={
+    #         "with_adjustment": True
+    #     }
+    # )
     adjust_ok = State(
         order_enum.p_operate_status_choice.ADJUST_OK,
         post_side_effects=[
@@ -121,10 +121,10 @@ class OrderProtocolStateMachineDef(ActionBasedStateMachineDef):
         adjust_ok,
     )
 
-    adjust_check_earnest.set_next_state(
-        order_enum.op_platform_action_choice.PLATFORM_CONFIRM_REFUND,
-        adjust_ok,
-    )
+    # adjust_check_earnest.set_next_state(
+    #     order_enum.op_platform_action_choice.PLATFORM_CONFIRM_REFUND,
+    #     adjust_ok,
+    # )
 
     # normal protocol
     normal_wait_final.set_next_state(
