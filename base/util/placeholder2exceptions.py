@@ -14,13 +14,13 @@ map(MAP.update, [APPRANCESYSMAP, CORESYSMAP, DEMANDSYSMAP, INVITESYSMAP, LOGSYSM
 
 
 def get_placeholder2exception(placeholder, error_code=None, error_message=None):
-    if placeholder in (MAP):
-        if error_message == None and error_code == None:
+    if placeholder in MAP:
+        if error_message is None and error_code is None:
             return WLException(*MAP[placeholder])
-        elif error_code == None and error_message != None:
+        elif error_code is None and error_message is not None:
             return WLException(MAP[placeholder][0], error_message)
-        elif error_code != None and error_message == None:
-            return  WLException(error_code, MAP[placeholder][1])
+        elif error_code is not None and error_message is None:
+            return WLException(error_code, MAP[placeholder][1])
         else:
             return WLException(error_code, error_message)
     else:
