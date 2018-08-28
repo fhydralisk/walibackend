@@ -1,13 +1,14 @@
 from django.core.files.base import ContentFile
 from django.db.models import Q
 from django.db import transaction
-from base.exceptions import WLException, Error500, Error404, default_exception
+from base.exceptions import Error500, default_exception
 from usersys.funcs.utils.usersid import user_from_sid
 from usersys.model_choices.user_enum import role_choice
 from invitesys.models import InviteContractTemplate, InviteContractSign
 from invitesys.model_choices.contract_enum import sign_status_choice
 from invitesys.model_choices.invite_enum import i_status_choice
 from ordersys.funcs.operate_order import create_order as create_order_func
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 def create_contract(iv_obj, template):
@@ -57,13 +58,13 @@ def get_contract_obj(user, cid):
     try:
         contract = InviteContractSign.objects.select_related("ivid", "ivid__uid_s", "ivid__uid_t").get(Q(ivid__uid_s=user) | Q(ivid__uid_t=user), id=cid)
     except InviteContractSign.DoesNotExist:
-        raise WLException(code=404, message="No such contract")
+        raise get_placeholder2exception("invite/contract/ : no such contract in function get_contract_obj")
 
     return contract
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/contract/content/ : user_sid error"))
 def obtain_contract_content(user, cid):
 
     contract = get_contract_obj(user, cid)
@@ -71,13 +72,13 @@ def obtain_contract_content(user, cid):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/contract/info/ : user_sid error"))
 def retrieve_contract_info(user, cid):
     return get_contract_obj(user, cid)
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/contract/sign/ : user_sid error"))
 def sign_contract(user, cid, sign_method):
     contract = get_contract_obj(user, cid)
 
@@ -103,11 +104,11 @@ def sign_contract(user, cid, sign_method):
 
     # Check invite status
     if contract.ivid.i_status != i_status_choice.CONFIRMED:
-        raise WLException(403, "Cannot change sign status of this contract.")
+        raise get_placeholder2exception("invite/contract/sign/ : cannot change sign status")
 
     # FIXME: If already signed or rejected, cannot revert?
     if getattr(contract, sign) != sign_status_choice.NOT_SIGNED:
-        raise WLException(403, "Already signed or rejected.")
+        raise get_placeholder2exception("invite/contract/sign/ : already signed or rejected")
 
     setattr(contract, sign, sign_method)
 

@@ -12,10 +12,11 @@ from usersys.model_choices.user_enum import validate_status_choice
 from .utils.usersid import user_from_sid
 from usersys.serializers.validate import UserValidateUserSerializer, UserValidateAreaSerializer
 from usersys.forms import ValidatePhotoUploadForm
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("user/validate/fetch_photo/ : user_sid error"))
 def get_validate_photo(user, t_photo):
     """
     Get photo of validation
@@ -29,11 +30,11 @@ def get_validate_photo(user, t_photo):
     if photo_to_return.exists():
         return photo_to_return[0].v_photo.path
     else:
-        raise Error404("No such photo")
+        raise get_placeholder2exception("user/validate/fetch_photo/ : no such photo")
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("user/validate/submit_photo/ : user_sid error"))
 def submit_validate_photo(user, t_photo, photo_files_form_obj):
 
     def disable_former_photos(vobj):
@@ -49,7 +50,7 @@ def submit_validate_photo(user, t_photo, photo_files_form_obj):
         vobj = UserValidate.objects.create(uid=user, validate_status=validate_status_choice.NOT_COMMITTED)
 
     if vobj.validate_status != validate_status_choice.NOT_COMMITTED:
-        raise Error401("Cannot change photo because already submitted the validation")
+        raise get_placeholder2exception("user/validate/submit_photo/ : validation submitted")
 
     photo = UserValidatePhoto()
     photo.t_photo = t_photo
@@ -60,15 +61,15 @@ def submit_validate_photo(user, t_photo, photo_files_form_obj):
         form.save()
         return photo.id
     else:
-        raise Error403(str(form.errors))
-
+        raise get_placeholder2exception("user/validate/submit_photo/ : photo error",
+                                        error_message=str(form.errors))
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("user/validate/delete_photo/ : user_sid error"))
 def delete_validate_photo(user, t_photo):
     vobj = user.user_validate
     if vobj.validate_status != validate_status_choice.NOT_COMMITTED:
-        raise Error401("Cannot change photo because already submitted the validation")
+        raise get_placeholder2exception("user/validate/delete_photo/ : validation submitted")
 
     photo_to_del = UserValidatePhoto.objects.filter(t_photo=t_photo, inuse=True, vid=vobj)
     for p in photo_to_del:
@@ -77,7 +78,7 @@ def delete_validate_photo(user, t_photo):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("user/validate/submit_info/ : user_sid error"))
 def save_validate(user, validate_obj=None, validate_areas=None, validate_request=0):
 
     def append_areas(uv, areas):
@@ -104,7 +105,7 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
 
     # Cannot revert by user
     if uvobj.validate_status not in (validate_status_choice.NOT_COMMITTED, validate_status_choice.REJECTED):
-        raise Error401("Already committed, cannot change")
+        raise get_placeholder2exception("user/validate/submit_info/ : validation submitted")
 
     if validate_areas is not None:
         append_areas(uvobj, validate_areas)
@@ -126,7 +127,8 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
         seri_before_commit.is_valid(raise_exception=True)
     except ValidationError:
         exc = seri_before_commit.errors.items()[0][1][0]
-        raise WLException(code=exc.code, message=str(exc))
+        raise get_placeholder2exception("user/validate/submit_info/ : information is incomplete",
+                                        error_code=exc.code, error_message=str(exc))
 
     if validate_request != 0:
         seri_after_commit = UserValidateUserSerializer(
@@ -138,11 +140,8 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
         except ValidationError:
             seri_before_commit.save()
             exc = seri_after_commit.errors.items()[0][1][0]
-            to_raise = WLException(
-                code=exc.code,
-                message=str(exc)
-            )
-            raise to_raise
+            raise get_placeholder2exception("user/validate/submit_info/ : information is incomplete",
+                                            error_code=exc.code, error_message=str(exc))
         else:
             seri_after_commit.save()
     else:
@@ -150,7 +149,7 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("user/validate/fetch_info/ : user_sid error"))
 def get_validate(user):
     """
     return the validate object.
