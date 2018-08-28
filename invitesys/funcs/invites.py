@@ -1,6 +1,6 @@
 from django.forms import modelform_factory
-from base.exceptions import WLException, default_exception, Error500, Error404
-from base.util.misc_validators import validators
+from base.exceptions import default_exception, Error500
+# from base.util.misc_validators import validators
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
 from usersys.model_choices.user_enum import role_choice
@@ -9,7 +9,7 @@ from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
 from invitesys.models import InviteInfo, InviteCancelReason, InviteProductPhoto
 from .contracts import create_contract, get_current_template
-
+from base.util.placeholder2exceptions import get_placeholder2exception
 MAP_TINVITE_INVITE_STATUS = {
     t_invite_choice.PROCEEDING_INVITES: (
         i_status_choice.STARTED,
@@ -29,7 +29,7 @@ MAP_TINVITE_INVITE_STATUS = {
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/obtain/self/ : user_sid error"))
 def obtain(user, t_invite, page, count_pre_page):
     """
     :param user:
@@ -81,7 +81,7 @@ def obtain(user, t_invite, page, count_pre_page):
     qs = qs1 | qs2
 
     start, end, n_pages = get_page_info(
-        qs, count_pre_page, page, index_error_excepiton=WLException(400, "Page out of range")
+        qs, count_pre_page, page, index_error_excepiton=get_placeholder2exception("invite/obtain/self/ : page out of range")
     )
 
     qs = qs.order_by('-id')
@@ -89,7 +89,7 @@ def obtain(user, t_invite, page, count_pre_page):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/obtain/detail/ : user_sid error"))
 def detail(user, ivid):
     """
 
@@ -105,16 +105,16 @@ def detail(user, ivid):
             'uid_t__user_validate'
         ).get(id=ivid)
     except InviteInfo.DoesNotExist:
-        raise WLException(404, "No such invite.")
+        raise get_placeholder2exception("invite/obtain/detail/ : no such invite")
 
     if iv.uid_s != user and iv.uid_t != user:
-        raise WLException(404, "No such invite")
+        raise get_placeholder2exception("invite/obtain/detail/ ; no access")
 
     return iv
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/launch/launch/ : user_sid error"))
 def publish(user, invite, invite_photos=None):
     """
 
@@ -125,7 +125,7 @@ def publish(user, invite, invite_photos=None):
     """
     # First check if the user is validated
     if not user.is_validated:
-        raise WLException(410, "User's validation does not passed, cannot publish.")
+        raise get_placeholder2exception("invite/launch/launch/ : user is not validated")
 
     # Validate whether
     invite["dmid_t"].validate_satisfy_demand(
@@ -164,7 +164,7 @@ def publish(user, invite, invite_photos=None):
     if user.role == role_choice.SELLER:
 
         # bind invite photo
-        exc = WLException(400, "invite_photos contains invalid photo id.")
+        exc = get_placeholder2exception("invite/launch/launch/ : invalid photo id")
         if invite_photos is not None:
             photo_objs = InviteProductPhoto.objects.select_related('ivid').filter(id__in=invite_photos, inuse=True)
             if photo_objs.count() != len(invite_photos):
@@ -184,7 +184,7 @@ def publish(user, invite, invite_photos=None):
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/flow/handle/ : user_sid error"))
 def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason_class=None):
     """
 
@@ -285,7 +285,7 @@ def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason
         }:
             pass
 
-        raise WLException(403, "Action Error")
+        raise get_placeholder2exception("invite/flow/handle/ : action error")
 
     # TODO: Log here
     try:
@@ -294,7 +294,7 @@ def handle(user, ivid, handle_method, price=None, pmid=None, reason=None, reason
             raise InviteInfo.DoesNotExist
 
     except InviteInfo.DoesNotExist:
-        raise WLException(404, "No such invite.")
+        raise get_placeholder2exception("invite/flow/handle/ : no such invite")
 
     _real_handle()
     iv_obj.save()
@@ -307,15 +307,15 @@ def get_reason_classes():
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/photo/upload/ : user_sid"))
 def upload_invite_photo(user, photo_desc, photo_files_form_obj, ivid=None):
     # type: (UserBase, str, object, InviteInfo) -> int
     if ivid is not None:
         if ivid.seller != user:
-            raise WLException(404, "No such invite.")
+            raise get_placeholder2exception("invite/photo/upload/ : no such invite")
 
     if user.role != role_choice.SELLER:
-        raise WLException(403, "Only seller can submit invite photos.")
+        raise get_placeholder2exception("invite/photo/upload/ : only seller")
 
     # Real submit
     photo = InviteProductPhoto(ivid=ivid, photo_desc=photo_desc, inuse=True, uploader=user)
@@ -326,47 +326,48 @@ def upload_invite_photo(user, photo_desc, photo_files_form_obj, ivid=None):
         submit_form.save()
         return photo.id
     else:
-        raise WLException(400, str(submit_form.errors))
+        raise get_placeholder2exception("invite/photo/upload/ : photo error", error_message=str(submit_form.errors))
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/photo/delete/ : user_sid error"))
 def delete_invite_photo(user, photo_id):
     try:
         photo = InviteProductPhoto.objects.filter(id=photo_id, inuse=True).get()
     except InviteProductPhoto.DoesNotExist:
-        raise WLException(404, "No such photo.")
+        raise get_placeholder2exception("invite/photo/delete/ : no such photo")
 
     if photo.uploader != user:
-        raise WLException(404, "No such photo.")
+        raise get_placeholder2exception("invite/photo/delete/ : is not uploader")
 
     if photo.ivid is not None:
         if photo.ivid.seller != user:
-            raise WLException(404, "No such photo.")
+            raise get_placeholder2exception("invite/photo/delete/ : is not seller")
 
         if photo.ivid.i_status not in {
             i_status_choice.STARTED,
         }:
-            raise WLException(403, "Cannot delete photo with status %d" % photo.ivid.i_status)
+            raise get_placeholder2exception("invite/photo/delete/ : status error",
+                                            error_message=photo.ivid.i_status)
 
     photo.inuse = False
     photo.save()
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("invite/photo/obtain/ : user_sid_error"))
 def get_invite_photo(user, photo_id):
     # type: (UserBase, int) -> str
     try:
         photo = InviteProductPhoto.objects.filter(id=photo_id, inuse=True).get()
     except InviteProductPhoto.DoesNotExist:
-        raise WLException(404, "No such photo.")
+        raise get_placeholder2exception("invite/photo/obtain/ : no such photo")
 
     if photo.ivid is not None:
         if photo.ivid.uid_s != user and photo.ivid.uid_t != user:
-            raise WLException(404, "No such photo.")
+            raise get_placeholder2exception("invite/photo/obtain/ : no access")
     else:
         if photo.uploader != user:
-            raise WLException(404, "No such photo.")
+            raise get_placeholder2exception("invite/photo/obtain/ : is not uploader")
 
     return photo.invite_photo.path

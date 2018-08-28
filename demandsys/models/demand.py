@@ -6,13 +6,12 @@ from base.util.timestamp import now
 
 from django.db import models
 from django.conf import settings
-from base.exceptions import WLException
 from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
 from demandsys.model_choices.demand_enum import t_demand_choice, unit_choice, freight_payer_choice
 from demandsys.util.unit_converter import UnitQuantityMetric, UnitPriceMetric
-
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 def calc_score_by_operator(m1, m2, score_tuple):
     return score_tuple[1] if m1 == m2 else score_tuple[0] if m1 < m2 else score_tuple[2]
@@ -72,22 +71,22 @@ class ProductDemand(models.Model):
             quantity_metric = UnitQuantityMetric(quantity, self.unit)
 
         if not self.in_use:
-            raise WLException(404, "No such demand - not in use")
+            raise get_placeholder2exception("invite/launch/launch/ : no such demand - not in use")
 
         # Validate expire date
         # TODO: Check whether "now" works
         if self.end_time < now():
-            raise WLException(404, "No such demand - expire")
+            raise get_placeholder2exception("invite/launch/launch/ : no such demand - expire")
 
         if opposite_role == self.uid.role:
-            raise WLException(404, "No such demand - role does not match")
+            raise get_placeholder2exception("invite/launch/launch/ : no such demand - role doesn't match")
 
         if quantity_metric < self.min_quantity_metric():
-            raise WLException(403, "Min Quantity not satisfied")
+            raise get_placeholder2exception("invite/launch.launch/ : min quantity not satisfied")
 
         # Validate whether quantity meets quantity - satisfied
         if quantity_metric > self.quantity_left():
-            raise WLException(403, "Exceed max quantity")
+            raise get_placeholder2exception("invite/launch/launch/ : exceed max quantity")
 
         return
 

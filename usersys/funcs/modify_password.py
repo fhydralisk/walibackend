@@ -14,6 +14,7 @@ from usersys.models import UserBase
 
 from .session import RegistrationSessionKeys, ValidateStatus
 from .utils.usersid import user_from_sid
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 User = get_user_model()
 
@@ -22,20 +23,19 @@ def modify_password(sid, pn, password, role):
     # validate sid to confirm the phone validation process
     session = get_session_dict(sid)
     if session is None:
-        raise Error404("Sid does not exist")
-
+        raise get_placeholder2exception("user/resetpasswd/pn/validate/ : sid error")
     # validate if sid match pn
     if pn != session.get(RegistrationSessionKeys.PHONE_NUMBER):
-        raise Error409("Validation code not match")
+        raise get_placeholder2exception("user/resetpasswd/pn/validate/ : pn conflicts with sid")
 
     if session.get(RegistrationSessionKeys.VALIDATE_STATUS) == ValidateStatus.VALIDATE_SUCCEEDED:
         # change password and save
         users = User.objects.filter(pn=pn, role=role)
         if len(users) == 0:
-            raise Error404("User does not exist")
+            raise get_placeholder2exception("user/resetpasswd/pn/validate/ : sid error")
 
         if not validators.validate(password, "user password"):
-            raise Error403("Format of password not valid")
+            raise get_placeholder2exception("user/resetpasswd/pn/validate/ : format of password not valid")
 
         users[0].set_password(password)
         users[0].save()
@@ -43,16 +43,16 @@ def modify_password(sid, pn, password, role):
         destroy_session(sid)
 
     else:
-        raise Error405("Not validated")
+        raise get_placeholder2exception("user/resetpasswd/pn/validate/ : not validated")
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("user/resetpasswd/changepasswd/ : user_sid error"))
 def change_password(user, old_password, new_password):
     # type: (UserBase, str, str) -> None
     user = authenticate(pn=user.pn, password=old_password)  # type: UserBase
     if user is None:
-        raise WLException(403, "Authenticate failed.")
+        raise get_placeholder2exception("user/resetpasswd/changepasswd/ : Authenticate failed")
 
     user.set_password(new_password)
     user.save()

@@ -1,10 +1,11 @@
 from demandsys.models import ProductDemand, ProductDemandPhoto
 from demandsys.model_choices.demand_enum import match_order_choice
-from base.exceptions import default_exception, Error500, Error404, Error400
+from base.exceptions import default_exception, Error500
 from base.util.timestamp import now
 from base.util.pages import get_page_info, get_page_info_list
 from usersys.funcs.utils.usersid import user_from_sid
 from demandsys.models.translaters import t_demand_translator
+from base.util.placeholder2exceptions import get_placeholder2exception
 
 
 @default_exception(Error500)
@@ -19,7 +20,7 @@ def get_popular_demand(role, user, page, count_per_page):
     """
 
     if user is None and role is None:
-        raise Error400("Either user or role must not be null.")
+        raise get_placeholder2exception("demand/obtain/hot/ : both user and role are null")
 
     if user is not None:
         role = user.role
@@ -33,14 +34,14 @@ def get_popular_demand(role, user, page, count_per_page):
         in_use=True, match=True).filter(end_time__gt=now()
     ).exclude(t_demand=t_demand_translator.from_role(role)).order_by("-id")
 
-    st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
+    st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=get_placeholder2exception("demand/obtain/hot/ : page out of range"))
 
     # return sliced single page
     return qs[st:ed], n_pages
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("demand/obtain/self/ : user_sid error"))
 def get_my_demand(user, page, count_per_page):
     """
     TODO: using user_sid to get specified page
@@ -57,13 +58,13 @@ def get_my_demand(user, page, count_per_page):
         'pmid', 'wcid'
     ).filter(uid=user, in_use=True).order_by("-id")
 
-    st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
+    st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=get_placeholder2exception("demand/obtain/self/ : page out of range"))
     # return sliced single page
     return qs[st:ed], n_pages
 
 
 @default_exception(Error500)
-@user_from_sid(Error404)
+@user_from_sid(get_placeholder2exception("demand/obtain/match/ : user_sid error"))
 def get_matched_demand(user, id, page, order, asc, count_per_page):
     """
     :param user:
@@ -95,7 +96,7 @@ def get_matched_demand(user, id, page, order, asc, count_per_page):
             'pmid', 'wcid'
         ).get(in_use=True, id=id, uid=user)
     except ProductDemand.DoesNotExist:
-        raise Error404("No such demand.")
+        raise get_placeholder2exception("demand/obtain/match/ : no such demand")
 
     match_queryset = ProductDemand.objects.select_related(
         'uid__user_validate',
@@ -122,7 +123,7 @@ def get_matched_demand(user, id, page, order, asc, count_per_page):
     matches_list.sort(key=match_key, reverse=not asc)
 
     st, ed, n_pages = get_page_info_list(
-        matches_list, count_per_page, page, index_error_excepiton=Error400("Page out of range")
+        matches_list, count_per_page, page, index_error_excepiton=get_placeholder2exception("demand/obtain/match/ : page out of range")
     )
 
     # Set the match field
@@ -152,19 +153,18 @@ def get_demand_detail(user, id):
             'pmid', 'wcid'
         ).get(in_use=True, id=id)
     except ProductDemand.DoesNotExist:
-        raise Error404("No such demand.")
+        raise get_placeholder2exception("demand/obtain/demand/ : no such demand")
     return demand
 
 
 @default_exception(Error500)
 def get_specified_photo(id):
     """
-    
+
     :param id: 
     :return:
     """
     try:
         return ProductDemandPhoto.objects.get(id=id).demand_photo.path
     except ProductDemandPhoto.DoesNotExist:
-        raise Error404("No such photo.")
-
+        raise get_placeholder2exception("demand/obtain/photo/ : no such photo")
