@@ -27,7 +27,9 @@ reset_passwd_urls = [
 ]
 
 info_urls = [
-    url(r'^self/', info.UserInfoView.as_view())
+    url(r'^self/', info.UserInfoView.as_view()),
+    url(r'^getsearchhistory/', info.GetSearchHistoryView.as_view()),
+    url(r'^emptysearchhistory', info.EmptySearchHistoryView.as_view()),
 ]
 
 urlpatterns = [
