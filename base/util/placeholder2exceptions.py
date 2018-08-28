@@ -10,7 +10,15 @@ from usersys.funcs.placeholder2exceptions import MAP as USERSYSMAP
 from base.exceptions import WLException
 
 MAP = {}
-map(MAP.update, [APPRANCESYSMAP, CORESYSMAP, DEMANDSYSMAP, INVITESYSMAP, LOGSYSMAP, ORDERSYSMAP, USERSYSMAP])
+map(MAP.update, [
+        APPRANCESYSMAP,
+        CORESYSMAP,
+        DEMANDSYSMAP,
+        INVITESYSMAP,
+        LOGSYSMAP,
+        ORDERSYSMAP,
+        USERSYSMAP,
+])
 
 
 def get_placeholder2exception(placeholder, error_code=None, **kwargs):
