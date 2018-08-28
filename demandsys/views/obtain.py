@@ -8,11 +8,12 @@ from demandsys.serializers.demand_api import (
     ObtainDemandSerializer, ObtainDemandDetailSerializer, ObtainHotDemandSerializer, ObtainDemandMatchSerializer
 )
 from demandsys.serializers.demand import (
-    DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer, DemandReadableDisplaySelfSerializer
+    DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer, DemandReadableDisplaySelfSerializer, DemandReadableDisplaySearchSerializer
 )
 from demandsys.serializers.photo_api import GetPhotoSerializer
-from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand
-
+from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand, get_search_demand
+from usersys.serializers.search_api import SearchHistorySubmitSerializer
+from usersys.funcs.search_history import submit_search_history
 
 # TODO: Move page size into settings
 class ObtainHotView(WLAPIView, APIView):
@@ -101,5 +102,22 @@ class ObtainMatchView(WLAPIView, APIView):
             data={
                 "match_demands": seri_demand.data,
                 "n_pages": pages,
+            }, context=context
+        )
+
+
+class ObtainSearchView(WLAPIView, APIView):
+    def post(self, request):
+        data, context = self.get_request_obj(request)
+        seri = SearchHistorySubmitSerializer(data=data)
+        self.validate_serializer(seri)
+        submit_search_history(user_sid=seri.validated_data['user_sid'], keyword=seri.validated_data['keyword'])
+        demands, n_pages = get_search_demand(count_per_page=5, **seri.data)
+        seri_demand = DemandReadableDisplaySearchSerializer(demands, many=True)
+
+        return self.generate_response(
+            data={
+                "search_demands": seri_demand.data,
+                "n_pages": n_pages,
             }, context=context
         )
