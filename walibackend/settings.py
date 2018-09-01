@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'backgroundsys',
     'apperancesys',
     'pushsys',
+    'simplified_invite',
+    'appraisalsys',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,1 @@
+from appraise import AppraisalInfo
