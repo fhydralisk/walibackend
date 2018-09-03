@@ -43,3 +43,12 @@ class EditDemandSerializer(serializers.Serializer):
 class CloseDeleteDemandSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     id = serializers.IntegerField()
+
+
+class ObtainSearchSerializer(serializers.Serializer):
+    user_sid = serializers.CharField(max_length=60)
+    keyword = serializers.CharField(max_length=256)
+    page = serializers.IntegerField(default=0)
+    t1id = serializers.IntegerField(default=None)
+    aid = serializers.IntegerField(default=None)
+    asc_of_price = serializers.NullBooleanField(default=None)
