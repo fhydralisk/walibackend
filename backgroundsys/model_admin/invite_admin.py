@@ -2,9 +2,8 @@
 from django.contrib import admin
 import invitesys.models as invitesys
 from usersys.models import UserBase, UserValidate
-import parameter as para
 from django.utils.html import format_html
-
+from django.core.urlresolvers import reverse
 
 #
 # class UserValidateAreaInline(admin.TabularInline):
@@ -104,7 +103,7 @@ class InviteInfoAdmin(InviteAdmin):
     price_unit.short_description = '单价'
 
     def operate(self, obj):
-        address = para.admin_URL + 'invitesys/inviteinfo/{}'.format(obj.id)
+        address = reverse('backgroundsys:invitesys_inviteinfo_change', args=(obj.id,))
         title = "详情"
         return format_html('<a href="{}">{}</a>'.format(address, title))
 

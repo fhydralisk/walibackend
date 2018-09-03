@@ -24,7 +24,7 @@ def register_all():
         if hasattr(m, 'to_register'):
             # raise ZeroDivisionError
             for r in m.to_register:
-                admin.site.register(*r)
+                admin_site.register(*r)
                 # raise Exception(*r)
 
 

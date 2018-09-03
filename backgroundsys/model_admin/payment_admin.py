@@ -9,7 +9,6 @@ from logsys.models import LogOrderProtocolStatus
 from paymentsys.models import *
 from ordersys.model_choices.order_enum import o_status_choice, p_operate_status_choice
 from logsys.models import LogOrderStatus
-import parameter as para
 
 
 class PaymentPlatformAdmin(admin.ModelAdmin):

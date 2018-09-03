@@ -1,8 +1,7 @@
 from django.contrib import admin
 
 from usersys.models import UserBase, UserValidate, UserValidateArea, UserValidatePhoto, UserSid
-
+from backgroundsys.admin_site import admin_site
 # Register your models here.
 
-# admin.site.register([UserBase, UserValidate, UserValidateArea, UserValidatePhoto, UserSid])
-admin.site.register([UserBase, UserValidatePhoto, UserSid])
+admin_site.register([UserBase, UserValidatePhoto, UserSid])

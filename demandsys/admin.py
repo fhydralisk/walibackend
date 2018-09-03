@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from backgroundsys.admin_site import admin_site
 from .models import ProductWaterContent, ProductQuality, ProductTypeL2, ProductTypeL1, ProductTypeL3, ProductDemand, ProductDemandPhoto
 # Register your models here.
 
@@ -21,5 +21,5 @@ class ProductDemandPhotoAdmin(admin.ModelAdmin):
 
 # admin.site.register([ProductWaterContent, ProductQuality,
 #                      ProductTypeL2])
-admin.site.register(ProductDemand, ProductDemandAdmin)
-admin.site.register(ProductDemandPhoto, ProductDemandPhotoAdmin)
+admin_site.register(ProductDemand, ProductDemandAdmin)
+admin_site.register(ProductDemandPhoto, ProductDemandPhotoAdmin)

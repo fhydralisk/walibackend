@@ -10,7 +10,6 @@ from pushsys.models import *
 from ordersys.model_choices.order_enum import o_status_choice, p_operate_status_choice
 from paymentsys.models import PaymentReceipt
 from logsys.models import LogOrderStatus
-import parameter as para
 
 class JPushSecretAdmin(admin.ModelAdmin):
     # ordering = ('-id',)

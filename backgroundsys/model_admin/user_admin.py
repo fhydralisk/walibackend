@@ -1,8 +1,11 @@
 # coding=utf-8
 from django.contrib import admin
 import usersys.models as usersys
-import parameter as para
 from django.utils.html import format_html
+from django.core.urlresolvers import reverse
+from functools import update_wrapper
+from django.views.generic import RedirectView
+from django.http import HttpResponseRedirect
 
 
 class UserValidateAreaInline(admin.TabularInline):
@@ -28,13 +31,13 @@ class UserValidateAdmin(UserAdmin):
     def operate(self, obj):
         """自定义一个操作标签，跳转url"""
         detail = "详情"
-        detail_url = para.admin_URL + 'usersys/uservalidate/{}/change/?id=1'.format(obj.id)
+        detail_url = reverse('backgroundsys:usersys_uservalidate_change', args=(obj.id,)) + '?status=1'
         authenticate = "认证"
-        authenticate_url = para.admin_URL + 'usersys/uservalidate/{}/change/?id=2'.format(obj.id)
+        authenticate_url = reverse('backgroundsys:usersys_uservalidate_change', args=(obj.id,)) + '?status=2'
         invite = '邀请'
-        invite_url = para.admin_URL + 'invitesys/inviteinfo/?q={}'.format(obj.uid.pn)
+        invite_url = reverse('backgroundsys:invitesys_inviteinfo_changelist') + '?q={}'.format(obj.uid.pn)
         deal = '交易'
-        deal_url = para.admin_URL + 'ordersys/orderinfo/?q={}'.format(obj.uid.pn)
+        deal_url = reverse('backgroundsys:ordersys_orderinfo_changelist') + '?q={}'.format(obj.uid.pn)
 
         return format_html(
             '<a href="{}">{}</a> &emsp; <a href="{}">{}</a> &emsp; <a href="{}">{}</a> &emsp; <a href="{}">{}</a>'.format(
@@ -58,18 +61,61 @@ class UserValidateAdmin(UserAdmin):
             areas_strings += "    "
         return areas_strings
 
+    def get_urls(self):
+        from django.conf.urls import url
+
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+
+            wrapper.model_admin = self
+            return update_wrapper(wrapper, view)
+
+        info = self.model._meta.app_label, self.model._meta.model_name
+
+        def pass_view(self, userid):
+            temp = usersys.UserValidate.objects.get(id=userid)
+            temp.validate_status = 2
+            temp.save()
+            redirect_url = reverse('backgroundsys:usersys_uservalidate_change', args=(userid,)) + '?status=2'
+            return HttpResponseRedirect(redirect_url)
+
+        def fail_view(self, userid):
+            temp = usersys.UserValidate.objects.get(id=userid)
+            temp.validate_status = 4
+            temp.save()
+            redirect_url = reverse('backgroundsys:usersys_uservalidate_change', args=(userid,)) + '?status=2'
+            return HttpResponseRedirect(redirect_url)
+
+        urlpatterns = [
+            url(r'^$', wrap(self.changelist_view), name='%s_%s_changelist' % info),
+            url(r'^(.+)/pass', pass_view, name='%s_%s_pass' % info),
+            url(r'^(.+)/fail', fail_view, name='%s_%s_fail' % info),
+            url(r'^add/$', wrap(self.add_view), name='%s_%s_add' % info),
+            url(r'^(.+)/history/$', wrap(self.history_view), name='%s_%s_history' % info),
+            url(r'^(.+)/delete/$', wrap(self.delete_view), name='%s_%s_delete' % info),
+            url(r'^(.+)/change/$', wrap(self.change_view), name='%s_%s_change' % info),
+            # For backwards compatibility (was the change url before 1.9)
+            url(r'^(.+)/$', wrap(RedirectView.as_view(
+                pattern_name='%s:%s_%s_change' % ((self.admin_site.name,) + info)
+            ))),
+        ]
+        return urlpatterns
+
     def image(self, obj):
         return format_html('<img src="%s" />' % obj.validate_photo.v_photo)
 
     image.short_description = '经营执照'
 
-    # @eel.expose
-    def my_python(self):
-        return 1
-
     def button(self, obj):
+        pass_url = reverse('backgroundsys:usersys_uservalidate_pass', args=(obj.id,))
+        pass_des = '通过认证'
+        fail_url = reverse('backgroundsys:usersys_uservalidate_fail', args=(obj.id,))
+        fail_des = "拒绝认证"
         return format_html(
-            '<button onclick="alert(\'haha\')">你好</button>')
+            '<a href="{}">{}</a> &emsp; &emsp;&emsp;&emsp;<a href="{}">{}</a>'.format(pass_url, pass_des,fail_url,fail_des))
+
+    button.short_description = '操作'
 
     def area(self, obj):
         area_ids = obj.validate_area.all()
@@ -88,7 +134,7 @@ class UserValidateAdmin(UserAdmin):
 
     def get_fieldsets(self, request, obj=None):
         get = request.GET
-        if (get.get("id") == "1"):
+        if (get.get("status") == "1"):
             fieldsets = (
                 ('基本信息', {
                     'fields': (('uid',), ('phonenum',), ('t_user',), ('company'), ('contact'),)
@@ -111,12 +157,12 @@ class UserValidateAdmin(UserAdmin):
     def get_readonly_fields(self, request, obj=None):
         """change self.readonly_fields and self.inlines"""
         get = request.GET
-        if (get.get("id") == "1"):
+        if (get.get("status") == "1"):
             self.readonly_fields = ('uid', 'phonenum',)
             self.inlines = []
         else:
             self.readonly_fields = ('t_user', 'image', 'company', 'contact', 'bankcard', 'obank', 'uid', 'phonenum',
-                                    'texno', 'address', 'area', 'button')
+                                    'texno', 'address', 'area', 'button','validate_status')
         return self.readonly_fields
 
 
