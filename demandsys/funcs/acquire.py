@@ -9,7 +9,7 @@ from demandsys.models.translaters import t_demand_translator
 
 @default_exception(Error500)
 @user_from_sid(None)
-def get_popular_demand(role, user, page, t1id, aid, acs_of_price, count_per_page):
+def get_popular_demand(role, user, page, t1id, aid, asc_of_price, count_per_page):
     """
     :param role: 
     :param user:
@@ -37,8 +37,8 @@ def get_popular_demand(role, user, page, t1id, aid, acs_of_price, count_per_page
         qs = qs.filter(qid__t3id__t2id__t1id=t1id)
     if aid is not None:
         qs = qs.filter(aid=aid)
-    if acs_of_price is not None:
-        if acs_of_price:
+    if asc_of_price is not None:
+        if asc_of_price:
             qs = qs.order_by("price")
         else:
             qs = qs.order_by("-price")
@@ -53,11 +53,14 @@ def get_popular_demand(role, user, page, t1id, aid, acs_of_price, count_per_page
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def get_my_demand(user, page, count_per_page, t1id, aid, acs_of_price,):
+def get_my_demand(user, page, t1id, aid, asc_of_price, count_per_page):
     """
     TODO: using user_sid to get specified page
     :param user:
     :param page:
+    :param t1id:
+    :param aid:
+    :param asc_of_price:
     :param count_per_page
     :return: 
     """
@@ -73,8 +76,8 @@ def get_my_demand(user, page, count_per_page, t1id, aid, acs_of_price,):
         qs = qs.filter(qid__t3id__t2id__t1id=t1id)
     if aid is not None:
         qs = qs.filter(aid=aid)
-    if acs_of_price is not None:
-        if acs_of_price:
+    if asc_of_price is not None:
+        if asc_of_price:
             qs = qs.order_by("price")
         else:
             qs = qs.order_by("-price")
