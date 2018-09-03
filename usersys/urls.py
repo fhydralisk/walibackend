@@ -27,7 +27,8 @@ reset_passwd_urls = [
 ]
 
 info_urls = [
-    url(r'^self/', info.UserInfoView.as_view())
+    url(r'^self/', info.UserInfoView.as_view()),
+    url(r'^feedback/$', info.UserFeedbackView.as_view()),
 ]
 
 urlpatterns = [

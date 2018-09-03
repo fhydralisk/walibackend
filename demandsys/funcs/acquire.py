@@ -9,7 +9,7 @@ from demandsys.models.translaters import t_demand_translator
 
 @default_exception(Error500)
 @user_from_sid(None)
-def get_popular_demand(role, user, page, count_per_page):
+def get_popular_demand(role, user, page, t1id, aid, asc_of_price, count_per_page):
     """
     :param role: 
     :param user:
@@ -31,7 +31,19 @@ def get_popular_demand(role, user, page, count_per_page):
         'pmid', 'wcid'
     ).filter(
         in_use=True, match=True).filter(end_time__gt=now()
-    ).exclude(t_demand=t_demand_translator.from_role(role)).order_by("-id")
+    ).exclude(t_demand=t_demand_translator.from_role(role))
+
+    if t1id is not None:
+        qs = qs.filter(qid__t3id__t2id__t1id=t1id)
+    if aid is not None:
+        qs = qs.filter(aid=aid)
+    if asc_of_price is not None:
+        if asc_of_price:
+            qs = qs.order_by("price", "-id")
+        else:
+            qs = qs.order_by("-price", "-id")
+    else:
+        qs = qs.order_by("-id")
 
     st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
 
@@ -41,11 +53,14 @@ def get_popular_demand(role, user, page, count_per_page):
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def get_my_demand(user, page, count_per_page):
+def get_my_demand(user, page, t1id, aid, asc_of_price, count_per_page):
     """
     TODO: using user_sid to get specified page
     :param user:
     :param page:
+    :param t1id:
+    :param aid:
+    :param asc_of_price:
     :param count_per_page
     :return: 
     """
@@ -55,7 +70,19 @@ def get_my_demand(user, page, count_per_page):
         'qid__t3id__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
-    ).filter(uid=user, in_use=True).order_by("-id")
+    ).filter(uid=user, in_use=True)
+
+    if t1id is not None:
+        qs = qs.filter(qid__t3id__t2id__t1id=t1id)
+    if aid is not None:
+        qs = qs.filter(aid=aid)
+    if asc_of_price is not None:
+        if asc_of_price:
+            qs = qs.order_by("price", "-id")
+        else:
+            qs = qs.order_by("-price", "-id")
+    else:
+        qs = qs.order_by("-id")
 
     st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
     # return sliced single page
