@@ -39,9 +39,9 @@ def get_popular_demand(role, user, page, t1id, aid, asc_of_price, count_per_page
         qs = qs.filter(aid=aid)
     if asc_of_price is not None:
         if asc_of_price:
-            qs = qs.order_by("price")
+            qs = qs.order_by("price", "-id")
         else:
-            qs = qs.order_by("-price")
+            qs = qs.order_by("-price", "-id")
     else:
         qs = qs.order_by("-id")
 
@@ -78,9 +78,9 @@ def get_my_demand(user, page, t1id, aid, asc_of_price, count_per_page):
         qs = qs.filter(aid=aid)
     if asc_of_price is not None:
         if asc_of_price:
-            qs = qs.order_by("price")
+            qs = qs.order_by("price", "-id")
         else:
-            qs = qs.order_by("-price")
+            qs = qs.order_by("-price", "-id")
     else:
         qs = qs.order_by("-id")
 
