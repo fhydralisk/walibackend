@@ -7,15 +7,15 @@ from .demand import DemandPublishSerializer, DemandEditSerializer
 class ObtainDemandSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     page = serializers.IntegerField(default=0)
-    t1id = serializers.IntegerField(default=None)
-    aid = serializers.IntegerField(default=None)
-    asc_of_price = serializers.NullBooleanField(default=None)
+    t1id = serializers.IntegerField(default=None, allow_null=True)
+    aid = serializers.IntegerField(default=None, allow_null=True)
+    asc_of_price = serializers.NullBooleanField(default=None, allow_null=True)
     count_per_page = serializers.IntegerField(default=3)
 
 
 class ObtainHotDemandSerializer(ObtainDemandSerializer):
     user_sid = serializers.CharField(max_length=60, default=None)
-    role = serializers.ChoiceField(choices=role_choice.get_choices(), default=None)
+    role = serializers.ChoiceField(choices=role_choice.get_choices(), default=None, allow_null=True)
     count_per_page = serializers.IntegerField(default=6)
 
 
