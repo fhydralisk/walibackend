@@ -21,7 +21,7 @@ class ObtainHotView(WLAPIView, APIView):
         seri = ObtainHotDemandSerializer(data=data)
         self.validate_serializer(seri)
 
-        demands, n_pages = get_popular_demand(count_per_page=5, **seri.data)
+        demands, n_pages = get_popular_demand(**seri.data)
 
         seri_demand = DemandReadableDisplaySerializer(demands, many=True)
 
@@ -40,7 +40,7 @@ class ObtainSelfView(WLAPIView, APIView):
         seri = ObtainDemandSerializer(data=data)
         self.validate_serializer(seri)
 
-        demands, n_pages = get_my_demand(count_per_page=5, **seri.data)
+        demands, n_pages = get_my_demand(**seri.data)
 
         seri_demand = DemandReadableDisplaySelfSerializer(demands, many=True)
 

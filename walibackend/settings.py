@@ -26,6 +26,8 @@ SECRET_KEY = '6l96=e*-y!^4w+3dg&*liclqe!2tc_c$w2f#x)*(&p_m7&aao9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+USE_MYSQL = False
+
 # TODO: Add host name
 ALLOWED_HOSTS = []
 
@@ -93,13 +95,26 @@ WSGI_APPLICATION = 'walibackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-# TODO: Change database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+# Change database
+if USE_MYSQL:
+    SILENCED_SYSTEM_CHECKS = ['mysql.E001']
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'read_default_file': '/Users/hydra/Documents/coding/github/wali/backend/walibackend/client'
+            },
+        }
     }
-}
+
+else:
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation
