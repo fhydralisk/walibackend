@@ -7,6 +7,7 @@ class SubmitAppraisalSerializer(serializers.Serializer):
     ivid = serializers.IntegerField()
     in_accordance = serializers.BooleanField()
     parameter = serializers.JSONField()
+    check_photos = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
 
     def validate(self, attrs):
         if not attrs["in_accordance"]:
