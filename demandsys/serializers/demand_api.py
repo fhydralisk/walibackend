@@ -14,7 +14,7 @@ class ObtainDemandSerializer(serializers.Serializer):
 
 
 class ObtainHotDemandSerializer(ObtainDemandSerializer):
-    user_sid = serializers.CharField(max_length=60, default=None)
+    user_sid = serializers.CharField(max_length=60, default=None, allow_null=True)
     role = serializers.ChoiceField(choices=role_choice.get_choices(), default=None, allow_null=True)
     count_per_page = serializers.IntegerField(default=6)
 
