@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
-from simplified_invite.serializers.simplified_invitel_api import (
+from simplified_invite.serializers.simplified_invite_api import (
     SubmitInviteSerializer, CancelInviteSerializer
 )
 from simplified_invite.serializers.invite import InviteInfoDisplaySerializer

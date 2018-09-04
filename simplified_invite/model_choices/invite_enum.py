@@ -18,20 +18,6 @@ class _IStatusChoice(FieldChoice):
     )
 
 
-class _TInviteChoice(FieldChoice):
-    CHOICE_DISPLAY = (
-        # (1, _(""), "PROCEEDING_INVITES_MINE"),
-        # (2, _(""), "CLOSED_INVITES_MINE"),
-        # (3, _(""), "PROCEEDING_INVITES_OTHERS"),
-        # (4, _(""), "CLOSED_INVITES_OTHERS"),
-        # (5, _(""), "FINISHED_INVITES_MINE"),
-        # (6, _(""), "FINISHED_INVITES_OTHERS"),
-        (1, _(""), "PROCEEDING_INVITES"),
-        (2, _(""), "CLOSED_INVITES"),
-        (3, _(""), "FINISHED_INVITES"),
-    )
-
-
 class _HandleMethodChoice(FieldChoice):
     CHOICE_DISPLAY = (
         (1, _(""), "ACCEPT"),
@@ -41,13 +27,12 @@ class _HandleMethodChoice(FieldChoice):
     )
 
 
-class _TInvite2Appraisal(FieldChoice):
+class _TInviteChoice(FieldChoice):
     CHOICE_DISPLAY = (
         (0, _(""), "PROCEEDING"),
         (1, _(""), "COMPLETED_OR_CANCELED"),
     )
 
 i_status_choice = _IStatusChoice()
-t_invite_choice = _TInviteChoice()
 handle_method_choice = _HandleMethodChoice()
-t_invite2appraisal_choice = _TInvite2Appraisal()
+t_invite_choice = _TInviteChoice()

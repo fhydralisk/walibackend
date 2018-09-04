@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from usersys.funcs.utils.sid_management import sid_getuser
 from usersys.model_choices.user_enum import role_choice
-from simplified_invite.model_choices.invite_enum import t_invite2appraisal_choice
+from simplified_invite.model_choices.invite_enum import t_invite_choice
 from simplified_invite.serializers.invite import InviteInfoInAppraisalSysSubmitSerializer
 
 
@@ -13,7 +13,7 @@ class ObtainDefaultInviteSerializer(serializers.Serializer):
 
 class ObtainSelfInvite2AppraisalSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
-    t_invite2appraisal = serializers.ChoiceField(choices=t_invite2appraisal_choice.get_choices())
+    t_invite = serializers.ChoiceField(choices=t_invite_choice.get_choices())
     page = serializers.IntegerField(default=0)
 
 
@@ -25,7 +25,6 @@ class ObtainInvite2AppraisalDetailSerializer(serializers.Serializer):
 class SubmitInviteSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     invite = serializers.JSONField()
-    invite_photos = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
 
     def validate(self, attrs):
         user = sid_getuser(attrs["user_sid"])
@@ -39,7 +38,7 @@ class SubmitInviteSerializer(serializers.Serializer):
 
         seri = seri_cls(data=attrs["invite"])
         seri.is_valid(raise_exception=True)
-        attrs["invite"] = seri.validaated_data
+        attrs["invite"] = seri.validated_data
         return attrs
 
 
@@ -47,5 +46,4 @@ class CancelInviteSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     ivid = serializers.IntegerField()
     reason_id = serializers.IntegerField()
-    reason = serializers.CharField(max_length=256, allow_null=True)
-
+    reason = serializers.CharField(max_length=256, default=None)

@@ -10,7 +10,7 @@ from usersys.model_choices.user_enum import role_choice
 
 @default_exception(Error500)
 @user_from_sid(Error404)
-def submit_appraisal(user, ivid, parameter):
+def submit_appraisal(user, ivid, in_accordance, parameter):
     # type: (UserBase, int, dict) -> QuerySet
     try:
         iv_obj = InviteInfo.objects.get(id=ivid)
@@ -21,13 +21,27 @@ def submit_appraisal(user, ivid, parameter):
         raise WLException(403, 'this user has no access to submit the invite')
 
     if not iv_obj.i_status == i_status_choice.STARTED:
-        raise WLException(403, 'invite in this status can not submit aappraisal')
+        raise WLException(403, 'invite in this status can not submit appraisal')
 
+    if in_accordance:
+        appraisal_obj = AppraisalInfo.objects.create(
+            in_accordance=in_accordance,
+            a_status=a_status_choice.APPRAISAL_SUBMITTED,
+            ivid=iv_obj,
+            final_price=iv_obj.price,
+            unit=iv_obj.unit,
+            quantity=iv_obj.quantity,
+            wcid=iv_obj.dmid_t.wcid,
+            qid=iv_obj.dmid_t.qid
+        )
+
+    else:
+        appraisal_obj = AppraisalInfo.objects.create(
+            in_accordance=in_accordance,
+            ivid=iv_obj,
+            a_status=a_status_choice.APPRAISAL_SUBMITTED,
+            **parameter
+        )
     iv_obj.i_status = i_status_choice.SIGNED
     iv_obj.save()
-    appraisal_obj = AppraisalInfo.objects.create(**parameter)
-    appraisal_obj.ivid = iv_obj
-    appraisal_obj.a_status = a_status_choice.APPRAISAL_SUBMITTED
-    appraisal_obj.save()
     return appraisal_obj
-

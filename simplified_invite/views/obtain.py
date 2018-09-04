@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
-from simplified_invite.serializers.simplified_invitel_api import (
+from simplified_invite.serializers.simplified_invite_api import (
     ObtainDefaultInviteSerializer, ObtainSelfInvite2AppraisalSerializer, ObtainInvite2AppraisalDetailSerializer
 )
 from simplified_invite.serializers.invite import (
@@ -37,7 +37,7 @@ class ObtainInvite2SelfAppraisalView(WLAPIView, APIView):
 
         return self.generate_response(
             data={
-                "self_appraisals": seri_invites.data,
+                "self_invites": seri_invites.data,
                 "n_pages":  n_pages
             },
             context=context
@@ -55,7 +55,7 @@ class ObtainInvite2AppraisalSDetailView(WLAPIView, APIView):
 
         return self.generate_response(
             data={
-                "appraisal": seri_invite.data
+                "invite_detail": seri_invite.data
             },
             context=context
         )

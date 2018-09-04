@@ -5,13 +5,13 @@ import views.operate as operate
 
 url_pattern_obtain = [
     url(r'^defaultinvite/', obtain.ObtainDefaultInviteView.as_view()),
-    url(r'^selfappraisal/', obtain.ObtainInvite2SelfAppraisalView.as_view()),
-    url(r'^appraisaldetail/', obtain.ObtainInvite2AppraisalSDetailView.as_view()),
+    url(r'^selfinvite/', obtain.ObtainInvite2SelfAppraisalView.as_view()),
+    url(r'^invitedetail/', obtain.ObtainInvite2AppraisalSDetailView.as_view()),
 ]
 
 url_pattern_operate = [
-    url(r'^submitinivte/', operate.SubmitInviteView.as_view()),
-    url(r'^cancelinivte/', operate.CancelInviteView.as_view()),
+    url(r'^submitinvite/', operate.SubmitInviteView.as_view()),
+    url(r'^cancelinvite/', operate.CancelInviteView.as_view()),
 ]
 
 

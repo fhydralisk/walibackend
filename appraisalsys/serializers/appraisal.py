@@ -2,10 +2,15 @@ from rest_framework import serializers
 from appraisalsys.models import AppraisalInfo
 
 
-class AppraisalSubmitDisplaySerializer(serializers.ModelSerializer):
+class AppraisalInfoDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = AppraisalInfo
-        # TODO select the field to display when submit susseed
         fields = (
-            "some fields",
+            "id", "final_price", "unit", "description", "quantity", "wcid", "qid",
         )
+
+
+class AppraisalSubmitDisplaySerializer(AppraisalInfoDisplaySerializer):
+    class Meta:
+        model = AppraisalInfo
+        fields = AppraisalInfoDisplaySerializer.Meta.fields + ("ivid",)

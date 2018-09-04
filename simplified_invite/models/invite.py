@@ -56,7 +56,7 @@ class InviteInfo(models.Model):
     )
     quantity = models.FloatField()
     price = models.FloatField()
-    unit = models.IntegerField(max_length=unit_choice.MAX_LENGTH, choices=unit_choice.choice)
+    unit = models.IntegerField(choices=unit_choice.choice)
 
     i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
     reason_class = models.ForeignKey(
