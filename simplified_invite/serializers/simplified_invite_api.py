@@ -46,4 +46,4 @@ class CancelInviteSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     ivid = serializers.IntegerField()
     reason_id = serializers.IntegerField()
-    reason = serializers.CharField(max_length=256, default=None)
+    reason = serializers.CharField(max_length=256, default=None, allow_null=True)
