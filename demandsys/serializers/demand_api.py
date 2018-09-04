@@ -54,6 +54,6 @@ class ObtainSearchSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     keyword = serializers.CharField(max_length=256)
     page = serializers.IntegerField(default=0)
-    t1id = serializers.IntegerField(default=None)
-    aid = serializers.IntegerField(default=None)
+    t1id = serializers.IntegerField(default=None, allow_null=True)
+    aid = serializers.IntegerField(default=None, allow_null=True)
     asc_of_price = serializers.NullBooleanField(default=None)
