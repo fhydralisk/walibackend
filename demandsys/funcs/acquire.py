@@ -5,6 +5,7 @@ from base.util.timestamp import now
 from base.util.pages import get_page_info, get_page_info_list
 from usersys.funcs.utils.usersid import user_from_sid
 from demandsys.models.translaters import t_demand_translator
+from django.db.models import Q
 
 
 def filter_and_order_demand(qs, t1id, aid, asc_of_price):
@@ -194,3 +195,28 @@ def get_specified_photo(id):
     except ProductDemandPhoto.DoesNotExist:
         raise Error404("No such photo.")
 
+
+@default_exception(Error500)
+@user_from_sid(Error404)
+def get_search_demand(user, page, keyword, t1id, aid, asc_of_price, count_per_page):
+    qs = ProductDemand.objects.select_related(
+        'uid__user_validate',
+        'qid__t3id__t2id__t1id',
+        'aid__cid__pid',
+        'pmid', 'wcid'
+    ).filter(Q(uid__user_validate__company__contains=keyword) | Q(uid__user_validate__contact=keyword) |
+             Q(pid__tname3=keyword), in_use=True).exclude(uid__role=user.role)
+    if t1id is not None:
+        qs = qs.filter(qid__t3id__t2id__t1id=t1id)
+    if aid is not None:
+        qs = qs.filter(aid=aid)
+    if asc_of_price is not None:
+        if asc_of_price:
+            qs = qs.order_by("price", "-id")
+        else:
+            qs = qs.order_by("-price", "-id")
+    else:
+        qs = qs.order_by("-id")
+    st, ed, n_pages = get_page_info(qs, count_per_page, page, index_error_excepiton=Error400("Page out of range"))
+    # return sliced single page
+    return qs[st:ed], n_pages
