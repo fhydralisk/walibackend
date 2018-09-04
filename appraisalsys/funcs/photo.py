@@ -11,7 +11,7 @@ from appraisalsys.models import CheckPhoto
 @user_from_sid(Error404)
 def upload_check_photo(user, ivid, photo_files_from_obj):
     # type: (UserBase, InviteInfo, object) -> int
-    if not user.role == role_choice.BUYER or not user == ivid.uid_s:
+    if not (user.role == role_choice.BUYER and user == ivid.uid_s):
         raise WLException(403, "no access to upload this photo")
 
     # submit
@@ -35,7 +35,7 @@ def delete_check_photo(user, photo_id):
     except CheckPhoto.DoesNotExist:
         raise WLException(404, "no such photo_id")
 
-    if not user == photo.uploader:
+    if user != photo.uploader:
         raise WLException(403, "no accsee to delete")
 
     photo.in_use = False
