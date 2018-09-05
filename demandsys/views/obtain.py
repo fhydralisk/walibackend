@@ -5,14 +5,13 @@ from base.views import WLAPIView
 from django.http.response import FileResponse
 from django.conf import settings
 from demandsys.serializers.demand_api import (
-    ObtainDemandSerializer, ObtainDemandDetailSerializer, ObtainHotDemandSerializer, ObtainDemandMatchSerializer
+    ObtainDemandSerializer, ObtainDemandDetailSerializer, ObtainHotDemandSerializer, ObtainDemandMatchSerializer, ObtainSearchSerializer
 )
 from demandsys.serializers.demand import (
-    DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer, DemandReadableDisplaySelfSerializer
+    DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer, DemandReadableDisplaySelfSerializer, DemandReadableDisplaySearchSerializer
 )
 from demandsys.serializers.photo_api import GetPhotoSerializer
-from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand
-
+from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand, get_search_demand
 
 # TODO: Move page size into settings
 class ObtainHotView(WLAPIView, APIView):
@@ -22,7 +21,7 @@ class ObtainHotView(WLAPIView, APIView):
         seri = ObtainHotDemandSerializer(data=data)
         self.validate_serializer(seri)
 
-        demands, n_pages = get_popular_demand(count_per_page=5, **seri.data)
+        demands, n_pages = get_popular_demand(**seri.data)
 
         seri_demand = DemandReadableDisplaySerializer(demands, many=True)
 
@@ -41,7 +40,7 @@ class ObtainSelfView(WLAPIView, APIView):
         seri = ObtainDemandSerializer(data=data)
         self.validate_serializer(seri)
 
-        demands, n_pages = get_my_demand(count_per_page=5, **seri.data)
+        demands, n_pages = get_my_demand(**seri.data)
 
         seri_demand = DemandReadableDisplaySelfSerializer(demands, many=True)
 
@@ -101,5 +100,22 @@ class ObtainMatchView(WLAPIView, APIView):
             data={
                 "match_demands": seri_demand.data,
                 "n_pages": pages,
+            }, context=context
+        )
+
+
+class ObtainSearchView(WLAPIView, APIView):
+    def post(self, request):
+        data, context = self.get_request_obj(request)
+        seri = ObtainSearchSerializer(data=data)
+        self.validate_serializer(seri)
+
+        demands, n_pages = get_search_demand(count_per_page=10, **seri.data)
+        seri_demand = DemandReadableDisplaySearchSerializer(demands, many=True)
+
+        return self.generate_response(
+            data={
+                "search_demands": seri_demand.data,
+                "n_pages": n_pages,
             }, context=context
         )

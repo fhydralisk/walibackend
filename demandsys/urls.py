@@ -1,6 +1,6 @@
 from django.conf.urls import url, include
-from demandsys.views.obtain import ObtainHotView, ObtainSelfView, ObtainDetailView, ObtainPhotoDataView, ObtainMatchView
-from demandsys.views.catalog import GetTreedProductTypeView, GetFTreedProductTypeView
+from demandsys.views.obtain import ObtainHotView, ObtainSelfView, ObtainDetailView, ObtainPhotoDataView, ObtainMatchView, ObtainSearchView
+from demandsys.views.catalog import GetTreedProductTypeView, GetFTreedProductTypeView, GetProductTypeL1
 from demandsys.views.publish import (
     EditDemandView, PublishDemandView, RemovePhotoView, ShutDemandView, UploadPhotoView, DeleteDemandView,
 )
@@ -11,11 +11,13 @@ obtain_urlpatterns = [
     url(r'^demand/', ObtainDetailView.as_view()),
     url(r'^photo/', ObtainPhotoDataView.as_view()),
     url(r'^match/', ObtainMatchView.as_view()),
+    url(r'^search/$', ObtainSearchView.as_view()),
 
 ]
 catalog_urlpatterns = [
     url(r'^lall/', GetTreedProductTypeView.as_view()),
     url(r'^flall/', GetFTreedProductTypeView.as_view()),
+    url(r'^l1/$', GetProductTypeL1.as_view()),
 ]
 
 publish_urlpatterns = [

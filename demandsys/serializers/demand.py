@@ -64,6 +64,12 @@ class DemandReadableDisplaySelfSerializer(DemandReadableDisplaySerializer):
         fields = DemandReadableDisplaySerializer.Meta.fields + ('comment',)
 
 
+class DemandReadableDisplaySearchSerializer(DemandReadableDisplaySerializer):
+
+    class Meta(DemandReadableDisplaySerializer.Meta):
+        fields = DemandReadableDisplaySerializer.Meta.fields
+
+
 class DemandReadableDisplayMatchSerializer(DemandReadableDisplaySerializer):
     def __init__(self, match_demand, *args, **kwargs):
         self.match_demand = match_demand
