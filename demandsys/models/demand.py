@@ -10,8 +10,7 @@ from base.exceptions import WLException
 from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
-from demandsys.model_choices.demand_enum import t_demand_choice, unit_choice, freight_payer_choice
-from demandsys.util.unit_converter import UnitQuantityMetric, UnitPriceMetric
+from demandsys.model_choices.demand_enum import t_demand_choice, freight_payer_choice, interval_choice
 
 
 def calc_score_by_operator(m1, m2, score_tuple):
@@ -25,11 +24,10 @@ class ProductDemand(models.Model):
     qid = models.ForeignKey(ProductQuality, related_name="product_quality")
     wcid = models.ForeignKey(ProductWaterContent, related_name="product_watercontent")
     quantity = models.FloatField()
-    min_quantity = models.FloatField()
+    min_quantity = models.FloatField(default=0)
     price = models.FloatField()
-    unit = models.IntegerField(choices=unit_choice.choice)
-    pmid = models.ForeignKey(CorePaymentMethod)
-    st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("start time"))
+    pmid = models.ForeignKey(CorePaymentMethod, default=None, null=True)
+    st_time = models.DateTimeField(auto_now=True, verbose_name=_("start time"))
     end_time = models.DateTimeField()
     abid = models.ForeignKey(
         UserAddressBook,
@@ -46,18 +44,13 @@ class ProductDemand(models.Model):
     create_datetime = models.DateTimeField(auto_now_add=True)
     freight_payer = models.IntegerField(
         choices=freight_payer_choice.choice,
-        default=freight_payer_choice.FREIGHT_SELLER
+        default=None,
+        null=True
     )
     in_use = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.description
-
-    def price_metric(self):
-        return UnitPriceMetric(self.price, self.unit)
-
-    def quantity_metric(self):
-        return UnitQuantityMetric(self.quantity, self.unit)
 
     def validate_satisfy_demand(self, opposite_role, quantity=None):
         """
@@ -67,7 +60,6 @@ class ProductDemand(models.Model):
         :param quantity:
         :return:
         """
-
 
         if not self.in_use:
             raise WLException(404, "No such demand - not in use")
@@ -91,15 +83,13 @@ class ProductDemand(models.Model):
 
     def quantity_left(self):
         # TODO: Implement this
-        return UnitQuantityMetric(self.quantity, self.unit)
-
-    def min_quantity_metric(self):
-        return UnitQuantityMetric(self.min_quantity, self.unit)
+        return self.quantity
 
     @property
     def is_expired(self):
         return self.end_time < now()
 
+    # FIXME: maybe the create_time is better than st_time
     @property
     def duration(self):
         return (self.end_time - self.st_time).days
@@ -115,18 +105,34 @@ class ProductDemand(models.Model):
     def match_score(self, other):
         # type: (self.__class__) -> dict
         score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, (1, 0, -1))
-        score_price = calc_score_by_operator(self.price_metric(), other.price_metric(), (1, 0, -1))
-        score_paymethod = calc_score_by_operator(self.pmid.ord, other.pmid.ord, (1, 0, -1))
+        score_price = calc_score_by_operator(self.price, other.price, (1, 0, -1))
         score_area = 1 if self.aid == other.aid else 0 if self.aid.cid == other.aid.cid else -1
-        score_total = score_water + score_price + score_paymethod + score_area
+        score_total = score_water + score_price + score_area
 
         return {
             "score_water": score_water,
             "score_area": score_area,
-            "score_paymethod": score_paymethod,
             "score_price": score_price,
             "score_overall": score_total
         }
+
+    @property
+    def last_modify_from_now(self):
+        interval = now() - self.st_time
+        if interval.seconds < 3600:
+            return interval_choice.JUST_NOW
+        elif interval.seconds <= 3600 * 6:
+            return interval_choice.AN_HOUR_AGO
+        elif interval.seconds <= 3600 * 24:
+            return interval_choice.SIX_HOURS_AGO
+        elif interval.days < 2:
+            return interval_choice.A_DAYS_AGO
+        elif interval.days < 10:
+            return interval_choice.TWO_DAYS_AGO
+        elif interval.days < 30:
+            return interval_choice.TEN_DAYS_AGO
+        else:
+            return interval_choice.A_MONTH_AGO
 
 
 class ProductDemandPhoto(models.Model):
