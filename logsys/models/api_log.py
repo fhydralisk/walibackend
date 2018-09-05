@@ -7,3 +7,4 @@ class ApiLog(models.Model):
     visitor = models.ForeignKey(UserBase, verbose_name='访客', blank=True, null=True, )
     log_date_time = models.DateTimeField(auto_now_add=True)
     url = models.CharField(max_length=100)
+    parameter = models.TextField(blank=True, null=True)
