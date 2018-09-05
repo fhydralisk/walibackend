@@ -35,7 +35,20 @@ class _MatchOrderChoice(FieldChoice):
     )
 
 
+class _IntervalChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _(""), "JUST_NOW"),
+        (2, _(""), "AN_HOUR_AGO"),
+        (3, _(""), "SIX_HOURS_AGO"),
+        (4, _(""), "A_DAY_AGO"),
+        (5, _(""), "TWO_DAYS_AGO"),
+        (6, _(""), "TEN_DAYS_AGO"),
+        (7, _(""), "A_MONTH_AGO"),
+    )
+
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
 freight_payer_choice = _FreightPayerChoice()
 match_order_choice = _MatchOrderChoice()
+interval_choice = _IntervalChoice()
