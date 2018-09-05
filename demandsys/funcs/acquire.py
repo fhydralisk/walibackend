@@ -103,7 +103,7 @@ def get_matched_demand(user, id, page, order, asc, count_per_page):
 
     def confirm_satisfied(self, other):
         # type: (ProductDemand, ProductDemand) -> bool
-        return self.quantity_metric() > other.min_quantity_metric()
+        return self.quantity > other.min_quantity
 
     def match_key(m_obj):
         # type: (ProductDemand) -> object
@@ -112,7 +112,7 @@ def get_matched_demand(user, id, page, order, asc, count_per_page):
         elif order == match_order_choice.QUANTITY:
             return m_obj.quantity_left()
         elif order == match_order_choice.PRICE:
-            return m_obj.price_metric().scaled_value()
+            return m_obj.price
 
     try:
         demand = ProductDemand.objects.select_related(
