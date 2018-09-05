@@ -9,7 +9,7 @@ class ObtainDemandSerializer(serializers.Serializer):
     page = serializers.IntegerField(default=0)
     t1id = serializers.IntegerField(default=None, allow_null=True)
     aid = serializers.IntegerField(default=None, allow_null=True)
-    asc_of_price = serializers.NullBooleanField(default=None, allow_null=True)
+    asc_of_price = serializers.NullBooleanField(default=None)
     count_per_page = serializers.IntegerField(default=3)
 
 
