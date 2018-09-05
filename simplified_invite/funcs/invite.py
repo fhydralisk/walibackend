@@ -16,7 +16,7 @@ def submit_invite(user, invite):
 
     # Validate whether
     invite["dmid_t"].validate_satisfy_demand(
-        user.role, quantity_metric=UnitQuantityMetric(invite["quantity"], invite["unit"])
+        user.role, quantity=invite["quantity"]
     )
 
     invite_obj = InviteInfo(uid_s=user, **invite)

@@ -24,7 +24,7 @@ class AppraisalInfoSubmitSerializerForAccordance(serializers.ModelSerializer):
     class Meta:
         model = AppraisalInfo
         fields = (
-          "final_price", "unit", "description", "quantity", "wcid", "qid",
+          "final_price", "description", "quantity", "wcid", "qid",
         )
 
 

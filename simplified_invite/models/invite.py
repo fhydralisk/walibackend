@@ -7,7 +7,6 @@ from usersys.models import UserBase, UserAddressBook
 from demandsys.models import ProductDemand
 from coresys.models import CoreAddressArea
 from simplified_invite.model_choices.invite_enum import i_status_choice
-from demandsys.model_choices.demand_enum import unit_choice
 from usersys.model_choices.user_enum import role_choice
 
 
@@ -56,7 +55,6 @@ class InviteInfo(models.Model):
     )
     quantity = models.FloatField()
     price = models.FloatField()
-    unit = models.IntegerField(choices=unit_choice.choice)
 
     i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
     reason_class = models.ForeignKey(

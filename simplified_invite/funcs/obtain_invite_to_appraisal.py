@@ -25,7 +25,6 @@ def demand_to_invite(user, dmid):
     validate_area = UserValidateArea.objects.filter(vid__uid=user).last()
     invite = {
         "price": demand.price,
-        "unit": demand.unit,
         "quantity": demand.quantity,
         "aid": None if validate_area == None else validate_area.aid,
         "street": None if user.user_validate.address == None else user.user_validate.address

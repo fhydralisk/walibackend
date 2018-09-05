@@ -30,7 +30,6 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             a_status=a_status_choice.APPRAISAL_SUBMITTED,
             ivid=iv_obj,
             final_price=iv_obj.price,
-            unit=iv_obj.unit,
             quantity=iv_obj.quantity,
             wcid=iv_obj.dmid_t.wcid,
             qid=iv_obj.dmid_t.qid

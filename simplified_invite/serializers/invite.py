@@ -10,7 +10,7 @@ class DefaultInviterInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = InviteInfo
         # TODO select the field to display
-        fields = ("price", "unit", "quantity", "aid", "street",)
+        fields = ("price", "quantity", "aid", "street",)
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -52,15 +52,13 @@ class InviteInfoDisplaySerializer(serializers.ModelSerializer):
     related_appraisal = AppraisalInfoDisplaySerializer(source='appraisal')
     reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
 
-
-
     class Meta:
         model = InviteInfo
         fields = (
             'id',
             'buyer', 'seller', 'aid', 'street',
             'dmid_s', 'dmid_t', 'quantity', 'reason', 'reason_class',
-            'price', 'unit', 'i_status',
+            'price', 'i_status',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc',
             'total_price', 'related_appraisal',
         )
@@ -87,7 +85,6 @@ class InviteInfoInAppraisalSysSubmitSerializer(serializers.ModelSerializer):
             'dmid_t',
             'quantity',
             'price',
-            'unit',
             'aid',
             'street',
             'abid',

@@ -59,7 +59,7 @@ class ProductDemand(models.Model):
     def quantity_metric(self):
         return UnitQuantityMetric(self.quantity, self.unit)
 
-    def validate_satisfy_demand(self, opposite_role, quantity=None, quantity_metric=None):
+    def validate_satisfy_demand(self, opposite_role, quantity=None):
         """
         Raise WLError if not satisfied.
         :param opposite_role:
@@ -68,8 +68,6 @@ class ProductDemand(models.Model):
         :return:
         """
 
-        if quantity_metric is None:
-            quantity_metric = UnitQuantityMetric(quantity, self.unit)
 
         if not self.in_use:
             raise WLException(404, "No such demand - not in use")
@@ -82,11 +80,11 @@ class ProductDemand(models.Model):
         if opposite_role == self.uid.role:
             raise WLException(404, "No such demand - role does not match")
 
-        if quantity_metric < self.min_quantity_metric():
+        if quantity < self.min_quantity:
             raise WLException(403, "Min Quantity not satisfied")
 
         # Validate whether quantity meets quantity - satisfied
-        if quantity_metric > self.quantity_left():
+        if quantity > self.quantity_left():
             raise WLException(403, "Exceed max quantity")
 
         return

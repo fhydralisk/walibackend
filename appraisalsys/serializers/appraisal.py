@@ -6,7 +6,7 @@ class AppraisalInfoDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = AppraisalInfo
         fields = (
-            "id", "final_price", "unit", "description", "quantity", "wcid", "qid",
+            "id", "final_price", "description", "quantity", "wcid", "qid",
         )
 
 
