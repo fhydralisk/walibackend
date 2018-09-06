@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from usersys.funcs.utils.usersid import user_from_sid
 from base.exceptions import Error500, Error404, WLException, default_exception
 from usersys.models import UserBase
@@ -12,7 +13,7 @@ from usersys.model_choices.user_enum import role_choice
 @default_exception(Error500)
 @user_from_sid(Error404)
 def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
-    # type: (UserBase, int, dict) -> AppraisalInfo
+    # type: (UserBase, int, bool, dict, list) -> AppraisalInfo
     try:
         iv_obj = InviteInfo.objects.get(id=ivid)
     except InviteInfo.DoesNotExist:
@@ -29,10 +30,8 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             in_accordance=in_accordance,
             a_status=a_status_choice.APPRAISAL_SUBMITTED,
             ivid=iv_obj,
-            final_price=iv_obj.price,
-            quantity=iv_obj.quantity,
+            final_total_price=iv_obj.price,
             wcid=iv_obj.dmid_t.wcid,
-            qid=iv_obj.dmid_t.qid
         )
 
     else:
