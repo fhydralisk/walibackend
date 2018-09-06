@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -7,7 +8,9 @@ from usersys.models import UserBase, UserAddressBook
 from demandsys.models import ProductDemand
 from coresys.models import CoreAddressArea
 from simplified_invite.model_choices.invite_enum import i_status_choice
-from usersys.model_choices.user_enum import role_choice
+from usersys.model_choices.user_enum import role_choice, change_reason_choice
+
+from simple_history.models import HistoricalRecords
 
 
 class InviteCancelReason(models.Model):
@@ -25,25 +28,29 @@ class InviteInfo(models.Model):
 
         self.initial_i_status = self.i_status
 
+    class Meta:
+        verbose_name = _('邀请信息')
+        verbose_name_plural = verbose_name
+
     uid_s = models.ForeignKey(
         UserBase,
         on_delete=models.CASCADE,
         related_name="simplified_user_invite_src",
         db_index=True,
-        verbose_name=_("inviter")
+        verbose_name=_("邀请人")
     )
     uid_t = models.ForeignKey(
         UserBase,
         on_delete=models.CASCADE,
         related_name="simplified_user_invite_dst",
         db_index=True,
-        verbose_name=_("invitee")
+        verbose_name=_("被邀请人")
     )
     dmid_s = models.ForeignKey(
         ProductDemand,
         on_delete=models.CASCADE,  # Do not allow?
         related_name="simplified_demand_invite_src",
-        verbose_name=_("inviter's demand"),
+        verbose_name=_("邀请人需求"),
         null=True,
         blank=True
     )
@@ -51,29 +58,35 @@ class InviteInfo(models.Model):
         ProductDemand,
         on_delete=models.CASCADE,
         related_name="simplified_demand_invite_dst",
-        verbose_name=_("invitee's demand")
+        verbose_name=_("被邀请人需求")
     )
-    quantity = models.FloatField()
-    price = models.FloatField()
+    quantity = models.FloatField(verbose_name='质量')
+    price = models.FloatField(verbose_name='价格')
 
-    i_status = models.IntegerField(_("Invite status"), choices=i_status_choice.choice)
+    i_status = models.IntegerField(_("邀请状态"), choices=i_status_choice.choice)
     reason_class = models.ForeignKey(
         InviteCancelReason,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='邀请取消类型',
     )
-    reason = models.TextField(null=True, blank=True)
+    reason = models.TextField(null=True, blank=True, verbose_name='邀请取消原因')
     abid = models.ForeignKey(
         UserAddressBook,
         on_delete=models.SET_NULL,
-        verbose_name=_("user address book"),
+        verbose_name=_("用户地址"),
         related_name="simplified_invite",
         null=True,
         blank=True
     )
-    aid = models.ForeignKey(CoreAddressArea, blank=True, null=True, related_name="simplified_invite")
-    street = models.CharField(max_length=511, blank=True, null=True)
+    aid = models.ForeignKey(CoreAddressArea, blank=True, null=True, related_name="simplified_invite", verbose_name='区域')
+    street = models.CharField(max_length=511, blank=True, null=True, verbose_name='街道')
+
+    history = HistoricalRecords()
+    change_comment = models.TextField(verbose_name='修改备注', null=True, blank=True)
+    change_reason = models.CharField(verbose_name='修改原因', default='买家要求修改', max_length=100,
+                                     choices=change_reason_choice.choice)
 
     def __unicode__(self):
         return str(self.uid_s) + " v.s. " + str(self.uid_t)
