@@ -7,7 +7,7 @@ from django.conf import settings
 from usersys.models import UserBase
 from simplified_invite.models import InviteInfo
 from appraisalsys.model_choices.appraisal_enum import a_status_choice
-from demandsys.models.product import ProductWaterContent, ProductQuality
+from demandsys.models.product import ProductWaterContent, ProductTypeL1
 
 
 class ImpurityContent(models.Model):
@@ -57,3 +57,12 @@ class CheckPhoto(models.Model):
     upload_data = models.DateTimeField(auto_now_add=True)
     in_use = models.BooleanField(default=True)
     check_photo = models.ImageField(upload_to=settings.UPLOAD_CHECK_PHOTO)
+
+
+class JsonSchemaOfAppraisal(models.Model):
+    t1id = models.ForeignKey(
+        ProductTypeL1,
+        on_delete=models.CASCADE,
+        related_name="json_schema_of_appraisal",
+    )
+    json_schema = models.TextField()

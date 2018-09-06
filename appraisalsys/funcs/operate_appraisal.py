@@ -35,22 +35,6 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
         )
 
     else:
-        print(iv_obj.dmid_t.pid.t2id.t1id.tname1)
-        if (
-                (iv_obj.dmid_t.pid.t2id.t1id.tname1 == "PET" or iv_obj.dmid_t.pid.t2id.t1id.tname1 == u"废纸")
-            and (not "impcid" in parameter or parameter["impcid"] == None)
-        ):
-            raise WLException(400, "impcid required")
-
-        if (
-                (iv_obj.dmid_t.pid.t2id.t1id.tname1 == u"废铁")
-            and (
-                not ("price_1" in parameter and "price_2" in parameter and "price_3" in parameter)
-                or (parameter["price_1"] == None or  parameter["price_2"] == None or parameter["price_3"] == None)
-            )
-        ):
-            raise WLException(400, "price required")
-
 
         appraisal_obj = AppraisalInfo.objects.create(
             in_accordance=in_accordance,

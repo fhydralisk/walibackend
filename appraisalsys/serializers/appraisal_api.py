@@ -1,5 +1,9 @@
 from rest_framework import serializers
-from appraisalsys.models import AppraisalInfo
+from appraisalsys.models import AppraisalInfo, JsonSchemaOfAppraisal
+from simplified_invite.models import InviteInfo
+from jsonschema import validate
+from base.exceptions import WLException
+import json
 
 
 class SubmitAppraisalSerializer(serializers.Serializer):
@@ -10,7 +14,17 @@ class SubmitAppraisalSerializer(serializers.Serializer):
     check_photos = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
 
     def validate(self, attrs):
+
         if not attrs["in_accordance"]:
+            try:
+                invite_obj = InviteInfo.objects.select_related('dmid_t__pid__t2id__t1id').get(id=attrs["ivid"])
+            except InviteInfo.DoesNotExist:
+                raise WLException(404, "no such ivid")
+            print(invite_obj.dmid_t.pid.t2id.t1id.id)
+            JS = JsonSchemaOfAppraisal.objects.get(t1id=invite_obj.dmid_t.pid.t2id.t1id.id)
+            schema = json.loads(JS.json_schema)
+            validate(attrs["parameter"], schema)
+
             seri_cls = AppraisalInfoSubmitSerializerForAccordance
         else:
             seri_cls = AppraisalInfoSubmitSerializerForNotAccordance
