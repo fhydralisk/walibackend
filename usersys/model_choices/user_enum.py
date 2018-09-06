@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
@@ -35,7 +36,15 @@ class _TPhotoChoice(FieldChoice):
     )
 
 
+class _ChangeChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        ('买家要求修改', _("买家要求修改"), "BUYER"),
+        ('其他', _("其他"), "OTHERREASON"),
+    )
+
+
 role_choice = _RoleChoice()
 t_user_choice = _TUserChoice()
 validate_status_choice = _ValidateStatusChoice()
 t_photo_choice = _TPhotoChoice()
+change_reason_choice = _ChangeChoice()
