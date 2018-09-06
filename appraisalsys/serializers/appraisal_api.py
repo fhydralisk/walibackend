@@ -21,9 +21,12 @@ class SubmitAppraisalSerializer(serializers.Serializer):
             except InviteInfo.DoesNotExist:
                 raise WLException(404, "no such ivid")
             print(invite_obj.dmid_t.pid.t2id.t1id.id)
-            JS = JsonSchemaOfAppraisal.objects.get(t1id=invite_obj.dmid_t.pid.t2id.t1id.id)
-            schema = json.loads(JS.json_schema)
-            validate(attrs["parameter"], schema)
+            try:
+                JS = JsonSchemaOfAppraisal.objects.get(t1id=invite_obj.dmid_t.pid.t2id.t1id.id)
+                schema = json.loads(JS.json_schema)
+                validate(attrs["parameter"], schema)
+            except JsonSchemaOfAppraisal.DoesNotExist:
+                pass
 
             seri_cls = AppraisalInfoSubmitSerializerForAccordance
         else:
