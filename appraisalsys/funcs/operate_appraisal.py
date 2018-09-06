@@ -15,7 +15,7 @@ from usersys.model_choices.user_enum import role_choice
 def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
     # type: (UserBase, int, bool, dict, list) -> AppraisalInfo
     try:
-        iv_obj = InviteInfo.objects.get(id=ivid)
+        iv_obj = InviteInfo.objects.select_related('dmid_t__pid__t2id__t1id').get(id=ivid)
     except InviteInfo.DoesNotExist:
         raise WLException(404, "no such ivid")
 
@@ -35,6 +35,23 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
         )
 
     else:
+        print(iv_obj.dmid_t.pid.t2id.t1id.tname1)
+        if (
+                (iv_obj.dmid_t.pid.t2id.t1id.tname1 == "PET" or iv_obj.dmid_t.pid.t2id.t1id.tname1 == u"废纸")
+            and (not "impcid" in parameter or parameter["impcid"] == None)
+        ):
+            raise WLException(400, "impcid required")
+
+        if (
+                (iv_obj.dmid_t.pid.t2id.t1id.tname1 == u"废铁")
+            and (
+                not ("price_1" in parameter and "price_2" in parameter and "price_3" in parameter)
+                or (parameter["price_1"] == None or  parameter["price_2"] == None or parameter["price_3"] == None)
+            )
+        ):
+            raise WLException(400, "price required")
+
+
         appraisal_obj = AppraisalInfo.objects.create(
             in_accordance=in_accordance,
             ivid=iv_obj,
