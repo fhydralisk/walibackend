@@ -18,11 +18,13 @@ class ApiMiddleware(object):
         if method == 'GET':
             user_sid = request.GET.get('user_sid')
         elif method == 'POST':
-            data = json.loads(request.body)['data']
-            string += request.body
             try:
+                data = json.loads(request.body)['data']
+                string += request.body
                 user_sid = data['user_sid']
-            except:
+            except ValueError:
+                string += 'Request format is incorrect or photo'
+            except KeyError:
                 user_sid = None
         else:
             pass
