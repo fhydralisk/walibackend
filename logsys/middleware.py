@@ -1,44 +1,62 @@
 # coding=utf-8
+
+import json
+from django.http.response import HttpResponse
+
 from .models.api_log import ApiLog
 from usersys.funcs.utils.sid_management import sid_getuser
-import json
 
 
 class ApiMiddleware(object):
     def __init__(self, get_response):
         self.get_response = get_response
 
+    @staticmethod
+    def record_api(url, user_sid, parameter):
+        visitor = sid_getuser(user_sid) if user_sid is not None else None
+        ApiLog.objects.create(visitor=visitor, url=url, parameter=parameter)
+
     def __call__(self, request):
         method = request.method
-        string = ''
-        parameter = request.GET.items()
-        user_sid = None
-        for (key, value) in parameter:
-            string = string + str(key) + '=' + str(value) + ';'
+        url = request.path
+
+        # TODO: Check whether url is our API, not admin site, etc.
+
+        response = self.get_response(request)  # type: HttpResponse
+
+        if response.status_code != 200:
+            # Only record successful api call.
+            return response
+
+        # Check method
         if method == 'GET':
-            user_sid = request.GET.get('user_sid')
+            user_sid = request.GET.get('user_sid', None)
+
+            try:
+                parameter = json.dumps(request.GET)
+            except ValueError:
+                parameter = None
+
+            self.record_api(url, user_sid, parameter)
         elif method == 'POST':
-            type = request.content_type
-            if type == 'application/json':
-                string += request.body
+            content_type = request.content_type  # type: str
+            if content_type.lower() == 'application/json':
+                parameter = request.body
                 try:
-                    data = json.loads(request.body)['data']
-                    user_sid = data['user_sid']
+                    data = json.loads(request.body)
+                    user_sid = data['data']['user_sid']
                 except ValueError:
-                    string += 'Request format is incorrect or photo'
+                    parameter += ' : Incorrect Json Format'
+                    user_sid = None
                 except KeyError:
                     user_sid = None
             else:
-                pass
+                # Maybe user_sid is in query string.
+                user_sid = request.GET.get('user_sid', None)
+                parameter = ''
+
+            self.record_api(url, user_sid, parameter)
         else:
             pass
-        url = request.path
-        visitor = sid_getuser(user_sid)
-        if visitor:
-            api_log = ApiLog(visitor=visitor, url=url, parameter=string)
-        else:
-            api_log = ApiLog(url=url, parameter=string)
-        api_log.save()
-        response = self.get_response(request)
 
         return response
