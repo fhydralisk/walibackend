@@ -22,6 +22,14 @@ class ApiMiddleware(object):
 
         # TODO: Check whether url is our API, not admin site, etc.
 
+        if method == 'POST' and request.content_type.lower() == 'application/json':
+            body_copied = request.body
+        response = self.get_response(request)  # type: HttpResponse
+
+        if response.status_code != 200:
+            # Only record successful api call.
+            return response
+
         # Check method
         if method == 'GET':
             user_sid = request.GET.get('user_sid', None)
@@ -35,7 +43,7 @@ class ApiMiddleware(object):
         elif method == 'POST':
             content_type = request.content_type  # type: str
             if content_type.lower() == 'application/json':
-                parameter = request.body
+                parameter = body_copied
                 try:
                     data = json.loads(request.body)
                     user_sid = data['data']['user_sid']
@@ -52,7 +60,5 @@ class ApiMiddleware(object):
             self.record_api(url, user_sid, parameter)
         else:
             pass
-
-        response = self.get_response(request)  # type: HttpResponse
 
         return response
