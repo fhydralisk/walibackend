@@ -82,8 +82,12 @@ class ProductDemand(models.Model):
         return
 
     def quantity_left(self):
-        # TODO: Implement this
-        return self.quantity
+        from appraisalsys.models.appraise import AppraisalInfo
+        counter_appraisal_quantity = AppraisalInfo.objects.filter(
+            models.Q(ivid__dmid_s=self) | models.Q(ivid__dmid_t=self)
+        ).aggregate(models.Sum('ivid__quantity'))
+
+        return self.quantity - counter_appraisal_quantity if counter_appraisal_quantity < self.quantity else 0
 
     @property
     def is_expired(self):
@@ -119,11 +123,11 @@ class ProductDemand(models.Model):
     @property
     def last_modify_from_now(self):
         interval = now() - self.st_time
-        if interval.seconds < 3600:
+        if interval.total_seconds() < 3600:
             return interval_choice.JUST_NOW
-        elif interval.seconds <= 3600 * 6:
+        elif interval.total_seconds() <= 3600 * 6:
             return interval_choice.AN_HOUR_AGO
-        elif interval.seconds <= 3600 * 24:
+        elif interval.total_seconds() <= 3600 * 24:
             return interval_choice.SIX_HOURS_AGO
         elif interval.days < 2:
             return interval_choice.A_DAYS_AGO
