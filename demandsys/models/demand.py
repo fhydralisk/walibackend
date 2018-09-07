@@ -83,14 +83,9 @@ class ProductDemand(models.Model):
 
     def quantity_left(self):
         from appraisalsys.models.appraise import AppraisalInfo
-        appraisal_with_demand = AppraisalInfo.objects.select_related(
-            'ivid__dmid_s', 'ivid__dmid_t'
-        ).filter(
+        counter_appraisal_quantity = AppraisalInfo.objects.filter(
             models.Q(ivid__dmid_s=self) | models.Q(ivid__dmid_t=self)
-        )
-        counter_appraisal_quantity = 0
-        for appraisal_obj in appraisal_with_demand:
-            counter_appraisal_quantity += appraisal_obj.ivid.quantity
+        ).aggregate(models.Sum('ivid__quantity'))
 
         return self.quantity - counter_appraisal_quantity if counter_appraisal_quantity < self.quantity else 0
 
