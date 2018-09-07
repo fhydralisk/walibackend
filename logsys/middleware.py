@@ -22,12 +22,6 @@ class ApiMiddleware(object):
 
         # TODO: Check whether url is our API, not admin site, etc.
 
-        response = self.get_response(request)  # type: HttpResponse
-
-        if response.status_code != 200:
-            # Only record successful api call.
-            return response
-
         # Check method
         if method == 'GET':
             user_sid = request.GET.get('user_sid', None)
@@ -58,5 +52,7 @@ class ApiMiddleware(object):
             self.record_api(url, user_sid, parameter)
         else:
             pass
+
+        response = self.get_response(request)  # type: HttpResponse
 
         return response
