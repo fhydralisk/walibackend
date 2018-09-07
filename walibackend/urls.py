@@ -25,6 +25,8 @@ import ordersys.urls
 import paymentsys.urls
 import logsys.urls
 import apperancesys.urls
+import appraisalsys.urls
+import simplified_invite.urls
 
 
 urlpatterns = [
@@ -38,4 +40,6 @@ urlpatterns = [
     url(r'^log/', include(logsys.urls.url_patterns)),
     url(r'^admin/', include(admin_site.urls)),
     url(r'^appearance/', include(apperancesys.urls.url_patterns)),
+    url(r'^simplifiedinvite/', include(simplified_invite.urls.url_pattern)),
+    url(r'^appraisal/', include(appraisalsys.urls.url_pattern)),
 ]

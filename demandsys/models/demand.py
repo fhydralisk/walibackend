@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
@@ -19,36 +20,41 @@ def calc_score_by_operator(m1, m2, score_tuple):
 
 
 class ProductDemand(models.Model):
-    uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_demand")
-    t_demand = models.IntegerField(verbose_name=_("demand type"), choices=t_demand_choice.choice, db_index=True)
+    uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_demand", verbose_name='发起人')
+    t_demand = models.IntegerField(verbose_name=_("需求类型"), choices=t_demand_choice.choice, db_index=True)
     pid = models.ForeignKey(ProductTypeL3, on_delete=models.CASCADE, related_name="product_demand", db_index=True)
-    qid = models.ForeignKey(ProductQuality, related_name="product_quality")
-    wcid = models.ForeignKey(ProductWaterContent, related_name="product_watercontent")
-    quantity = models.FloatField()
-    min_quantity = models.FloatField()
-    price = models.FloatField()
-    unit = models.IntegerField(choices=unit_choice.choice)
-    pmid = models.ForeignKey(CorePaymentMethod)
-    st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("start time"))
-    end_time = models.DateTimeField()
+    qid = models.ForeignKey(ProductQuality, related_name="product_quality", verbose_name='质量标准')
+    wcid = models.ForeignKey(ProductWaterContent, related_name="product_watercontent", verbose_name='含水量标准')
+    quantity = models.FloatField(verbose_name='数量（吨）')
+    min_quantity = models.FloatField(verbose_name='最小供应量（吨）')
+    price = models.FloatField(verbose_name='价格')
+    unit = models.IntegerField(choices=unit_choice.choice, verbose_name='质量、价格单位')
+    pmid = models.ForeignKey(CorePaymentMethod, verbose_name='付款方式')
+    st_time = models.DateTimeField(auto_now_add=True, verbose_name=_("发起时间"))
+    end_time = models.DateTimeField(verbose_name='过期时间')
     abid = models.ForeignKey(
         UserAddressBook,
         on_delete=models.SET_NULL,
-        verbose_name=_("user address book"),
+        verbose_name=_("收/发货地址"),
         null=True,
         blank=True
     )
-    aid = models.ForeignKey(CoreAddressArea, blank=True, null=True)
-    street = models.CharField(max_length=511, blank=True, null=True)
-    description = models.TextField()
-    comment = models.TextField(blank=True, null=True)
-    match = models.BooleanField(default=False)
-    create_datetime = models.DateTimeField(auto_now_add=True)
+    aid = models.ForeignKey(CoreAddressArea, blank=True, null=True, verbose_name='区地址')
+    street = models.CharField(max_length=511, blank=True, null=True, verbose_name='具体地址')
+    description = models.TextField(verbose_name='描述')
+    comment = models.TextField(blank=True, null=True, verbose_name='备注')
+    match = models.BooleanField(default=False, verbose_name='是否开启匹配')
+    create_datetime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     freight_payer = models.IntegerField(
         choices=freight_payer_choice.choice,
-        default=freight_payer_choice.FREIGHT_SELLER
+        default=freight_payer_choice.FREIGHT_SELLER,
+        verbose_name='运费付款方'
     )
-    in_use = models.BooleanField(default=True)
+    in_use = models.BooleanField(default=True, verbose_name='是否使用')
+
+    class Meta:
+        verbose_name = "需求"
+        verbose_name_plural = verbose_name
 
     def __unicode__(self):
         return self.description
@@ -59,7 +65,7 @@ class ProductDemand(models.Model):
     def quantity_metric(self):
         return UnitQuantityMetric(self.quantity, self.unit)
 
-    def validate_satisfy_demand(self, opposite_role, quantity=None, quantity_metric=None):
+    def validate_satisfy_demand(self, opposite_role, quantity=None):
         """
         Raise WLError if not satisfied.
         :param opposite_role:
@@ -67,9 +73,6 @@ class ProductDemand(models.Model):
         :param quantity:
         :return:
         """
-
-        if quantity_metric is None:
-            quantity_metric = UnitQuantityMetric(quantity, self.unit)
 
         if not self.in_use:
             raise WLException(404, "No such demand - not in use")
@@ -82,18 +85,18 @@ class ProductDemand(models.Model):
         if opposite_role == self.uid.role:
             raise WLException(404, "No such demand - role does not match")
 
-        if quantity_metric < self.min_quantity_metric():
+        if quantity < self.min_quantity:
             raise WLException(403, "Min Quantity not satisfied")
 
         # Validate whether quantity meets quantity - satisfied
-        if quantity_metric > self.quantity_left():
+        if quantity > self.quantity_left():
             raise WLException(403, "Exceed max quantity")
 
         return
 
     def quantity_left(self):
         # TODO: Implement this
-        return UnitQuantityMetric(self.quantity, self.unit)
+        return self.quantity
 
     def min_quantity_metric(self):
         return UnitQuantityMetric(self.min_quantity, self.unit)
@@ -132,12 +135,17 @@ class ProductDemand(models.Model):
 
 
 class ProductDemandPhoto(models.Model):
-    dmid = models.ForeignKey(ProductDemand, on_delete=models.SET_NULL, related_name="demand_photo", db_index=True, null=True, blank=True)
-    demand_photo = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO)
-    demand_photo_snapshot = models.FilePathField(null=True, blank=True)
-    inuse = models.BooleanField(default=False)
-    upload_date = models.DateTimeField(auto_now_add=True)
-    photo_desc = models.CharField(max_length=255)
+    dmid = models.ForeignKey(ProductDemand, on_delete=models.SET_NULL, related_name="demand_photo", db_index=True,
+                             null=True, blank=True, verbose_name='相应需求')
+    demand_photo = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO, verbose_name='原图路径')
+    demand_photo_snapshot = models.FilePathField(null=True, blank=True, verbose_name='缩略图路径')
+    inuse = models.BooleanField(default=False, verbose_name='是否有效')
+    upload_date = models.DateTimeField(auto_now_add=True, verbose_name='上传日期')
+    photo_desc = models.CharField(max_length=255, verbose_name='照片描述')
+
+    class Meta:
+        verbose_name = "需求照片"
+        verbose_name_plural = verbose_name
 
     def __unicode__(self):
         return self.photo_desc

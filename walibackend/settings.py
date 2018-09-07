@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
+    'simple_history',
 
     'base',
     'coresys',
@@ -56,6 +57,8 @@ INSTALLED_APPS = [
     'backgroundsys',
     'apperancesys',
     'pushsys',
+    'simplified_invite',
+    'appraisalsys',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
 
     'corsheaders.middleware.CorsMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -215,9 +219,9 @@ CACHES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -242,6 +246,7 @@ UPLOAD_VALIDATE_PHOTO = 'upload/user/validate/%Y/%m/%d/'
 UPLOAD_DEMAND_PHOTO = 'upload/demand/origin/%Y/%m/%d/'
 UPLOAD_INVITE_PHOTO = 'upload/invite/origin/%Y/%m/%d/'
 UPLOAD_DEMAND_PHOTO_SNAPSHOT = 'upload/demand/snapshot/%Y/%m/%d/'
+UPLOAD_CHECK_PHOTO = 'upload/appraisal/check_photos/%Y/%m/%d/'
 CONTRACTS_GENERATE = 'contract/%Y/%m/%d/'
 CONTRACTS_TEMPLATE = 'contract_template/'
 
@@ -335,3 +340,5 @@ CALCULATOR = {
     "LIQUIDATION": "ordersys.funcs.calculator.liquidation.DummyLiquidationCalculator"
 }
 
+# history
+SIMPLE_HISTORY_HISTORY_CHANGE_REASON_USE_TEXT_FIELD=True

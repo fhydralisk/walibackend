@@ -1,12 +1,14 @@
+# coding=utf-8
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
-
+from simple_history.models import HistoricalRecords
 from django.db import models
 from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
-from usersys.model_choices.user_enum import role_choice, t_user_choice, validate_status_choice, t_photo_choice
+from usersys.model_choices.user_enum import role_choice, t_user_choice, validate_status_choice, t_photo_choice, \
+    change_reason_choice
 from coresys.models import CoreAddressArea, CoreAddressCity, CoreAddressProvince
 from base.util.misc_validators import validators
 from django.conf import settings
@@ -42,24 +44,23 @@ class UserManager(BaseUserManager):
 
 
 class UserBase(AbstractBaseUser, PermissionsMixin):
-
-    email = models.EmailField(_('email address'), null=True)
+    email = models.EmailField(_('邮箱地址'), null=True)
     # FIXME: This is an issue, pn field should not be unique.
-    pn = models.CharField(_('phone number'), max_length=25, unique=True, validators=[
+    pn = models.CharField(_('账号/手机号'), max_length=25, unique=True, validators=[
         validators.get_validator("phone number")
     ])
-    role = models.IntegerField(_("user role"), choices=role_choice.choice)
-    register_date = models.DateTimeField(_("register date"), auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    role = models.IntegerField(_("用户类型"), choices=role_choice.choice, blank=True, null=True)
+    register_date = models.DateTimeField(_("注册时间"), auto_now_add=True)
+    is_active = models.BooleanField(default=True, verbose_name='用户是否有效')
+    is_staff = models.BooleanField(default=False, verbose_name="是否为职员")
 
     objects = UserManager()
     USERNAME_FIELD = 'pn'
     REQUIRED_FIELDS = []
 
     class Meta:
-        verbose_name = _('userbase')
-        verbose_name_plural = _('usersbase')
+        verbose_name = _('基础用户')
+        verbose_name_plural = verbose_name
         unique_together = ('pn', 'role')
 
     def get_full_name(self):
@@ -81,19 +82,28 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
 
 # TODO: Deal with the validator, it is unsafe to be here.
 class UserValidate(models.Model):
-    uid = models.OneToOneField(UserBase, on_delete=models.CASCADE, related_name="user_validate", db_index=True)
-    contact = models.CharField(max_length=100, null=True, blank=True)
-    company = models.CharField(max_length=255, null=True, blank=True)
-    idcard_number = models.CharField(max_length=30, null=True, blank=True)
-    bankcard = models.CharField(max_length=255, null=True, blank=True)
-    obank = models.CharField(max_length=255, null=True, blank=True)
-    texno = models.CharField(max_length=255, null=True, blank=True)
-    address = models.CharField(max_length=255, null=True, blank=True)
+    uid = models.OneToOneField(UserBase, on_delete=models.CASCADE, related_name="user_validate", db_index=True,
+                               verbose_name='用户')
+    contact = models.CharField(_("联系人姓名"), max_length=100, null=True, blank=True)
+    company = models.CharField(_("公司名称"), max_length=255, null=True, blank=True)
+    idcard_number = models.CharField(_("身份证号"), max_length=30, null=True, blank=True)
+    bankcard = models.CharField(_("银行账户"), max_length=255, null=True, blank=True)
+    obank = models.CharField(_("开户银行"), max_length=255, null=True, blank=True)
+    texno = models.CharField(_("纳税人识别号"), max_length=255, null=True, blank=True)
+    address = models.CharField(_("注册地址"), max_length=255, null=True, blank=True)
     phonenum = models.CharField(max_length=25, null=True, blank=True, validators=[
         validators.get_validator("phone number")
-    ])
-    t_user = models.IntegerField(choices=t_user_choice.choice, null=True, blank=True)
-    validate_status = models.IntegerField(choices=validate_status_choice.choice)
+    ], verbose_name="手机号/账号")
+    t_user = models.IntegerField(verbose_name="用户类型", choices=t_user_choice.choice, null=True, blank=True)
+    validate_status = models.IntegerField(_("验证状态"), choices=validate_status_choice.choice)
+    history = HistoricalRecords()
+    change_comment = models.TextField(verbose_name='修改备注', null=True)
+    change_reason = models.CharField(verbose_name='修改原因', default='买家要求修改', max_length=100,
+                                     choices=change_reason_choice.choice)
+
+    class Meta:
+        verbose_name = _('用户认证')
+        verbose_name_plural = verbose_name
 
     def __unicode__(self):
         if self.company is not None:
@@ -105,29 +115,48 @@ class UserValidate(models.Model):
 
 
 class UserValidatePhoto(models.Model):
-    vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_photo", db_index=True)
-    v_photo = models.ImageField(upload_to=settings.UPLOAD_VALIDATE_PHOTO)
-    inuse = models.BooleanField(default=True)
-    upload_date = models.DateTimeField(auto_now_add=True)
-    t_photo = models.IntegerField(choices=t_photo_choice.choice)
+    vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_photo", db_index=True,
+                            verbose_name='认证用户')
+    v_photo = models.ImageField(upload_to=settings.UPLOAD_VALIDATE_PHOTO, verbose_name="路径")
+    inuse = models.BooleanField(default=True, verbose_name="是否使用")
+    upload_date = models.DateTimeField(auto_now_add=True, verbose_name='上传时间')
+    t_photo = models.IntegerField(choices=t_photo_choice.choice, verbose_name="照片类型")
+
+    class Meta:
+        verbose_name = "认证照片"
+        verbose_name_plural = verbose_name
 
     def __unicode__(self):
         return "Validate Photo of %s, uploaded %s" % (self.vid.uid.pn, self.upload_date.strftime("%b %d %Y %H:%M:%S"))
 
 
 class UserValidateArea(models.Model):
-    vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_area", db_index=True)
-    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="uv_province", db_index=False, null=True, blank=True)
-    cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, db_index=False, null=True, blank=True)
-    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True, blank=True)
+    vid = models.ForeignKey(UserValidate, on_delete=models.CASCADE, related_name="validate_area", db_index=True,
+                            verbose_name="用户")
+    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.SET_NULL, related_name="uv_province", db_index=False,
+                            null=True, blank=True, verbose_name="省")
+    cid = models.ForeignKey(CoreAddressCity, on_delete=models.SET_NULL, db_index=False, null=True, blank=True,
+                            verbose_name="市")
+    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True, blank=True,
+                            verbose_name="区")
+
+    class Meta:
+        verbose_name = "认证区域"
+        verbose_name_plural = verbose_name
 
     def __unicode__(self):
         return "Validate Area of %s, %s" % (self.vid.uid.pn, self.aid.area if self.aid is not None else "None")
 
 
 class UserAddressBook(models.Model):
-    uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_addressbook", db_index=True)
-    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True, verbose_name=_("Area ID"))
-    street = models.CharField(max_length=511, blank=True, null=True)
-    contacts = models.CharField(max_length=100, null=True, blank=True)
-    phone = models.CharField(max_length=25, null=True, blank=True)
+    uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_addressbook", db_index=True,
+                            verbose_name='用户')
+    aid = models.ForeignKey(CoreAddressArea, on_delete=models.SET_NULL, db_index=False, null=True,
+                            verbose_name=_("区域"))
+    street = models.CharField(max_length=511, blank=True, null=True, verbose_name='具体街道信息')
+    contacts = models.CharField(max_length=100, null=True, blank=True, verbose_name='联系人')
+    phone = models.CharField(max_length=25, null=True, blank=True, verbose_name='联系电话')
+
+    class Meta:
+        verbose_name = "地址簿"
+        verbose_name_plural = verbose_name
