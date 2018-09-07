@@ -23,6 +23,10 @@ class UserFeedbackAdmin(admin.ModelAdmin):
 class UserAddressBookAdmin(admin.ModelAdmin):
     list_display = ('uid', 'aid', 'street', 'contacts', 'phone')
 
+    def get_readonly_fields(self, request, obj=None):
+        self.readonly_fields = ('uid',)
+        return self.readonly_fields
+
 
 class UserValidateAreaInline(admin.TabularInline):
     model = usersys.UserValidateArea
@@ -71,62 +75,63 @@ class UserValidateAdmin(UserAdmin):
             areas_strings += "    "
         return areas_strings
 
-    def get_urls(self):
-        from django.conf.urls import url
-
-        def wrap(view):
-            def wrapper(*args, **kwargs):
-                return self.admin_site.admin_view(view)(*args, **kwargs)
-
-            wrapper.model_admin = self
-            return update_wrapper(wrapper, view)
-
-        info = self.model._meta.app_label, self.model._meta.model_name
-
-        def pass_view(self, userid):
-            temp = usersys.UserValidate.objects.get(id=userid)
-            temp.validate_status = 2
-            temp.save()
-            redirect_url = reverse('backgroundsys:usersys_uservalidate_change', args=(userid,)) + '?status=2'
-            return HttpResponseRedirect(redirect_url)
-
-        def fail_view(self, userid):
-            temp = usersys.UserValidate.objects.get(id=userid)
-            temp.validate_status = 4
-            temp.save()
-            redirect_url = reverse('backgroundsys:usersys_uservalidate_change', args=(userid,)) + '?status=2'
-            return HttpResponseRedirect(redirect_url)
-
-        urlpatterns = [
-            url(r'^$', wrap(self.changelist_view), name='%s_%s_changelist' % info),
-            url(r'^(.+)/pass', pass_view, name='%s_%s_pass' % info),
-            url(r'^(.+)/fail', fail_view, name='%s_%s_fail' % info),
-            url(r'^add/$', wrap(self.add_view), name='%s_%s_add' % info),
-            url(r'^(.+)/history/$', wrap(self.history_view), name='%s_%s_history' % info),
-            url(r'^(.+)/delete/$', wrap(self.delete_view), name='%s_%s_delete' % info),
-            url(r'^(.+)/change/$', wrap(self.change_view), name='%s_%s_change' % info),
-            # For backwards compatibility (was the change url before 1.9)
-            url(r'^(.+)/$', wrap(RedirectView.as_view(
-                pattern_name='%s:%s_%s_change' % ((self.admin_site.name,) + info)
-            ))),
-        ]
-        return urlpatterns
+    # def get_urls(self):
+    #     from django.conf.urls import url
+    #
+    #     def wrap(view):
+    #         def wrapper(*args, **kwargs):
+    #             return self.admin_site.admin_view(view)(*args, **kwargs)
+    #
+    #         wrapper.model_admin = self
+    #         return update_wrapper(wrapper, view)
+    #
+    #     info = self.model._meta.app_label, self.model._meta.model_name
+    #
+    #     def pass_view(self, userid):
+    #         temp = usersys.UserValidate.objects.get(id=userid)
+    #         temp.validate_status = 2
+    #         temp.save()
+    #         redirect_url = reverse('backgroundsys:usersys_uservalidate_change', args=(userid,)) + '?status=2'
+    #         return HttpResponseRedirect(redirect_url)
+    #
+    #     def fail_view(self, userid):
+    #         temp = usersys.UserValidate.objects.get(id=userid)
+    #         temp.validate_status = 4
+    #         temp.save()
+    #         redirect_url = reverse('backgroundsys:usersys_uservalidate_change', args=(userid,)) + '?status=2'
+    #         return HttpResponseRedirect(redirect_url)
+    #
+    #     urlpatterns = [
+    #         url(r'^$', wrap(self.changelist_view), name='%s_%s_changelist' % info),
+    #         url(r'^(.+)/pass', pass_view, name='%s_%s_pass' % info),
+    #         url(r'^(.+)/fail', fail_view, name='%s_%s_fail' % info),
+    #         url(r'^add/$', wrap(self.add_view), name='%s_%s_add' % info),
+    #         url(r'^(.+)/history/$', wrap(self.history_view), name='%s_%s_history' % info),
+    #         #url(r'^(.+)/simple_history/$', wrap(self.history_view), name='%s_%s_simple_history' % info),
+    #         url(r'^(.+)/delete/$', wrap(self.delete_view), name='%s_%s_delete' % info),
+    #         url(r'^(.+)/change/$', wrap(self.change_view), name='%s_%s_change' % info),
+    #         # For backwards compatibility (was the change url before 1.9)
+    #         url(r'^(.+)/$', wrap(RedirectView.as_view(
+    #             pattern_name='%s:%s_%s_change' % ((self.admin_site.name,) + info)
+    #         ))),
+    #     ]
+    #     return urlpatterns
 
     def image(self, obj):
         return format_html('<img src="%s" />' % obj.validate_photo.v_photo)
 
     image.short_description = '经营执照'
 
-    def button(self, obj):
-        pass_url = reverse('backgroundsys:usersys_uservalidate_pass', args=(obj.id,))
-        pass_des = '通过认证'
-        fail_url = reverse('backgroundsys:usersys_uservalidate_fail', args=(obj.id,))
-        fail_des = "拒绝认证"
-        return format_html(
-            '<a href="{}">{}</a> &emsp; &emsp;&emsp;&emsp;<a href="{}">{}</a>'.format(pass_url, pass_des, fail_url,
-                                                                                      fail_des))
-
-    button.short_description = '操作'
+    # def button(self, obj):
+    #     pass_url = reverse('backgroundsys:usersys_uservalidate_pass', args=(obj.id,))
+    #     pass_des = '通过认证'
+    #     fail_url = reverse('backgroundsys:usersys_uservalidate_fail', args=(obj.id,))
+    #     fail_des = "拒绝认证"
+    #     return format_html(
+    #         '<a href="{}">{}</a> &emsp; &emsp;&emsp;&emsp;<a href="{}">{}</a>'.format(pass_url, pass_des, fail_url,
+    #                                                                                   fail_des))
+    #
+    # button.short_description = '操作'
 
     def area(self, obj):
         area_ids = obj.validate_area.all()
@@ -160,7 +165,7 @@ class UserValidateAdmin(UserAdmin):
                     'fields': (
                         ('uid'), ('t_user'), ('phonenum'), ('contact'), ('company'), ('bankcard',), ('obank'),
                         ('texno'), ('address'), ('image'), ("area"), ("validate_status"), ('change_reason'),
-                        ('change_comment'), ('button',))
+                        ('change_comment'),)
                 }),
             )
         return fieldsets
@@ -173,7 +178,7 @@ class UserValidateAdmin(UserAdmin):
             self.inlines = []
         else:
             self.readonly_fields = ('t_user', 'image', 'company', 'contact', 'bankcard', 'obank', 'uid', 'phonenum',
-                                    'texno', 'address', 'area', 'button', 'validate_status',)
+                                    'texno', 'address', 'area', 'button',)
         return self.readonly_fields
 
 
@@ -191,6 +196,12 @@ class UserBaseAdmin(UserAdmin):
 
 class UserSidAdmin(UserAdmin):
     list_display = ('sid', 'uid', 'generate_datetime', 'expire_datetime', 'last_login', 'last_ipaddr', 'is_login')
+    ordering = ('-generate_datetime',)
+
+    def get_readonly_fields(self, request, obj=None):
+        self.readonly_fields = (
+            'sid', 'uid', 'generate_datetime', 'expire_datetime', 'last_login', 'last_ipaddr', 'is_login')
+        return self.readonly_fields
 
 
 to_register = [

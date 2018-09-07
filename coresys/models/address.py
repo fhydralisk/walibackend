@@ -18,7 +18,7 @@ class CoreAddressProvince(models.Model):
 
 
 class CoreAddressCity(models.Model):
-    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.CASCADE, related_name="city", verbose_name='省')
+    pid = models.ForeignKey(CoreAddressProvince, on_delete=models.CASCADE, related_name="city", verbose_name='所属省')
     city = models.CharField(max_length=50, verbose_name='市')
     in_use = models.BooleanField(default=True, verbose_name='是否有效')
 
@@ -31,7 +31,7 @@ class CoreAddressCity(models.Model):
 
 
 class CoreAddressArea(models.Model):
-    cid = models.ForeignKey(CoreAddressCity, on_delete=models.CASCADE, related_name="area", verbose_name='市')
+    cid = models.ForeignKey(CoreAddressCity, on_delete=models.CASCADE, related_name="area", verbose_name='所属市')
     area = models.CharField(max_length=50, verbose_name='区')
     in_use = models.BooleanField(default=True, verbose_name='是否有效')
 

@@ -19,6 +19,18 @@ class JPushSecretAdmin(admin.ModelAdmin):
 class PushTemplateAdmin(admin.ModelAdmin):
     list_display = ('template_name', 'template', 'upload_date', 'push_state_name', 'in_use')
 
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = (
+            (None, {
+                'fields': (('template_name',), ('template',), ('upload_date',), ('push_state_name',), ('in_use',),)
+            }),
+        )
+        return fieldsets
+
+    def get_readonly_fields(self, request, obj=None):
+        self.readonly_fields = ('upload_date',)
+        return self.readonly_fields
+
 
 to_register = [
     (JPushSecret, JPushSecretAdmin),
