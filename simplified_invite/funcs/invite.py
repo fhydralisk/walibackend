@@ -1,6 +1,5 @@
 from usersys.funcs.utils.usersid import user_from_sid
 from base.exceptions import Error500, Error404, WLException, default_exception
-from demandsys.util.unit_converter import UnitQuantityMetric
 from usersys.models import UserBase
 from usersys.model_choices.user_enum import role_choice
 from simplified_invite.models import InviteInfo
@@ -12,7 +11,7 @@ from simplified_invite.model_choices.invite_enum import i_status_choice
 def submit_invite(user, invite):
     # type: (UserBase, dict, list) -> QuerySet
     if not user.is_validated():
-        raise WLException(410, "user's validataion does not passed, can't submit")
+        raise WLException(410, "user's validation does not passed, can't submit")
 
     # Validate whether
     invite["dmid_t"].validate_satisfy_demand(
@@ -35,7 +34,7 @@ def submit_invite(user, invite):
 def cancel_invite(user, ivid, reason_id, reason):
     # type: (UserBase, int) -> QuerySet
     if not user.is_validated():
-        raise WLException(410, "user's validataion does not passed")
+        raise WLException(410, "user's validation does not passed")
 
     try:
         invite_obj = InviteInfo.objects.get(id=ivid)
@@ -49,7 +48,7 @@ def cancel_invite(user, ivid, reason_id, reason):
         raise WLException(403, "can't cancel invite in this status")
 
     # if reason_id == 1, the reason must be filled
-    if reason_id == 1 and reason == None:
+    if reason_id == 1 and reason is None:
         raise WLException(405, "need a reason")
     invite_obj.reason_class_id = reason_id
     invite_obj.reason = reason if reason_id == 1 else invite_obj.reason_class.reason

@@ -9,7 +9,6 @@ from simplified_invite.model_choices.invite_enum import t_invite_choice, i_statu
 from django.db.models import Q
 
 
-
 @default_exception(Error500)
 @user_from_sid(Error404)
 def demand_to_invite(user, dmid):
@@ -26,8 +25,8 @@ def demand_to_invite(user, dmid):
     invite = {
         "price": demand.price,
         "quantity": demand.quantity,
-        "aid": None if validate_area == None else validate_area.aid,
-        "street": None if user.user_validate.address == None else user.user_validate.address
+        "aid": None if validate_area is None else validate_area.aid,
+        "street": None if user.user_validate.address is None else user.user_validate.address
     }
     return invite
 
@@ -47,6 +46,7 @@ def obtain_self_invite2appraisal_list(count_per_page, user, page, t_invite):
         qs, count_per_page, page, index_error_excepiton=WLException(400, "Page out of range")
     )
     return qs.order_by("-id")[start:end], n_pages
+
 
 @default_exception(Error500)
 @user_from_sid(Error404)

@@ -73,5 +73,6 @@ class JsonSchemaOfAppraisal(models.Model):
         ProductTypeL1,
         on_delete=models.CASCADE,
         related_name="json_schema_of_appraisal",
+        unique=True,
     )
     json_schema = models.TextField()
