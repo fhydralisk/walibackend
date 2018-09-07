@@ -129,7 +129,7 @@ def publish(user, invite, invite_photos=None):
 
     # Validate whether
     invite["dmid_t"].validate_satisfy_demand(
-        user.role, quantity_metric=UnitQuantityMetric(invite["quantity"], invite["unit"])
+        user.role, quantity=invite['quantity']
     )
 
     invite_obj = InviteInfo(**invite)

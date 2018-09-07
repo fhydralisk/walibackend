@@ -22,7 +22,19 @@ class _MatchOrderChoice(FieldChoice):
     QUANTITY = None
 
 
+class _IntervalChoice(FieldChoice):
+    JUST_NOW = None
+    AN_HOUR_AGO = None
+    SIX_HOURS_AGO = None
+    A_DAY_AGO = None
+    TWO_DAYS_AGO = None
+    TEN_DAYS_AGO = None
+    A_MONTH_AGO = None
+
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
 freight_payer_choice = _FreightPayerChoice()
 match_order_choice = _MatchOrderChoice()
+interval_choice = _IntervalChoice()
+

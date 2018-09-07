@@ -38,11 +38,12 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
     satisfied = serializers.SerializerMethodField()
     demand_photo_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='demand_photo')
     demand_photos = DemandPhotoSerializers(read_only=True, many=True, source='demand_photo')
+    pn = serializers.ReadOnlyField(source='uid.pn')
 
     class Meta:
         model = ProductDemand
         fields = (
-            'id', 't_demand', 'price', 'quantity', 'min_quantity', 'unit', 'match', 'end_time',
+            'id', 't_demand', 'price', 'quantity', 'min_quantity', 'match', 'end_time',
             'freight_payer', 'is_expired', 'description',
             'company', 'contact', 't_user',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
@@ -51,11 +52,13 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
             'demand_photos', 'demand_photo_ids',
             'qid', 't3id', 't2id', 't1id', 'wcid', 'pmid', 'aid',
             'street', 'expired_after_days',
+            'st_time', 'last_modify_from_now',
+            'pn'
         )
 
     def get_satisfied(self, obj):
         # type: (ProductDemand) -> float
-        return (obj.quantity_metric() - obj.quantity_left()).quantity
+        return obj.quantity - obj.quantity_left()
 
 
 class DemandReadableDisplaySelfSerializer(DemandReadableDisplaySerializer):
@@ -86,15 +89,15 @@ class DemandReadableDisplayMatchSerializer(DemandReadableDisplaySerializer):
 
 class DemandPublishSerializer(serializers.ModelSerializer):
 
-    duration = serializers.FloatField(min_value=0.0)
+    duration = serializers.FloatField(default=100)
+    min_quantity = serializers.FloatField(default=0)
 
     class Meta:
         model = ProductDemand
         fields = (
             'qid', 'wcid', 'quantity', 'min_quantity',
-            'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
+            'price', 'duration', 'abid', 'aid',
             'street', 'description', 'comment', 'match', 'comment',
-            'freight_payer',
         )
         validators = [
             AddressChoiceValidator()
@@ -102,6 +105,8 @@ class DemandPublishSerializer(serializers.ModelSerializer):
 
 
 class DemandEditSerializer(serializers.ModelSerializer):
+
+    min_quantity = serializers.FloatField(default=0)
 
     @property
     def root(self):
@@ -115,8 +120,8 @@ class DemandEditSerializer(serializers.ModelSerializer):
         model = ProductDemand
         fields = (
             'quantity', 'min_quantity',
-            'price', 'unit', 'pmid', 'duration', 'abid', 'aid',
-            'street', 'description', 'comment', 'match', 'comment', 'freight_payer'
+            'price', 'duration', 'abid', 'aid',
+            'street', 'description', 'comment', 'match', 'comment'
         )
         validators = [
             AddressChoiceValidator()
