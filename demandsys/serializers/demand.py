@@ -90,6 +90,7 @@ class DemandReadableDisplayMatchSerializer(DemandReadableDisplaySerializer):
 class DemandPublishSerializer(serializers.ModelSerializer):
 
     duration = serializers.FloatField(default=100)
+    min_quantity = serializers.FloatField(default=0)
 
     class Meta:
         model = ProductDemand
@@ -104,6 +105,8 @@ class DemandPublishSerializer(serializers.ModelSerializer):
 
 
 class DemandEditSerializer(serializers.ModelSerializer):
+
+    min_quantity = serializers.FloatField(default=0)
 
     @property
     def root(self):
