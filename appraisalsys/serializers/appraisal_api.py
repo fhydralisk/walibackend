@@ -1,5 +1,22 @@
 from rest_framework import serializers
-from appraisalsys.models import AppraisalInfo
+from demandsys.models import ProductWaterContent
+from appraisalsys.models import ImpurityContent
+
+
+class CommonFieldAppraisalSerializer(serializers.Serializer):
+    final_total_price = serializers.FloatField(min_value=0.0)
+    net_weight = serializers.FloatField(min_value=0.0)
+    pure_net_weight = serializers.FloatField(min_value=0.0)
+    wcid = serializers.PrimaryKeyRelatedField(
+        queryset=ProductWaterContent.objects.filter(in_use=True),
+        allow_null=True,
+        default=None,
+    )
+    impcid = serializers.PrimaryKeyRelatedField(
+        queryset=ImpurityContent.objects.filter(in_use=True),
+        allow_null=True,
+        default=None,
+    )
 
 
 class SubmitAppraisalSerializer(serializers.Serializer):
@@ -10,23 +27,6 @@ class SubmitAppraisalSerializer(serializers.Serializer):
     check_photos = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
 
     def validate(self, attrs):
-        if not attrs["in_accordance"]:
-            seri_cls = AppraisalInfoSubmitSerializerForAccordance
-        else:
-            seri_cls = AppraisalInfoSubmitSerializerForNotAccordance
-        seri = seri_cls(data=attrs["parameter"])
-        seri.is_valid(raise_exception=True)
-        attrs["parameter"] = seri.validated_data
+        seri_parameter = CommonFieldAppraisalSerializer(data=attrs['parameter'])
+        seri_parameter.is_valid(raise_exception=True)
         return attrs
-
-
-class AppraisalInfoSubmitSerializerForAccordance(serializers.ModelSerializer):
-    class Meta:
-        model = AppraisalInfo
-        fields = (
-          "final_price", "description", "quantity", "wcid", "qid",
-        )
-
-
-class AppraisalInfoSubmitSerializerForNotAccordance(serializers.Serializer):
-    pass

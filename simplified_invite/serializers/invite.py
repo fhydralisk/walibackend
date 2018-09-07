@@ -77,6 +77,7 @@ class InviteDetailDisplaySerializer(InviteInfoDisplaySerializer):
         model = InviteInfo
         fields = InviteInfoDisplaySerializer.Meta.fields
 
+
 class InviteInfoInAppraisalSysSubmitSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -91,7 +91,7 @@ class ProductDemand(models.Model):
 
     def quantity_left(self):
         # TODO: Implement this
-        return UnitQuantityMetric(self.quantity, self.unit)
+        return self.quantity
 
     def min_quantity_metric(self):
         return UnitQuantityMetric(self.min_quantity, self.unit)

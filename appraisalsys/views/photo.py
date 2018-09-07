@@ -5,9 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from base.views import WLAPIView
 from appraisalsys.serializers.photo_api import (
-    UploadCheckPhotoSerializer, GetDeleteCheckPhotoSerializer
+    UploadCheckPhotoSerializer,
+    GetDeleteCheckPhotoSerializer,
 )
 from appraisalsys.funcs.photo import upload_check_photo, delete_check_photo, get_check_photo
+
 
 class UploadCheckPhotoView(WLAPIView, APIView):
     parser_classes = (MultiPartParser,)
@@ -27,6 +29,7 @@ class UploadCheckPhotoView(WLAPIView, APIView):
             },
             context=context
         )
+
 
 class DeleteCheckPhotoView(WLAPIView, APIView):
 

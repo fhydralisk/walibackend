@@ -1,2 +1,2 @@
-from appraise import AppraisalInfo
-from appraise import CheckPhoto
+from .appraise import AppraisalInfo, ImpurityContent
+from .appraise import CheckPhoto, JsonSchemaOfAppraisal
