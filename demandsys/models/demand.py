@@ -85,9 +85,11 @@ class ProductDemand(models.Model):
         from appraisalsys.models.appraise import AppraisalInfo
         counter_appraisal_quantity = AppraisalInfo.objects.filter(
             models.Q(ivid__dmid_s=self) | models.Q(ivid__dmid_t=self)
-        ).aggregate(models.Sum('ivid__quantity'))
-
-        return self.quantity - counter_appraisal_quantity if counter_appraisal_quantity < self.quantity else 0
+        ).aggregate(models.Sum('ivid__quantity'))['ivid__quantity__sum']
+        if counter_appraisal_quantity is not None:
+            return self.quantity - counter_appraisal_quantity if counter_appraisal_quantity < self.quantity else 0
+        else:
+            return self.quantity
 
     @property
     def is_expired(self):
