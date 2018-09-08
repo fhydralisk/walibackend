@@ -15,8 +15,9 @@ class _AStatusChoice(FieldChoice):
 
 
 class _ChangeChoice(FieldChoice):
-    BUYER = None
-    OTHERREASON = None
+    BUYER_SUBMIT = None
+    BUYER_REQUEST = None
+    OTHER = None
 
 
 t_appraisal_choice = _TAppraisalChoice()
