@@ -9,7 +9,7 @@ from simplified_invite.models import InviteInfo
 from appraisalsys.model_choices.appraisal_enum import a_status_choice
 from demandsys.models.product import ProductTypeL1, ProductWaterContent
 from simple_history.models import HistoricalRecords
-from usersys.model_choices.user_enum import change_reason_choice
+from appraisalsys.model_choices.appraisal_enum import change_reason_choice
 
 
 class ImpurityContent(models.Model):
@@ -17,7 +17,7 @@ class ImpurityContent(models.Model):
     in_use = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = '杂质'
+        verbose_name = _('杂质')
         verbose_name_plural = verbose_name
 
     def __unicode__(self):
@@ -29,7 +29,7 @@ class AppraisalInfo(models.Model):
         InviteInfo,
         verbose_name=_("邀请信息"),
         on_delete=models.CASCADE,
-        related_name="appraisal"
+        related_name="appraisal",
     )
     a_status = models.IntegerField(_("反馈填写情况"), choices=a_status_choice.choice)
     in_accordance = models.BooleanField(_("是否符合描述"))
@@ -49,17 +49,21 @@ class AppraisalInfo(models.Model):
         verbose_name=_("杂质"),
         on_delete=models.SET_NULL,
         related_name="appraisal",
-        null=True
+        null=True,
     )
     parameter = models.TextField(null=True, verbose_name='其余参数')
 
     history = HistoricalRecords()
-    change_reason = models.CharField(verbose_name='修改原因', default='买家要求修改', max_length=100,
-                                     choices=change_reason_choice.choice)
+    change_reason = models.IntegerField(
+        verbose_name='修改原因',
+        default='买家要求修改',
+        max_length=100,
+        choices=change_reason_choice.choice,
+    )
     change_comment = models.TextField(verbose_name='修改备注', null=True, blank=True)
 
     class Meta:
-        verbose_name = '评价'
+        verbose_name = _('评价')
         verbose_name_plural = verbose_name
 
 
@@ -68,7 +72,7 @@ class CheckPhoto(models.Model):
         UserBase,
         verbose_name=_("上传人"),
         on_delete=models.CASCADE,
-        related_name='appraisal_check_photo'
+        related_name='appraisal_check_photo',
     )
     apprid = models.ForeignKey(
         AppraisalInfo,
@@ -82,7 +86,7 @@ class CheckPhoto(models.Model):
     check_photo = models.ImageField(upload_to=settings.UPLOAD_CHECK_PHOTO, verbose_name='照片')
 
     class Meta:
-        verbose_name = '评价照片'
+        verbose_name = _('评价照片')
         verbose_name_plural = verbose_name
 
 

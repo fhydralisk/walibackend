@@ -1,4 +1,5 @@
-from base.util.field_choice import FieldChoice
+from base.util.field_choice import FieldChoice# coding=utf-8
+
 
 
 class _RoleChoice(FieldChoice):
