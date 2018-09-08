@@ -21,5 +21,14 @@ class _AStatusChoice(FieldChoice):
     )
 
 
+class _ChangeChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (0, _("买家提交"), "BUYER_SUBMIT"),
+        (1, _("买家要求修改"), "BUYER_REQUEST"),
+        (2, _("其他"), "OTHER"),
+    )
+
+
 t_appraisal_choice = _TAppraisalChoice()
 a_status_choice = _AStatusChoice()
+change_reason_choice = _ChangeChoice()

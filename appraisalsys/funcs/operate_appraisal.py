@@ -46,7 +46,7 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
         except ValidationError as e:
             raise WLException(400, str(e.message))
 
-        appraisal_obj = AppraisalInfo.objects.create(
+        appraisal_obj = AppraisalInfo(
             in_accordance=in_accordance,
             ivid=iv_obj,
             a_status=a_status_choice.APPRAISAL_SUBMITTED,
@@ -57,6 +57,9 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             impcid_id=parameter.pop("impcid") if "impcid" in parameter else None,
             parameter=json.dumps(parameter)
         )
+        appraisal_obj._history_user = user
+        appraisal_obj.save()
+
     iv_obj.i_status = i_status_choice.SIGNED
     iv_obj.save()
 

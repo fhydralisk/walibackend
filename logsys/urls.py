@@ -1,5 +1,6 @@
 from django.conf.urls import include, url
 import logsys.views.order_logs as order_logs
+import logsys.views.appraisal_logs as appraisal_logs
 
 
 url_patterns_order = [
@@ -8,6 +9,12 @@ url_patterns_order = [
 ]
 
 
+url_patterns_appraisal = [
+    url(r'^log/$', appraisal_logs.ObtainAppraisalLogView.as_view()),
+]
+
+
 url_patterns = [
     url(r'^order/', include(url_patterns_order)),
+    url(r'^appraisal/', include(url_patterns_appraisal)),
 ]
