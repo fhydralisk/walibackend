@@ -56,7 +56,7 @@ class AppraisalInfo(models.Model):
     history = HistoricalRecords()
     change_reason = models.IntegerField(
         verbose_name='修改原因',
-        default='买家要求修改',
+        default=change_reason_choice.BUYER_SUBMIT,
         max_length=100,
         choices=change_reason_choice.choice,
     )
