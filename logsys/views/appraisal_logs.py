@@ -16,8 +16,13 @@ class ObtainAppraisalLogView(WLAPIView, APIView):
 
         seri_log = log_entry.AppraisalLogSerializer(log_entries, many=True)
 
+        appr_status = 0
+        if seri_log.data:
+            appr_status = 1
+
         return self.generate_response(
             data={
+                "appr_status": appr_status,
                 "logs": seri_log.data
             },
             context=context
