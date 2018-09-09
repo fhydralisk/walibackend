@@ -16,6 +16,6 @@ def obtain_appraisal_log(user, ivid):
 
     try:
         apprid = ivid.appraisal
-        return apprid.history.all()[:1]
+        return apprid.history.last()
     except AppraisalInfo.DoesNotExist:
         return None

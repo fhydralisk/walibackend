@@ -17,3 +17,8 @@ class ObtainOrderProtocolLogSerializer(serializers.Serializer):
 class ObtainAppraisalLogSerializer(serializers.Serializer):
     user_sid = serializers.CharField()
     ivid = serializers.PrimaryKeyRelatedField(queryset=InviteInfo.objects)
+
+
+class ObtainInviteLogSerializer(serializers.Serializer):
+    user_sid = serializers.CharField()
+    ivid = serializers.PrimaryKeyRelatedField(queryset=InviteInfo.objects)

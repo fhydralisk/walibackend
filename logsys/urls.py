@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 import logsys.views.order_logs as order_logs
 import logsys.views.appraisal_logs as appraisal_logs
-
+import logsys.funcs.log_invite
 
 url_patterns_order = [
     url(r'^obtain_order/', order_logs.ObtainLogOrderStatusView.as_view()),
