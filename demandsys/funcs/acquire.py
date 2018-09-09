@@ -10,6 +10,7 @@ from django.db.models import Q, F, Sum
 
 def hide_satisfied(qs):
     # FIXME: only sum simplified_demand_invite_dst
+    # Exclude all demands that are already satisfied.
     qs = qs.annotate(
         satisfied_dst=Sum('simplified_demand_invite_dst__appraisal__ivid__quantity')
     ).exclude(~Q(satisfied_dst=None), quantity__lte=(F('satisfied_dst')))
@@ -61,7 +62,7 @@ def get_popular_demand(role, user, page, t1id, aid, asc_of_price, count_per_page
         t_demand=t_demand_translator.from_role(role)
     )
 
-    qs =hide_satisfied(qs)
+    qs = hide_satisfied(qs)
 
     qs = filter_and_order_demand(qs, t1id, aid, asc_of_price)
 
