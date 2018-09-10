@@ -32,7 +32,7 @@ class InviteAndAppraisalLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InviteInfo
-        fields = ('invite_logs', 'appri_log', 'description')
+        fields = ('invite_logs', 'appr_log', 'description')
 
     def __init__(self, user=None, *args, **kwargs):
         # type: (UserBase, list, dict) -> None
@@ -51,7 +51,7 @@ class InviteAndAppraisalLogSerializer(serializers.ModelSerializer):
         else:
             return None
 
-    def get_description_field(self, obj):
+    def get_description(self, obj):
         # type: (InviteInfo) -> object
         return {
             'register': _('货品信息已由买方登记'),
