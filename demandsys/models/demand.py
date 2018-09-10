@@ -9,6 +9,7 @@ from django.conf import settings
 from base.exceptions import WLException
 from coresys.models import CoreAddressArea, CorePaymentMethod
 from usersys.models import UserBase, UserAddressBook
+from usersys.model_choices.user_enum import role_choice
 from .product import ProductTypeL3, ProductQuality, ProductWaterContent
 from demandsys.model_choices.demand_enum import t_demand_choice, freight_payer_choice, interval_choice
 
@@ -110,11 +111,14 @@ class ProductDemand(models.Model):
 
     def match_score(self, other):
         # type: (self.__class__) -> dict
-        score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, (1, 0, -1))
-        score_price = calc_score_by_operator(self.price, other.price, (1, 0, -1))
+        if self.uid.role == role_choice.SELLER:
+            score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, (1, 0, -1))
+            score_price = calc_score_by_operator(self.price, other.price, (1, 0, -1))
+        else:
+            score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, (-1, 0, 1))
+            score_price = calc_score_by_operator(self.price, other.price, (-1, 0, 1))
         score_area = 1 if self.aid == other.aid else 0 if self.aid.cid == other.aid.cid else -1
         score_total = score_water + score_price + score_area
-
         return {
             "score_water": score_water,
             "score_area": score_area,
