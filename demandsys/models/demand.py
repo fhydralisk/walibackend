@@ -14,6 +14,7 @@ from demandsys.model_choices.demand_enum import t_demand_choice, freight_payer_c
 
 
 def calc_score_by_operator(m1, m2, score_tuple):
+    # issue
     return score_tuple[1] if m1 == m2 else score_tuple[0] if m1 < m2 else score_tuple[2]
 
 
