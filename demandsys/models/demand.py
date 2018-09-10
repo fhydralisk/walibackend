@@ -39,7 +39,7 @@ class ProductDemand(models.Model):
     )
     aid = models.ForeignKey(CoreAddressArea, blank=True, null=True)
     street = models.CharField(max_length=511, blank=True, null=True)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     comment = models.TextField(blank=True, null=True)
     match = models.BooleanField(default=False)
     create_datetime = models.DateTimeField(auto_now_add=True)

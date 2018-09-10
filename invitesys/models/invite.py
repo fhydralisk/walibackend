@@ -14,7 +14,7 @@ from usersys.model_choices.user_enum import role_choice
 
 class InviteCancelReason(models.Model):
     in_use = models.BooleanField(default=True)
-    reason = models.CharField(max_length=256)
+    reason = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.reason
