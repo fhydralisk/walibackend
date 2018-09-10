@@ -35,7 +35,7 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             net_weight=iv_obj.quantity,
             final_total_price=iv_obj.total_price,
             water_content=iv_obj.dmid_t.wcid.water_content,
-            parameter={}
+            parameter="{}",
         )
 
     else:
