@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import json
+import re
 from usersys.funcs.utils.usersid import user_from_sid
 from base.exceptions import Error500, Error404, WLException, default_exception
 from usersys.models import UserBase
@@ -27,13 +28,16 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
     if not iv_obj.i_status == i_status_choice.STARTED:
         raise WLException(403, 'invite in this status can not submit appraisal')
 
+    water_content_re = re.search(r'\d+', iv_obj.dmid_t.wcid.pwcdesc)
+
     if in_accordance:
         appraisal_obj = AppraisalInfo.objects.create(
             in_accordance=in_accordance,
             a_status=a_status_choice.APPRAISAL_SUBMITTED,
             ivid=iv_obj,
-            final_total_price=iv_obj.price,
-            wcid=iv_obj.dmid_t.wcid.id
+            net_weight=iv_obj.quantity,
+            final_total_price=iv_obj.total_price,
+            wcid=float(water_content_re.group()) if water_content_re is not None else 0,
         )
 
     else:

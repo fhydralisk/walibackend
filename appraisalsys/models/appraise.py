@@ -31,21 +31,9 @@ class AppraisalInfo(models.Model):
 
     final_total_price = models.FloatField()
     net_weight = models.FloatField()
-    pure_net_weight = models.FloatField()
-    wcid = models.ForeignKey(
-        ProductWaterContent,
-        verbose_name=_("water_content"),
-        on_delete=models.SET_NULL,
-        related_name="appraisal",
-        null=True,
-    )
-    impcid = models.ForeignKey(
-        ImpurityContent,
-        verbose_name=_("impurity_content"),
-        on_delete=models.SET_NULL,
-        related_name="appraisal",
-        null=True
-    )
+    pure_net_weight = models.FloatField(null=True)
+    wcid = models.FloatField(_('含水量'), null=True)
+    impcid = models.FloatField(_('杂质含量'), null=True)
     parameter = models.TextField(null=True)
 
 

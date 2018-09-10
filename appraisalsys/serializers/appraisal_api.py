@@ -27,6 +27,7 @@ class SubmitAppraisalSerializer(serializers.Serializer):
     check_photos = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
 
     def validate(self, attrs):
-        seri_parameter = CommonFieldAppraisalSerializer(data=attrs['parameter'])
-        seri_parameter.is_valid(raise_exception=True)
+        if not attrs['in_accordance']:
+            seri_parameter = CommonFieldAppraisalSerializer(data=attrs['parameter'])
+            seri_parameter.is_valid(raise_exception=True)
         return attrs
