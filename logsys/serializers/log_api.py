@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ordersys.models import OrderProtocol, OrderInfo
 from appraisalsys.models import AppraisalInfo
+from simplified_invite.models import InviteInfo
 
 
 class ObtainOrderLogSerializer(serializers.Serializer):
@@ -16,3 +17,8 @@ class ObtainOrderProtocolLogSerializer(serializers.Serializer):
 class ObtainAppraisalLogSerializer(serializers.Serializer):
     user_sid = serializers.CharField()
     apprid = serializers.PrimaryKeyRelatedField(queryset=AppraisalInfo.objects)
+
+
+class ObtainInviteLogSerializer(serializers.Serializer):
+    user_sid = serializers.CharField()
+    ivid = serializers.PrimaryKeyRelatedField(queryset=InviteInfo.objects)

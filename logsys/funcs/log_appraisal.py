@@ -13,4 +13,4 @@ def obtain_appraisal_log(user, apprid):
     if apprid.ivid.buyer != user:
         raise WLException(403, "Permission denied.")
 
-    return apprid.history.all()
+    return apprid.history.last()
