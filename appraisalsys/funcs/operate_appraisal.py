@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 import json
-import re
 from usersys.funcs.utils.usersid import user_from_sid
 from base.exceptions import Error500, Error404, WLException, default_exception
 from usersys.models import UserBase
@@ -28,8 +27,6 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
     if not iv_obj.i_status == i_status_choice.STARTED:
         raise WLException(403, 'invite in this status can not submit appraisal')
 
-    water_content_re = re.search(r'\d+', iv_obj.dmid_t.wcid.pwcdesc)
-
     if in_accordance:
         appraisal_obj = AppraisalInfo.objects.create(
             in_accordance=in_accordance,
@@ -37,7 +34,8 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             ivid=iv_obj,
             net_weight=iv_obj.quantity,
             final_total_price=iv_obj.total_price,
-            wcid=float(water_content_re.group()) if water_content_re is not None else 0,
+            water_content=iv_obj.dmid_t.wcid.water_content,
+            parameter={}
         )
 
     else:
@@ -57,8 +55,8 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             final_total_price=parameter.pop("final_total_price"),
             net_weight=parameter.pop("net_weight"),
             pure_net_weight=parameter.pop("pure_net_weight"),
-            wcid_id=parameter.pop("wcid") if "wcid" in parameter else None,
-            impcid_id=parameter.pop("impcid") if "impcid" in parameter else None,
+            water_content=parameter.pop("water_content") if "water_content" in parameter else None,
+            impurity_content=parameter.pop("impurity_content") if "impurity_content" in parameter else None,
             parameter=json.dumps(parameter)
         )
     iv_obj.i_status = i_status_choice.SIGNED

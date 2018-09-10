@@ -7,17 +7,8 @@ class CommonFieldAppraisalSerializer(serializers.Serializer):
     final_total_price = serializers.FloatField(min_value=0.0)
     net_weight = serializers.FloatField(min_value=0.0)
     pure_net_weight = serializers.FloatField(min_value=0.0)
-    wcid = serializers.PrimaryKeyRelatedField(
-        queryset=ProductWaterContent.objects.filter(in_use=True),
-        allow_null=True,
-        default=None,
-    )
-    impcid = serializers.PrimaryKeyRelatedField(
-        queryset=ImpurityContent.objects.filter(in_use=True),
-        allow_null=True,
-        default=None,
-    )
-
+    water_content = serializers.FloatField(allow_null=True, default=None, min_value=0.0, max_value=100)
+    impurity_content = serializers.FloatField(allow_null=True, default=None, min_value=0.0)
 
 class SubmitAppraisalSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)

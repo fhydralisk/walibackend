@@ -32,8 +32,8 @@ class AppraisalInfo(models.Model):
     final_total_price = models.FloatField()
     net_weight = models.FloatField()
     pure_net_weight = models.FloatField(null=True)
-    wcid = models.FloatField(_('含水量'), null=True)
-    impcid = models.FloatField(_('杂质含量'), null=True)
+    water_content = models.FloatField(_('含水量'), null=True)
+    impurity_content = models.FloatField(_('杂质含量'), null=True)
     parameter = models.TextField(null=True)
 
 
