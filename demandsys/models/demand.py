@@ -57,7 +57,6 @@ class ProductDemand(models.Model):
         """
         Raise WLError if not satisfied.
         :param opposite_role:
-        :param quantity_metric:
         :param quantity:
         :return:
         """
@@ -112,18 +111,23 @@ class ProductDemand(models.Model):
     def match_score(self, other):
         # type: (self.__class__) -> dict
         if self.uid.role == role_choice.SELLER:
-            score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, (1, 0, -1))
-            score_price = calc_score_by_operator(self.price, other.price, (1, 0, -1))
+            score_tuple = (1, 0, -1)
+        elif self.uid.role == role_choice.BUYER:
+            score_tuple = (-1, 0, 1)
         else:
-            score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, (-1, 0, 1))
-            score_price = calc_score_by_operator(self.price, other.price, (-1, 0, 1))
+            raise AssertionError("role of user should be seller or buyer but %d instead." % self.uid.role)
+
+        score_water = calc_score_by_operator(self.wcid.ord, other.wcid.ord, score_tuple)
+        score_price = calc_score_by_operator(self.price, other.price, score_tuple)
+
         score_area = 1 if self.aid == other.aid else 0 if self.aid.cid == other.aid.cid else -1
         score_total = score_water + score_price + score_area
+
         return {
             "score_water": score_water,
             "score_area": score_area,
             "score_price": score_price,
-            "score_overall": score_total
+            "score_overall": score_total,
         }
 
     @property
@@ -146,7 +150,14 @@ class ProductDemand(models.Model):
 
 
 class ProductDemandPhoto(models.Model):
-    dmid = models.ForeignKey(ProductDemand, on_delete=models.SET_NULL, related_name="demand_photo", db_index=True, null=True, blank=True)
+    dmid = models.ForeignKey(
+        ProductDemand,
+        on_delete=models.SET_NULL,
+        related_name="demand_photo",
+        db_index=True,
+        null=True,
+        blank=True,
+    )
     demand_photo = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO)
     demand_photo_snapshot = models.FilePathField(null=True, blank=True)
     inuse = models.BooleanField(default=False)
