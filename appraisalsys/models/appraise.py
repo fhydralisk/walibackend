@@ -7,7 +7,7 @@ from django.conf import settings
 from usersys.models import UserBase
 from simplified_invite.models import InviteInfo
 from appraisalsys.model_choices.appraisal_enum import a_status_choice
-from demandsys.models.product import ProductTypeL1, ProductWaterContent
+from demandsys.models.product import ProductTypeL1
 from simple_history.models import HistoricalRecords
 from appraisalsys.model_choices.appraisal_enum import change_reason_choice
 
@@ -25,6 +25,7 @@ class ImpurityContent(models.Model):
 
 
 class AppraisalInfo(models.Model):
+
     ivid = models.OneToOneField(
         InviteInfo,
         verbose_name=_("邀请信息"),
@@ -37,30 +38,18 @@ class AppraisalInfo(models.Model):
     final_total_price = models.FloatField(verbose_name='最终价格')
     net_weight = models.FloatField(_("净重"))
     pure_net_weight = models.FloatField(_("结算净重"))
-    wcid = models.ForeignKey(
-        ProductWaterContent,
-        verbose_name=_("含水量"),
-        on_delete=models.SET_NULL,
-        related_name="appraisal",
-        null=True,
-    )
-    impcid = models.ForeignKey(
-        ImpurityContent,
-        verbose_name=_("杂质"),
-        on_delete=models.SET_NULL,
-        related_name="appraisal",
-        null=True,
-    )
-    parameter = models.TextField(null=True, verbose_name='其余参数')
+    water_content = models.FloatField(_('含水量'), null=True)
+    impurity_content = models.FloatField(_('杂质含量'), null=True)
+    parameter = models.TextField(null=True, verbose_name=_('其余参数'))
 
     history = HistoricalRecords()
     change_reason = models.IntegerField(
-        verbose_name='修改原因',
+        verbose_name=_('修改原因'),
         default=change_reason_choice.BUYER_SUBMIT,
         max_length=100,
         choices=change_reason_choice.choice,
     )
-    change_comment = models.TextField(verbose_name='修改备注', null=True, blank=True)
+    change_comment = models.TextField(verbose_name=_('修改备注'), null=True, blank=True)
 
     class Meta:
         verbose_name = _('评价')
@@ -81,9 +70,9 @@ class CheckPhoto(models.Model):
         related_name='check_photo',
         null=True,
     )
-    upload_data = models.DateTimeField(auto_now_add=True, verbose_name='上传时间')
-    in_use = models.BooleanField(default=True, verbose_name='是否使用')
-    check_photo = models.ImageField(upload_to=settings.UPLOAD_CHECK_PHOTO, verbose_name='照片')
+    upload_data = models.DateTimeField(auto_now_add=True, verbose_name=_('上传时间'))
+    in_use = models.BooleanField(default=True, verbose_name=_('是否使用'))
+    check_photo = models.ImageField(upload_to=settings.UPLOAD_CHECK_PHOTO, verbose_name=_('照片'))
 
     class Meta:
         verbose_name = _('评价照片')

@@ -24,8 +24,8 @@ class AppraisalInfoDisplaySerializer(serializers.ModelSerializer):
             logger.warning('parameter of Pk: %d of AppraisalInfo object is invalid')
             parameter_dict = {}
 
-        parameter_dict["wcid"] = instance.wcid_id
-        parameter_dict["impcid"] = instance.impcid_id
+        parameter_dict["water_content"] = instance.water_content
+        parameter_dict["impurity_content"] = instance.impurity_content
         parameter_dict["final_total_price"] = instance.final_total_price
         parameter_dict["net_weight"] = instance.net_weight
         parameter_dict["pure_net_weight"] = instance.pure_net_weight

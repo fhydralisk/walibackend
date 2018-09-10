@@ -41,6 +41,7 @@ class ProductQuality(models.Model):
 
 class ProductWaterContent(models.Model):
     pwcdesc = models.CharField(max_length=255, verbose_name=_("Water content description"))
+    water_content = models.FloatField()
     ord = models.IntegerField(verbose_name=_("Order field"))
     in_use = models.BooleanField(default=True)
 
