@@ -1,12 +1,13 @@
 from rest_framework.views import APIView
 from base.views import WLAPIView
 from simplified_invite.serializers.simplified_invite_api import (
-    ObtainDefaultInviteSerializer, ObtainSelfInvite2AppraisalSerializer, ObtainInvite2AppraisalDetailSerializer
+    ObtainDefaultInviteSerializer, ObtainSelfInvite2AppraisalSerializer, ObtainInvite2AppraisalDetailSerializer,
+    InviteCancelReasonDisplaySerializer,
 )
 from simplified_invite.serializers.invite import (
     DefaultInviterInfoSerializer, SelfInviteDisplaySerializer, InviteDetailDisplaySerializer
 )
-from simplified_invite.funcs.obtain_invite_to_appraisal import demand_to_invite
+from simplified_invite.funcs.obtain_invite_to_appraisal import demand_to_invite, get_reason_classes
 from simplified_invite.funcs.obtain_invite_to_appraisal import obtain_self_invite2appraisal_list, obtain_invite2appraisal_detail
 
 
@@ -56,6 +57,20 @@ class ObtainInvite2AppraisalSDetailView(WLAPIView, APIView):
         return self.generate_response(
             data={
                 "invite_detail": seri_invite.data
+            },
+            context=context
+        )
+
+class ObtainCancelReasonView(WLAPIView, APIView):
+    def get(self, request):
+        data, context = self.get_request_obj(request)
+
+        reasons = get_reason_classes()
+        seri_reasons = InviteCancelReasonDisplaySerializer(reasons, many=True)
+
+        return self.generate_response(
+            data={
+                "reason_classes": seri_reasons.data
             },
             context=context
         )

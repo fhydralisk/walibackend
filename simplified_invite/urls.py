@@ -4,14 +4,15 @@ import views.operate as operate
 
 
 url_pattern_obtain = [
-    url(r'^defaultinvite/', obtain.ObtainDefaultInviteView.as_view()),
-    url(r'^selfinvite/', obtain.ObtainInvite2SelfAppraisalView.as_view()),
-    url(r'^invitedetail/', obtain.ObtainInvite2AppraisalSDetailView.as_view()),
+    url(r'^defaultinvite/$', obtain.ObtainDefaultInviteView.as_view()),
+    url(r'^selfinvite/$', obtain.ObtainInvite2SelfAppraisalView.as_view()),
+    url(r'^invitedetail/$', obtain.ObtainInvite2AppraisalSDetailView.as_view()),
+    url(r'^cancel_reason/$', obtain.ObtainCancelReasonView.as_view())
 ]
 
 url_pattern_operate = [
-    url(r'^submitinvite/', operate.SubmitInviteView.as_view()),
-    url(r'^cancelinvite/', operate.CancelInviteView.as_view()),
+    url(r'^submitinvite/$', operate.SubmitInviteView.as_view()),
+    url(r'^cancelinvite/$', operate.CancelInviteView.as_view()),
 ]
 
 
