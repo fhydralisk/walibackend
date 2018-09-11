@@ -4,7 +4,7 @@ from usersys.models import UserBase, UserValidateArea
 from usersys.model_choices.user_enum import role_choice
 from usersys.funcs.utils.usersid import user_from_sid
 from demandsys.models import ProductDemand
-from simplified_invite.models import InviteInfo
+from simplified_invite.models import InviteInfo, InviteCancelReason
 from simplified_invite.model_choices.invite_enum import t_invite_choice, i_status_choice
 from django.db.models import Q
 
@@ -61,3 +61,8 @@ def obtain_invite2appraisal_detail(user, ivid):
         raise WLException(403, "no access to obtain this invite")
 
     return iv
+
+
+@default_exception(Error500)
+def get_reason_classes():
+    return InviteCancelReason.objects.filter(in_use=True).all()

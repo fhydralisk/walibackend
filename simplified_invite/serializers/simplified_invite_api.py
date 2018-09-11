@@ -48,3 +48,13 @@ class CancelInviteSerializer(serializers.Serializer):
     ivid = serializers.IntegerField()
     reason_id = serializers.PrimaryKeyRelatedField(queryset=InviteCancelReason.objects.filter(in_use=True))
     reason = serializers.CharField(max_length=2048, default=None, allow_null=True)
+
+
+class InviteCancelReasonDisplaySerializer(serializers.ModelSerializer):
+
+    value = serializers.ReadOnlyField(source='id')
+    label = serializers.ReadOnlyField(source='reason')
+
+    class Meta:
+        model = InviteCancelReason
+        fields = ('value', 'label')
