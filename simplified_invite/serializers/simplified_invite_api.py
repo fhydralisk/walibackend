@@ -4,6 +4,7 @@ from usersys.funcs.utils.sid_management import sid_getuser
 from usersys.model_choices.user_enum import role_choice
 from simplified_invite.model_choices.invite_enum import t_invite_choice
 from simplified_invite.serializers.invite import InviteInfoInAppraisalSysSubmitSerializer
+from simplified_invite.models import InviteCancelReason
 
 
 class ObtainDefaultInviteSerializer(serializers.Serializer):
@@ -45,5 +46,5 @@ class SubmitInviteSerializer(serializers.Serializer):
 class CancelInviteSerializer(serializers.Serializer):
     user_sid = serializers.CharField(max_length=60)
     ivid = serializers.IntegerField()
-    reason_id = serializers.IntegerField()
-    reason = serializers.CharField(max_length=256, default=None, allow_null=True)
+    reason_id = serializers.PrimaryKeyRelatedField(queryset=InviteCancelReason.objects.filter(in_use=True))
+    reason = serializers.CharField(max_length=2048, default=None, allow_null=True)
