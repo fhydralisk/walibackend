@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from django.conf import settings
 
 
 class ProductTypeL1(models.Model):
     tname1 = models.CharField(max_length=255, verbose_name=_("Top level product type"))
     in_use = models.BooleanField(default=True)
+    default_photo = models.ImageField(upload_to=settings.UPLOAD_DEMAND_PHOTO)
 
     def __unicode__(self):
         return self.tname1
