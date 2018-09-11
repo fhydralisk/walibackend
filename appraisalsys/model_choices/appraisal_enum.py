@@ -29,6 +29,14 @@ class _ChangeChoice(FieldChoice):
     )
 
 
+class _TemplateChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _("废纸, PET模板"), "PET"),
+        (2, _("废铁模板"), "IRON"),
+    )
+
+
 t_appraisal_choice = _TAppraisalChoice()
 a_status_choice = _AStatusChoice()
 change_reason_choice = _ChangeChoice()
+template_choice = _TemplateChoice()
