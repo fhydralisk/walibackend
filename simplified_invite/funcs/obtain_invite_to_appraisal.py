@@ -37,9 +37,9 @@ def obtain_self_invite2appraisal_list(count_per_page, user, page, t_invite):
     # type: (int, UserBase, int, int) -> Queryset
     qs = user.simplified_user_invite_dst.all() | user.simplified_user_invite_src.all()
     if t_invite == t_invite_choice.PROCEEDING:
-        qs = qs.filter(i_status=i_status_choice.STARTED)
+        qs = qs.filter(i_status=i_status_choice.STARTED).order_by('-id')
     elif t_invite == t_invite_choice.COMPLETED_OR_CANCELED:
-        qs = qs.filter(Q(i_status=i_status_choice.CANCELED) | Q(i_status=i_status_choice.SIGNED))
+        qs = qs.filter(Q(i_status=i_status_choice.CANCELED) | Q(i_status=i_status_choice.SIGNED)).order_by('-id')
     else:
         raise WLException(400, "this type is invalid")
     start, end, n_pages = get_page_info(
