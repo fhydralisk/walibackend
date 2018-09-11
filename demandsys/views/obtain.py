@@ -10,8 +10,8 @@ from demandsys.serializers.demand_api import (
 from demandsys.serializers.demand import (
     DemandReadableDisplaySerializer, DemandReadableDisplayMatchSerializer, DemandReadableDisplaySelfSerializer, DemandReadableDisplaySearchSerializer
 )
-from demandsys.serializers.photo_api import GetPhotoSerializer
-from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand, get_search_demand
+from demandsys.serializers.photo_api import GetPhotoSerializer, GetPhotoByDmidSerializer
+from demandsys.funcs.acquire import get_popular_demand, get_demand_detail, get_my_demand, get_specified_photo, get_matched_demand, get_search_demand, get_photo_by_dmid
 
 # TODO: Move page size into settings
 class ObtainHotView(WLAPIView, APIView):
@@ -80,6 +80,21 @@ class ObtainPhotoDataView(WLAPIView, APIView):
         self.validate_serializer(seri)
 
         photo_path = get_specified_photo(**seri.data)
+        real_path = os.path.join(settings.BASE_DIR, photo_path)
+
+        return FileResponse(open(real_path), content_type='image')
+
+
+class ObtainPhotoByDmidView(WLAPIView, APIView):
+    ERROR_HTTP_STATUS = True
+
+    def get(self, request):
+        data, context = self.get_request_obj(request)
+
+        seri = GetPhotoByDmidSerializer(data=data)
+        self.validate_serializer(seri)
+
+        photo_path = get_photo_by_dmid(**seri.data)
         real_path = os.path.join(settings.BASE_DIR, photo_path)
 
         return FileResponse(open(real_path), content_type='image')

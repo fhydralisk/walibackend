@@ -213,6 +213,19 @@ def get_specified_photo(id):
         raise Error404("No such photo.")
 
 
+def get_photo_by_dmid(dmid):
+    # type: (int) -> string
+    try:
+        demand_obj = ProductDemand.objects.get(id=dmid)
+    except ProductDemand.DoesNotExist:
+        raise Error404("no such demand")
+    photo = demand_obj.demand_photo.filter(inuse=True).order_by('-id').last()
+    if photo is not None:
+        return photo.demand_photo.path
+    else:
+        return demand_obj.pid.t2id.t1id.default_photo.path
+
+
 @default_exception(Error500)
 @user_from_sid(Error404)
 def get_search_demand(user, page, keyword, t1id, aid, asc_of_price, count_per_page):
