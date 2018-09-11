@@ -6,7 +6,7 @@ from django.db import models
 from django.conf import settings
 from usersys.models import UserBase
 from simplified_invite.models import InviteInfo
-from appraisalsys.model_choices.appraisal_enum import a_status_choice
+from appraisalsys.model_choices.appraisal_enum import a_status_choice, template_choice
 from demandsys.models.product import ProductTypeL1
 from simple_history.models import HistoricalRecords
 from appraisalsys.model_choices.appraisal_enum import change_reason_choice
@@ -87,3 +87,4 @@ class JsonSchemaOfAppraisal(models.Model):
         unique=True,
     )
     json_schema = models.TextField()
+    template_id = models.IntegerField(_("使用模板ID"), choices=template_choice.choice)

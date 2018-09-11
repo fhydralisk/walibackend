@@ -20,6 +20,11 @@ class _ChangeChoice(FieldChoice):
     OTHER = None
 
 
+class _TemplateChoice(FieldChoice):
+    PET = None
+    IRON = None
+
 t_appraisal_choice = _TAppraisalChoice()
 a_status_choice = _AStatusChoice()
 change_reason_choice = _ChangeChoice()
+template_choice = _TemplateChoice()

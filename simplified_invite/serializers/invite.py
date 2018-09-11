@@ -73,9 +73,14 @@ class SelfInviteDisplaySerializer(InviteInfoDisplaySerializer):
 
 class InviteDetailDisplaySerializer(InviteInfoDisplaySerializer):
 
+    template_id = serializers.SlugRelatedField(
+        slug_field='template_id',
+        source='dmid_t.pid.t2id.t1id.json_schema_of_appraisal.last',
+        read_only=True
+    )
     class Meta:
         model = InviteInfo
-        fields = InviteInfoDisplaySerializer.Meta.fields
+        fields = InviteInfoDisplaySerializer.Meta.fields + ("template_id",)
 
 
 class InviteInfoInAppraisalSysSubmitSerializer(serializers.ModelSerializer):
