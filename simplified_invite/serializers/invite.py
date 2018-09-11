@@ -3,6 +3,7 @@ from simplified_invite.models import InviteInfo
 from demandsys.serializers.validators.address_submit import AddressChoiceValidator
 from usersys.models import UserBase
 from appraisalsys.serializers.appraisal import AppraisalInfoDisplaySerializer
+from demandsys.serializers.demand import DemandPhotoSerializers
 
 
 class DefaultInviterInfoSerializer(serializers.ModelSerializer):
@@ -51,6 +52,8 @@ class InviteInfoDisplaySerializer(serializers.ModelSerializer):
     pwcdesc = serializers.ReadOnlyField(source='dmid_t.wcid.pwcdesc')
     related_appraisal = AppraisalInfoDisplaySerializer(source='appraisal')
     reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
+    demand_photos = DemandPhotoSerializers(read_only=True, many=True, source='dmid_t.demand_photo')
+    demand_photo_ids = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='dmid_t.demand_photo')
 
     class Meta:
         model = InviteInfo
@@ -58,6 +61,7 @@ class InviteInfoDisplaySerializer(serializers.ModelSerializer):
             'id',
             'buyer', 'seller', 'aid', 'street',
             'dmid_s', 'dmid_t', 'quantity', 'reason', 'reason_class',
+            'demand_photos', 'demand_photo_ids',
             'price', 'i_status',
             'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc',
             'total_price', 'related_appraisal',
