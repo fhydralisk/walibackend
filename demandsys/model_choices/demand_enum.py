@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
@@ -47,8 +48,16 @@ class _IntervalChoice(FieldChoice):
     )
 
 
+class _ProductT1idChoice(FieldChoice):
+    CHOICE_DISPLAY = (
+        (1, _("PET"), "PET"),
+        (2, _("废铁"), "IRON"),
+        (3, _("废纸"), "PAPER"),
+    )
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
 freight_payer_choice = _FreightPayerChoice()
 match_order_choice = _MatchOrderChoice()
 interval_choice = _IntervalChoice()
+product_t1id_choice = _ProductT1idChoice()

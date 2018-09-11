@@ -32,9 +32,16 @@ class _IntervalChoice(FieldChoice):
     A_MONTH_AGO = None
 
 
+class _ProductT1idChoice(FieldChoice):
+    PET = None
+    IRON = None
+    PAPER = None
+
+
 unit_choice = _UnitChoice()
 t_demand_choice = _TDemandChoice()
 freight_payer_choice = _FreightPayerChoice()
 match_order_choice = _MatchOrderChoice()
 interval_choice = _IntervalChoice()
+product_t1id_choice = _ProductT1idChoice()
 

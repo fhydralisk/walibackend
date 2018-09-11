@@ -5,7 +5,9 @@ from base.util.db import update_instance_from_dict
 from demandsys.forms import UploadPhotoForm
 from demandsys.models import ProductDemand, ProductDemandPhoto
 from demandsys.models.translaters import t_demand_translator
+from demandsys.model_choices.demand_enum import product_t1id_choice
 from usersys.funcs.utils.usersid import user_from_sid
+from walibackend import settings
 
 
 @default_exception(Error500)
@@ -104,6 +106,19 @@ def publish_demand(user, demand, photo_ids=None):
 
     if photo_ids is not None:
         append_photo(demand_instance, photo_ids)
+    else:
+        if demand_instance.pid.t2id.t1id.id == product_t1id_choice.PET:
+            photo_obj = ProductDemandPhoto(inuse=True, dmid=demand_instance,
+                                           demand_photo=settings.MEDIA_ROOT + "/upload/demand/origin/PET.png")
+        elif demand_instance.pid.t2id.t1id.id == product_t1id_choice.IRON:
+            photo_obj = ProductDemandPhoto(inuse=True, dmid=demand_instance,
+                                           demand_photo=settings.MEDIA_ROOT + "/upload/demand/origin/IRON.png")
+        elif demand_instance.pid.t2id.t1id.id == product_t1id_choice.PAPER:
+            photo_obj = ProductDemandPhoto(inuse=True, dmid=demand_instance,
+                                           demand_photo=settings.MEDIA_ROOT + "/upload/demand/origin/PAPER.png")
+        else:
+            raise WLException(404, "no such type")
+        photo_obj.save()
 
     return demand_instance.id
 
