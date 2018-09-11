@@ -29,7 +29,7 @@ class CancelInviteView(WLAPIView, APIView):
         data, context = self.get_request_obj(request)
         seri = CancelInviteSerializer(data=data)
         self.validate_serializer(seri)
-        cancel_invite(**seri.data)
+        cancel_invite(**seri.validated_data)
         return self.generate_response(
             data={},
             context=context
