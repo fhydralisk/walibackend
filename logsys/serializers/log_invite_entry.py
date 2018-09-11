@@ -4,37 +4,82 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.apps import apps
 from rest_framework import serializers
-from invitesys.models import InviteInfo
+from simplified_invite.models import InviteInfo
+from simplified_invite.model_choices.invite_enum import i_status_choice
 from logsys.models import LogInviteStatus
 from usersys.models import UserBase
 from usersys.model_choices.user_enum import role_choice
 import json
 
+
 HistoricalAppraisalInfo = apps.get_model('appraisalsys', 'HistoricalAppraisalInfo')
 
 
 class AppraisalLogSerializer(serializers.ModelSerializer):
-    show = serializers.SerializerMethodField()
+    formatted = serializers.SerializerMethodField()
+
+    MAP_FIELD_NAME = {
+        "final_total_price": "成交总金额为: {final_total_price} 元",
+        "net_weight": "净重为: {net_weight} 吨",
+        "pure_net_weight": "结算净重为: {pure_net_weight} 吨",
+    }
+
+    MAP_PARAMETER_NAME = {
+        "price_1": "质检员一报价: {price_1} 元/吨",
+        "price_2": "质检员二报价: {price_2} 元/吨",
+    }
+
+    desc = '已完成，交易信息已由买方登记',
 
     class Meta:
         model = HistoricalAppraisalInfo
-        fields = ('id', 'a_status', 'in_accordance', 'history_date', 'ivid', 'show')
+        fields = ('id', 'a_status', 'in_accordance', 'history_date', 'ivid', 'parameter', 'formatted')
 
-    def get_show(self, obj):
-        string = '成交总金额为：'
-        string = string + str(obj.final_total_price) + '元 '
-        string = string + '净重为：' + str(obj.net_weight) + '吨 '
-        string = string + '结算净重为：' + str(obj.pure_net_weight) + '吨 '
-        parameter = json.loads(obj.parameter)
-        string = string + '质检员一报价：' + str(parameter['price_1']) + '元/吨 '
-        string = string + '质检员二报价：' + str(parameter['price_2']) + '元/吨'
-        return string
+    def get_formatted(self, obj):
+
+        to_format = []
+        to_format_args = {}
+        for k, v in self.MAP_FIELD_NAME.items():
+            attr = getattr(obj, k, None)
+            # Fixme: How to determine if 0 should be contained in this format.
+            if attr:
+                to_format.append(v)
+                to_format_args[k] = attr
+
+        try:
+            parameter = json.loads(obj.parameter)  # type: dict
+        except ValueError:
+            return None
+
+        for k, v in self.MAP_PARAMETER_NAME.items():
+            attr = parameter.get(k, None)
+            # Fixme: How to determine if 0 should be contained in this format.
+            if attr:
+                to_format.append(v)
+                to_format_args[k] = attr
+
+        return _(
+            "%s\n%s" %
+            (self.desc, " ".join(to_format).format(**to_format_args))
+        )
 
 
 class InviteLogSerializer(serializers.ModelSerializer):
+    formatted = serializers.SerializerMethodField()
+
+    MAP_ISTATUS_DESCRIPTION = {
+        i_status_choice.STARTED: "货品信息已由买方登记",
+        i_status_choice.CANCELED: "买方取消",
+        i_status_choice.SIGNED: "已完成，交易信息已由买方登记",
+    }
+
     class Meta:
         model = LogInviteStatus
-        fields = ('ivid', 'operator', 'log_date_time', 'i_status')
+        fields = ('ivid', 'operator', 'log_date_time', 'i_status', 'formatted')
+
+    def get_formatted(self, obj):
+        # type: (InviteInfo) -> object
+        return _(self.MAP_ISTATUS_DESCRIPTION.get(obj.i_status, None))
 
 
 class InviteAndAppraisalLogSerializer(serializers.ModelSerializer):
@@ -44,7 +89,7 @@ class InviteAndAppraisalLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InviteInfo
-        fields = ('invite_logs', 'appr_log', 'description')
+        fields = ('invite_logs', 'appr_log')
 
     def __init__(self, user=None, *args, **kwargs):
         # type: (UserBase, list, dict) -> None
@@ -62,11 +107,3 @@ class InviteAndAppraisalLogSerializer(serializers.ModelSerializer):
                 return None
         else:
             return None
-
-    def get_description(self, obj):
-        # type: (InviteInfo) -> object
-        return {
-            'register': _('货品信息已由买方登记'),
-            'finish': _('已完成，交易信息已由买方登记'),
-            'cancel': _('买方取消'),
-        }
