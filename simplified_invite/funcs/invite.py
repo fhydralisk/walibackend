@@ -2,7 +2,7 @@ from usersys.funcs.utils.usersid import user_from_sid
 from base.exceptions import Error500, Error404, WLException, default_exception
 from usersys.models import UserBase
 from usersys.model_choices.user_enum import role_choice
-from simplified_invite.models import InviteInfo
+from simplified_invite.models import InviteInfo, InviteCancelReason
 from simplified_invite.model_choices.invite_enum import i_status_choice
 
 
@@ -32,7 +32,7 @@ def submit_invite(user, invite):
 @default_exception(Error500)
 @user_from_sid(Error404)
 def cancel_invite(user, ivid, reason_id, reason):
-    # type: (UserBase, int) -> QuerySet
+    # type: (UserBase, int, int, string) -> InviteInfo
     if not user.is_validated():
         raise WLException(410, "user's validation does not passed")
 
@@ -47,11 +47,14 @@ def cancel_invite(user, ivid, reason_id, reason):
     if not invite_obj.i_status == i_status_choice.STARTED:
         raise WLException(403, "can't cancel invite in this status")
 
-    # if reason_id == 1, the reason must be filled
-    if reason_id == 1 and reason is None:
+    try:
+        reason_obj = InviteCancelReason.objects.get(id=reason_id)
+    except InviteCancelReason.DoesNotExist:
+        raise WLException(404, "no such reason_id")
+    if reason_obj.is_other_reason == True and reason is None:
         raise WLException(405, "need a reason")
     invite_obj.reason_class_id = reason_id
-    invite_obj.reason = reason if reason_id == 1 else invite_obj.reason_class.reason
+    invite_obj.reason = reason if reason_obj.is_other_reason == True else invite_obj.reason_class.reason
     invite_obj.i_status = i_status_choice.CANCELED
     invite_obj.save()
     return invite_obj

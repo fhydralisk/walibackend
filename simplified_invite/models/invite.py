@@ -13,6 +13,7 @@ from usersys.model_choices.user_enum import role_choice
 class InviteCancelReason(models.Model):
     in_use = models.BooleanField(default=True)
     reason = models.CharField(max_length=256)
+    is_other_reason = models.BooleanField()
 
     def __unicode__(self):
         return self.reason
