@@ -8,15 +8,27 @@ from invitesys.models import InviteInfo
 from logsys.models import LogInviteStatus
 from usersys.models import UserBase
 from usersys.model_choices.user_enum import role_choice
-
+import json
 
 HistoricalAppraisalInfo = apps.get_model('appraisalsys', 'HistoricalAppraisalInfo')
 
 
 class AppraisalLogSerializer(serializers.ModelSerializer):
+    show = serializers.SerializerMethodField()
+
     class Meta:
         model = HistoricalAppraisalInfo
-        fields = '__all__'
+        fields = ('id', 'a_status', 'in_accordance', 'history_date', 'ivid', 'show')
+
+    def get_show(self, obj):
+        string = '成交总金额为：'
+        string = string + str(obj.final_total_price) + '元 '
+        string = string + '净重为：' + str(obj.net_weight) + '吨 '
+        string = string + '结算净重为：' + str(obj.pure_net_weight) + '吨 '
+        parameter = json.loads(obj.parameter)
+        string = string + '质检员一报价：' + str(parameter['price_1']) + '元/吨 '
+        string = string + '质检员二报价：' + str(parameter['price_2']) + '元/吨'
+        return string
 
 
 class InviteLogSerializer(serializers.ModelSerializer):
