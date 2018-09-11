@@ -9,28 +9,27 @@ from demandsys.views.publish import (
 )
 
 obtain_urlpatterns = [
-    url(r'^hot/', ObtainHotView.as_view()),
-    url(r'^self/', ObtainSelfView.as_view()),
-    url(r'^demand/', ObtainDetailView.as_view()),
-    url(r'^photo/', ObtainPhotoDataView.as_view()),
-    url(r'^match/', ObtainMatchView.as_view()),
+    url(r'^hot/$', ObtainHotView.as_view()),
+    url(r'^self/$', ObtainSelfView.as_view()),
+    url(r'^demand/$', ObtainDetailView.as_view()),
+    url(r'^photo/$', ObtainPhotoDataView.as_view()),
+    url(r'^match/$', ObtainMatchView.as_view()),
     url(r'^search/$', ObtainSearchView.as_view()),
-    url(r'^photo_by_dmid', ObtainPhotoByDmidView.as_view()),
-
+    url(r'^photo_by_dmid/$', ObtainPhotoByDmidView.as_view()),
 ]
 catalog_urlpatterns = [
-    url(r'^lall/', GetTreedProductTypeView.as_view()),
-    url(r'^flall/', GetFTreedProductTypeView.as_view()),
+    url(r'^lall/$', GetTreedProductTypeView.as_view()),
+    url(r'^flall/$', GetFTreedProductTypeView.as_view()),
     url(r'^l1/$', GetProductTypeL1.as_view()),
 ]
 
 publish_urlpatterns = [
-    url(r'^submit_photo/', UploadPhotoView.as_view()),
-    url(r'^remove_photo/', RemovePhotoView.as_view()),
-    url(r'^publish_demand/', PublishDemandView.as_view()),
-    url(r'^edit_demand/', EditDemandView.as_view()),
-    url(r'^close_demand/', ShutDemandView.as_view()),
-    url(r'^remove_demand/', DeleteDemandView.as_view()),
+    url(r'^submit_photo/$', UploadPhotoView.as_view()),
+    url(r'^remove_photo/$', RemovePhotoView.as_view()),
+    url(r'^publish_demand/$', PublishDemandView.as_view()),
+    url(r'^edit_demand/$', EditDemandView.as_view()),
+    url(r'^close_demand/$', ShutDemandView.as_view()),
+    url(r'^remove_demand/$', DeleteDemandView.as_view()),
 ]
 
 urlpatterns = [
