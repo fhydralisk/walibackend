@@ -9,6 +9,7 @@ class _PushStateChoice(FieldChoice):
     CHOICE_DISPLAY = (
         ("orderinfo_o_status", _(""), "ORDERINFO_O_STATUS"),
         ("inviteinfo_i_status", _(""), "INVITEINFO_I_STATUS"),
+        ("simplified_inviteinfo_i_status", _(""), "SIMPLIFIED_INVITEINFO_I_STATUS"),
     )
 
 

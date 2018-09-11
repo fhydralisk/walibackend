@@ -22,7 +22,8 @@ class InviteInfo(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(InviteInfo, self).__init__(*args, **kwargs)
-
+        # FIXME: If one attempts to save an object twice without retrieving this object again, the initial_xxx might
+        # FIXME: only record the very first initial status.
         self.initial_i_status = self.i_status
 
     uid_s = models.ForeignKey(

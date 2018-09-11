@@ -1,5 +1,6 @@
 import invite_push
 import order_push
+import simplified_invite_push
 
 
 def initialize():
