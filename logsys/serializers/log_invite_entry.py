@@ -29,7 +29,7 @@ class AppraisalLogSerializer(serializers.ModelSerializer):
         "price_2": "质检员二报价: {price_2} 元/吨",
     }
 
-    desc = '已完成，交易信息已由买方登记',
+    desc = '已完成，交易信息已由买方登记'
 
     class Meta:
         model = HistoricalAppraisalInfo
@@ -85,7 +85,6 @@ class InviteLogSerializer(serializers.ModelSerializer):
 class InviteAndAppraisalLogSerializer(serializers.ModelSerializer):
     invite_logs = InviteLogSerializer(source='invite_log', many=True)
     appr_log = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
 
     class Meta:
         model = InviteInfo
