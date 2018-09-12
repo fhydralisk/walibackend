@@ -22,11 +22,14 @@ class AppraisalLogSerializer(serializers.ModelSerializer):
         "final_total_price": "成交总金额为: {final_total_price} 元",
         "net_weight": "净重为: {net_weight} 吨",
         "pure_net_weight": "结算净重为: {pure_net_weight} 吨",
+        "water_content": "含水量为: {water_content}%",
+        "impurity_content": "杂质含量为: {impurity_content}吨",
     }
 
     MAP_PARAMETER_NAME = {
         "price_1": "质检员一报价: {price_1} 元/吨",
         "price_2": "质检员二报价: {price_2} 元/吨",
+        "price_3": "质检员三报价: {price_3} 元/吨",
     }
 
     desc = '已完成，交易信息已由买方登记'
