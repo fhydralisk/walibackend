@@ -153,6 +153,8 @@ def get_matched_demand(user, id, page, order, asc, count_per_page):
         end_time__gt=now(),
     )
 
+    match_queryset = hide_satisfied(match_queryset)     # hide the demand which is satisfied
+
     # FIXME: Here we got a efficient issue, Every time user use this api, it will query the full set
     # of matched queryset. We must figure out how to fetch it by page, or ... cache it.
     matches = match_queryset.all()
