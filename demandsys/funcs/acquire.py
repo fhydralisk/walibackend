@@ -194,9 +194,6 @@ def get_demand_detail(user, id):
     except ProductDemand.DoesNotExist:
         raise Error404("No such demand.")
 
-    if demand.quantity_left() == 0:
-        raise Error404("demand satisfied")
-
     return demand
 
 
