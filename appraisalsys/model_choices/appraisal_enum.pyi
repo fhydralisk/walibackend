@@ -23,6 +23,7 @@ class _ChangeChoice(FieldChoice):
 class _TemplateChoice(FieldChoice):
     PET = None
     IRON = None
+    PAPER = None
 
 t_appraisal_choice = _TAppraisalChoice()
 a_status_choice = _AStatusChoice()

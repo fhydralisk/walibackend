@@ -26,6 +26,9 @@ class AppraisalInfoDisplaySerializer(serializers.ModelSerializer):
 
         parameter_dict["water_content"] = instance.water_content
         parameter_dict["impurity_content"] = instance.impurity_content
+        parameter_dict["final_price"] = instance.final_price
+        parameter_dict["tare"] = instance.tare
+        parameter_dict["deduction_ratio"] = instance.deduction_ratio
         parameter_dict["final_total_price"] = instance.final_total_price
         parameter_dict["net_weight"] = instance.net_weight
         parameter_dict["pure_net_weight"] = instance.pure_net_weight
