@@ -21,6 +21,8 @@ class SubmitAppraisalSerializer(serializers.Serializer):
         if not attrs['in_accordance']:
             if not "tare" in attrs['parameter'] and not "deduction_ratio" in attrs['parameter']:
                 raise ValidationError("Either tare or deduction_ratio must be set", 400)
+            if "tare" in attrs['parameter'] and "deduction_ratio" in attrs['parameter']:
+                raise ValidationError("Only one of tare and deduction_ratio should be set", 400)
             seri_parameter = CommonFieldAppraisalSerializer(data=attrs['parameter'])
             seri_parameter.is_valid(raise_exception=True)
         return attrs
