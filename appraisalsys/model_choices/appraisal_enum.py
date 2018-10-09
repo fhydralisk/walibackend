@@ -31,8 +31,9 @@ class _ChangeChoice(FieldChoice):
 
 class _TemplateChoice(FieldChoice):
     CHOICE_DISPLAY = (
-        (1, _("废纸, PET模板"), "PET"),
+        (1, _("废纸模板"), "PAPER"),
         (2, _("废铁模板"), "IRON"),
+        (3, _("PET模版"), "PET")
     )
 
 

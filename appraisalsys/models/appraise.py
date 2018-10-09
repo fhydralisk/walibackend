@@ -35,11 +35,15 @@ class AppraisalInfo(models.Model):
     a_status = models.IntegerField(_("反馈填写情况"), choices=a_status_choice.choice)
     in_accordance = models.BooleanField(_("是否符合描述"))
 
-    final_total_price = models.FloatField(verbose_name='最终价格')
+    final_total_price = models.FloatField(verbose_name='最终价格', null=True)
+    final_price = models.FloatField(_("单价"))
     net_weight = models.FloatField(_("净重"))
     pure_net_weight = models.FloatField(_("结算净重"), null=True)
     water_content = models.FloatField(_('含水量'), null=True)
     impurity_content = models.FloatField(_('杂质含量'), null=True)
+    tare = models.FloatField(_("扣重"), null=True)
+    deduction_ratio = models.FloatField(_("扣杂比率"), null=True)
+
     parameter = models.TextField(null=True, verbose_name=_('其余参数'))
 
     history = HistoricalRecords()

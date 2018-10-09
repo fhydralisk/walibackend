@@ -34,6 +34,7 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             ivid=iv_obj,
             net_weight=iv_obj.quantity,
             final_total_price=iv_obj.total_price,
+            final_price=iv_obj.price,
             water_content=iv_obj.dmid_t.wcid.water_content,
             parameter="{}",
         )
@@ -52,11 +53,11 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             in_accordance=in_accordance,
             ivid=iv_obj,
             a_status=a_status_choice.APPRAISAL_SUBMITTED,
-            final_total_price=parameter.pop("final_total_price"),
+            final_price=parameter.pop("final_price"),
             net_weight=parameter.pop("net_weight"),
-            pure_net_weight=parameter.pop("pure_net_weight"),
             water_content=parameter.pop("water_content") if "water_content" in parameter else None,
-            impurity_content=parameter.pop("impurity_content") if "impurity_content" in parameter else None,
+            tare=parameter.pop("tare") if "tare" in parameter else None,
+            deduction_ratio=parameter.pop("deduction_ratio") if "deduction_ratio" in parameter else None,
             parameter=json.dumps(parameter)
         )
         appraisal_obj._history_user = user
