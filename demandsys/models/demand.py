@@ -22,7 +22,7 @@ class ProductDemand(models.Model):
     uid = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name="user_demand")
     t_demand = models.IntegerField(verbose_name=_("demand type"), choices=t_demand_choice.choice, db_index=True)
     pid = models.ForeignKey(ProductTypeL3, on_delete=models.CASCADE, related_name="product_demand", db_index=True)
-    qid = models.ForeignKey(ProductQuality, related_name="product_quality")
+    qid = models.ForeignKey(ProductQuality, related_name="product_quality", null=True)
     wcid = models.ForeignKey(ProductWaterContent, related_name="product_watercontent")
     quantity = models.FloatField()
     min_quantity = models.FloatField(default=0)

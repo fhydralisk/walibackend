@@ -21,13 +21,12 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
     contact = serializers.ReadOnlyField(source='uid.user_validate.contact')
     t_user = serializers.ReadOnlyField(source='uid.user_validate.t_user')
 
-    tname1 = serializers.ReadOnlyField(source='qid.t3id.t2id.t1id.tname1')
-    t1id = serializers.ReadOnlyField(source='qid.t3id.t2id.t1id.id')
-    tname2 = serializers.ReadOnlyField(source='qid.t3id.t2id.tname2')
-    t2id = serializers.ReadOnlyField(source='qid.t3id.t2id.id')
-    tname3 = serializers.ReadOnlyField(source='qid.t3id.tname3')
-    t3id = serializers.ReadOnlyField(source='qid.t3id.id')
-    pqdesc = serializers.ReadOnlyField(source='qid.pqdesc')
+    tname1 = serializers.ReadOnlyField(source='pid.t2id.t1id.tname1')
+    t1id = serializers.ReadOnlyField(source='pid.t2id.t1id.id')
+    tname2 = serializers.ReadOnlyField(source='pid.t2id.tname2')
+    t2id = serializers.ReadOnlyField(source='pid.t2id.id')
+    tname3 = serializers.ReadOnlyField(source='pid.tname3')
+    t3id = serializers.ReadOnlyField(source='pid.id')
     pwcdesc = serializers.ReadOnlyField(source='wcid.pwcdesc')
     pmdesc = serializers.ReadOnlyField(source='pmid.opmdesc')
 
@@ -46,11 +45,11 @@ class DemandReadableDisplaySerializer(serializers.ModelSerializer):
             'id', 't_demand', 'price', 'quantity', 'min_quantity', 'match', 'end_time',
             'freight_payer', 'is_expired', 'description',
             'company', 'contact', 't_user',
-            'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc', 'pmdesc',
+            'tname1', 'tname2', 'tname3', 'pwcdesc', 'pmdesc',
             'area', 'city', 'province',
             'satisfied',
             'demand_photos', 'demand_photo_ids',
-            'qid', 't3id', 't2id', 't1id', 'wcid', 'pmid', 'aid',
+            't3id', 't2id', 't1id', 'wcid', 'pmid', 'aid',
             'street', 'expired_after_days',
             'st_time', 'last_modify_from_now',
             'pn'
@@ -95,7 +94,7 @@ class DemandPublishSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductDemand
         fields = (
-            'qid', 'wcid', 'quantity', 'min_quantity',
+            'pid', 'wcid', 'quantity', 'min_quantity',
             'price', 'duration', 'abid', 'aid',
             'street', 'description', 'comment', 'match', 'comment',
         )
