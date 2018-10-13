@@ -98,7 +98,6 @@ def publish_demand(user, demand, photo_ids=None):
 
     # Auto fill some of the fields
     demand_instance.t_demand = t_demand_translator.from_role(user.role)
-    demand_instance.pid = demand["qid"].t3id
     demand_instance.uid = user
     demand_instance.save()
 

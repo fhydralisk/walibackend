@@ -10,7 +10,6 @@ class DefaultInviterInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InviteInfo
-        # TODO select the field to display
         fields = ("price", "quantity", "aid", "street",)
 
 
@@ -45,10 +44,9 @@ class InviteInfoDisplaySerializer(serializers.ModelSerializer):
     buyer = UserInfoSerializer(inviter=True, source='uid_s')
     seller = UserInfoSerializer(inviter=False, source='uid_t')
 
-    tname1 = serializers.ReadOnlyField(source='dmid_t.qid.t3id.t2id.t1id.tname1')
-    tname2 = serializers.ReadOnlyField(source='dmid_t.qid.t3id.t2id.tname2')
-    tname3 = serializers.ReadOnlyField(source='dmid_t.qid.t3id.tname3')
-    pqdesc = serializers.ReadOnlyField(source='dmid_t.qid.pqdesc')
+    tname1 = serializers.ReadOnlyField(source='dmid_t.pid.t2id.t1id.tname1')
+    tname2 = serializers.ReadOnlyField(source='dmid_t.pid.t2id.tname2')
+    tname3 = serializers.ReadOnlyField(source='dmid_t.pid.tname3')
     pwcdesc = serializers.ReadOnlyField(source='dmid_t.wcid.pwcdesc')
     related_appraisal = AppraisalInfoDisplaySerializer(source='appraisal')
     reason_class = serializers.SlugRelatedField(slug_field='reason', read_only=True)
@@ -63,7 +61,7 @@ class InviteInfoDisplaySerializer(serializers.ModelSerializer):
             'dmid_s', 'dmid_t', 'quantity', 'reason', 'reason_class',
             'demand_photos', 'demand_photo_ids',
             'price', 'i_status',
-            'tname1', 'tname2', 'tname3', 'pqdesc', 'pwcdesc',
+            'tname1', 'tname2', 'tname3', 'pwcdesc',
             'total_price', 'related_appraisal',
         )
 
