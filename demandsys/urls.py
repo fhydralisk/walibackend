@@ -8,6 +8,8 @@ from demandsys.views.publish import (
     EditDemandView, PublishDemandView, RemovePhotoView, ShutDemandView, UploadPhotoView, DeleteDemandView,
 )
 
+from demandsys.views.quality import QualityView
+
 obtain_urlpatterns = [
     url(r'^hot/$', ObtainHotView.as_view()),
     url(r'^self/$', ObtainSelfView.as_view()),
@@ -17,10 +19,12 @@ obtain_urlpatterns = [
     url(r'^search/$', ObtainSearchView.as_view()),
     url(r'^photo_by_dmid/$', ObtainPhotoByDmidView.as_view()),
 ]
+
 catalog_urlpatterns = [
     url(r'^lall/$', GetTreedProductTypeView.as_view()),
     url(r'^flall/$', GetFTreedProductTypeView.as_view()),
     url(r'^l1/$', GetProductTypeL1.as_view()),
+    url(r'^quality/$', QualityView.as_view()),
 ]
 
 publish_urlpatterns = [
