@@ -6,7 +6,6 @@ from logsys.models import LogInviteStatus
 from base.exceptions import WLException, default_exception, Error500, Error404
 from usersys.funcs.utils.usersid import user_from_sid
 from usersys.models import UserBase
-from usersys.model_choices.user_enum import role_choice
 
 
 @receiver(post_save, sender=InviteInfo)
@@ -25,12 +24,9 @@ def obtain_invite_and_appraisal_log(user, ivid):
     if invite.uid_s != user and invite.uid_t != user:
         raise WLException(404, "No such invite")
 
-    if user.role == role_choice.BUYER:
-        try:
-            ret = (LogInviteStatus.objects.filter(ivid=ivid).order_by('id'), ivid.appraisal.history.last())
-        except AppraisalInfo.DoesNotExist:
-            ret = (LogInviteStatus.objects.filter(ivid=ivid).order_by('id'), None)
-    else:
+    try:
+        ret = (LogInviteStatus.objects.filter(ivid=ivid).order_by('id'), ivid.appraisal.history.last())
+    except AppraisalInfo.DoesNotExist:
         ret = (LogInviteStatus.objects.filter(ivid=ivid).order_by('id'), None)
 
     return ret
