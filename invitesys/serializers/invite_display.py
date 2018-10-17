@@ -37,9 +37,9 @@ class InviteReadableDisplaySerializer(serializers.ModelSerializer):
     inviter = UserInfoSerializer(inviter=True, source='uid_s')
     invitee = UserInfoSerializer(inviter=False, source='uid_t')
 
-    tname1 = serializers.ReadOnlyField(source='dmid_t.qid.t3id.t2id.t1id.tname1')
-    tname2 = serializers.ReadOnlyField(source='dmid_t.qid.t3id.t2id.tname2')
-    tname3 = serializers.ReadOnlyField(source='dmid_t.qid.t3id.tname3')
+    tname1 = serializers.ReadOnlyField(source='dmid_t.pid.t2id.t1id.tname1')
+    tname2 = serializers.ReadOnlyField(source='dmid_t.pid.t2id.tname2')
+    tname3 = serializers.ReadOnlyField(source='dmid_t.pid.tname3')
     pqdesc = serializers.ReadOnlyField(source='dmid_t.qid.pqdesc')
     pwcdesc = serializers.ReadOnlyField(source='dmid_t.wcid.pwcdesc')
     pmdesc = serializers.ReadOnlyField(source='pmid.opmdesc')

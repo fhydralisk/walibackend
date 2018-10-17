@@ -1,11 +1,9 @@
 from django.forms import modelform_factory
 from base.exceptions import WLException, default_exception, Error500, Error404
-from base.util.misc_validators import validators
 from base.util.pages import get_page_info
 from usersys.funcs.utils.usersid import user_from_sid
 from usersys.model_choices.user_enum import role_choice
 from usersys.models import UserBase
-from demandsys.util.unit_converter import UnitQuantityMetric
 from invitesys.model_choices.invite_enum import t_invite_choice, i_status_choice, handle_method_choice
 from invitesys.models import InviteInfo, InviteCancelReason, InviteProductPhoto
 from .contracts import create_contract, get_current_template
@@ -39,40 +37,15 @@ def obtain(user, t_invite, page, count_pre_page):
     :return: invites, n_pages
     """
 
-    # if t_invite in (
-    #     t_invite_choice.PROCEEDING_INVITES_MINE,
-    #     t_invite_choice.CLOSED_INVITES_MINE,
-    #     t_invite_choice.FINISHED_INVITES_MINE,
-    # ):
-    #     qs = user.user_invite_src.select_related(
-    #         'dmid_t__qid__t3id__t2id__t1id',
-    #         'dmid_t__wcid',
-    #         'uid_s__user_validate',
-    #         'uid_t__user_validate'
-    #     ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
-    # elif t_invite in (
-    #     t_invite_choice.PROCEEDING_INVITES_OTHERS,
-    #     t_invite_choice.CLOSED_INVITES_OTHERS,
-    #     t_invite_choice.FINISHED_INVITES_OTHERS,
-    # ):
-    #     qs = user.user_invite_dst.select_related(
-    #         'dmid_t__qid__t3id__t2id__t1id',
-    #         'dmid_t__wcid',
-    #         'uid_s__user_validate',
-    #         'uid_t__user_validate'
-    #     ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
-    # else:
-    #     raise WLException(400, "t_invite is invalid")
-
     qs1 = user.user_invite_src.select_related(
-        'dmid_t__qid__t3id__t2id__t1id',
+        'dmid_t__pid__t2id__t1id',
         'dmid_t__wcid',
         'uid_s__user_validate',
         'uid_t__user_validate'
     ).filter(i_status__in=MAP_TINVITE_INVITE_STATUS[t_invite])
 
     qs2 = user.user_invite_dst.select_related(
-        'dmid_t__qid__t3id__t2id__t1id',
+        'dmid_t__pid__t2id__t1id',
         'dmid_t__wcid',
         'uid_s__user_validate',
         'uid_t__user_validate'
@@ -99,7 +72,7 @@ def detail(user, ivid):
     """
     try:
         iv = InviteInfo.objects.select_related(
-            'dmid_t__qid__t3id__t2id__t1id',
+            'dmid_t__pid__t2id__t1id',
             'dmid_t__wcid',
             'uid_s__user_validate',
             'uid_t__user_validate'
