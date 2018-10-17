@@ -24,6 +24,8 @@ class AppraisalLogSerializer(serializers.ModelSerializer):
         "pure_net_weight": "结算净重为: {pure_net_weight} 吨",
         "water_content": "含水量为: {water_content}%",
         "impurity_content": "杂质含量为: {impurity_content}吨",
+        "tare": "扣重: {tare} 吨",
+        "deduction_ratio": "扣杂比率: {deduction_ratio}",
     }
 
     MAP_PARAMETER_NAME = {
