@@ -36,6 +36,7 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             final_total_price=iv_obj.total_price,
             final_price=iv_obj.price,
             water_content=iv_obj.dmid_t.wcid.water_content,
+            tare=0,
             parameter="{}",
         )
 
@@ -55,12 +56,21 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
             a_status=a_status_choice.APPRAISAL_SUBMITTED,
             final_price=parameter.pop("final_price"),
             net_weight=parameter.pop("net_weight"),
-            water_content=parameter.pop("water_content") if "water_content" in parameter else None,
-            tare=parameter.pop("tare") if "tare" in parameter else None,
-            deduction_ratio=parameter.pop("deduction_ratio") if "deduction_ratio" in parameter else None,
+            water_content=parameter.pop("water_content", None),
+            tare=parameter.pop("tare", None),
+            deduction_ratio=parameter.pop("deduction_ratio", None),
             parameter=json.dumps(parameter)
         )
         appraisal_obj._history_user = user
+
+        if not (appraisal_obj.tare is None ^ appraisal_obj.deduction_ratio is None):
+            raise WLException(400, "One an only one of tare and deduction_ratio field must be filled")
+
+        calculated_weight = \
+            appraisal_obj.net_weight - appraisal_obj.tare if appraisal_obj.tare is not None else \
+            appraisal_obj.net_weight * (1.0 - appraisal_obj.deduction_ratio)
+
+        appraisal_obj.final_total_price = appraisal_obj.final_price * calculated_weight
         appraisal_obj.save()
 
     iv_obj.i_status = i_status_choice.SIGNED
