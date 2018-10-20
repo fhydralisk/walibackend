@@ -68,7 +68,7 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
 
         calculated_weight = \
             appraisal_obj.net_weight - appraisal_obj.tare if appraisal_obj.tare is not None else \
-            appraisal_obj.net_weight * (1.0 - appraisal_obj.deduction_ratio)
+            appraisal_obj.net_weight * (100.0 - appraisal_obj.deduction_ratio) / 100.0
 
         appraisal_obj.final_total_price = appraisal_obj.final_price * calculated_weight
         appraisal_obj.save()
