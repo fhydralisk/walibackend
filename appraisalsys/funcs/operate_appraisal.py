@@ -63,7 +63,7 @@ def submit_appraisal(user, ivid, in_accordance, parameter, check_photos=None):
         )
         appraisal_obj._history_user = user
 
-        if not (appraisal_obj.tare is None ^ appraisal_obj.deduction_ratio is None):
+        if not ((appraisal_obj.tare is not None) ^ (appraisal_obj.deduction_ratio is not None)):
             raise WLException(400, "One an only one of tare and deduction_ratio field must be filled")
 
         calculated_weight = \
