@@ -20,7 +20,7 @@ def hide_satisfied(qs):
 def filter_and_order_demand(qs, t1id, aid, asc_of_price):
 
     if t1id is not None:
-        qs = qs.filter(qid__t3id__t2id__t1id=t1id)
+        qs = qs.filter(pid__t2id__t1id=t1id)
     if aid is not None:
         qs = qs.filter(aid=aid)
     if asc_of_price is not None:
@@ -53,7 +53,7 @@ def get_popular_demand(role, user, page, t1id, aid, asc_of_price, count_per_page
 
     qs = ProductDemand.objects.select_related(
         'uid__user_validate',
-        'qid__t3id__t2id__t1id',
+        'pid__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
     ).filter(in_use=True, match=True).filter(
@@ -88,7 +88,7 @@ def get_my_demand(user, page, t1id, aid, asc_of_price, count_per_page):
 
     qs = ProductDemand.objects.select_related(
         'uid__user_validate',
-        'qid__t3id__t2id__t1id',
+        'pid__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
     ).filter(uid=user, in_use=True)
@@ -130,7 +130,7 @@ def get_matched_demand(user, id, page, order, asc, count_per_page):
     try:
         demand = ProductDemand.objects.select_related(
             'uid__user_validate',
-            'qid__t3id__t2id__t1id',
+            'pid__t2id__t1id',
             'aid__cid__pid',
             'pmid', 'wcid'
         ).get(in_use=True, id=id, uid=user)
@@ -139,13 +139,13 @@ def get_matched_demand(user, id, page, order, asc, count_per_page):
 
     match_queryset = ProductDemand.objects.select_related(
         'uid__user_validate',
-        'qid__t3id__t2id__t1id',
+        'pid__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
     ).filter(
         in_use=True,            # Must be in use
         match=True,
-        qid=demand.qid,
+        pid=demand.pid,
         aid__cid__pid=demand.aid.cid.pid
     ).exclude(
         uid__role=user.role     # Exclude same role
@@ -189,7 +189,7 @@ def get_demand_detail(user, id):
     try:
         demand = ProductDemand.objects.select_related(
             'uid__user_validate',
-            'qid__t3id__t2id__t1id',
+            'pid__t2id__t1id',
             'aid__cid__pid',
             'pmid', 'wcid'
         ).get(in_use=True, id=id)
@@ -230,7 +230,7 @@ def get_photo_by_dmid(dmid):
 def get_search_demand(user, page, keyword, t1id, aid, asc_of_price, count_per_page):
     qs = ProductDemand.objects.select_related(
         'uid__user_validate',
-        'qid__t3id__t2id__t1id',
+        'pid__t2id__t1id',
         'aid__cid__pid',
         'pmid', 'wcid'
     ).filter(Q(uid__user_validate__company__contains=keyword) | Q(uid__user_validate__contact=keyword) |
