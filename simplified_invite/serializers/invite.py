@@ -1,9 +1,15 @@
+import logging
 from rest_framework import serializers
 from simplified_invite.models import InviteInfo
+from simplified_invite.model_choices.invite_enum import i_status_choice
 from demandsys.serializers.validators.address_submit import AddressChoiceValidator
 from usersys.models import UserBase
 from appraisalsys.serializers.appraisal import AppraisalInfoDisplaySerializer
+from appraisalsys.models.appraise import AppraisalInfo
 from demandsys.serializers.demand import DemandPhotoSerializers
+
+
+logger = logging.getLogger(__name__)
 
 
 class DefaultInviterInfoSerializer(serializers.ModelSerializer):
@@ -64,6 +70,23 @@ class InviteInfoDisplaySerializer(serializers.ModelSerializer):
             'tname1', 'tname2', 'tname3', 'pwcdesc',
             'total_price', 'related_appraisal',
         )
+
+    def to_representation(self, instance):
+        # type: (InviteInfo) -> dict
+
+        data = super(InviteInfoDisplaySerializer, self).to_representation(instance)
+        if instance.i_status == i_status_choice.SIGNED:
+            try:
+                appr_obj = instance.appraisal
+                data['price'] = appr_obj.final_price
+                data['quantity'] = appr_obj.net_weight - appr_obj.tare if appr_obj.tare is not None \
+                    else appr_obj.net_weight * (1 - appr_obj.deduction_ratio/100) if appr_obj.deduction_ratio is not None \
+                    else appr_obj.net_weight
+                data['total_price'] = data['price'] * data['quantity']
+            except AppraisalInfo.DoesNotExist:
+                logger.warning("This invite's status is signed but it has no appraisal")
+
+        return data
 
 
 class SelfInviteDisplaySerializer(InviteInfoDisplaySerializer):
