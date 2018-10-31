@@ -1,3 +1,4 @@
+import logging
 from rest_framework import serializers
 from simplified_invite.models import InviteInfo
 from simplified_invite.model_choices.invite_enum import i_status_choice
@@ -6,7 +7,9 @@ from usersys.models import UserBase
 from appraisalsys.serializers.appraisal import AppraisalInfoDisplaySerializer
 from appraisalsys.models.appraise import AppraisalInfo
 from demandsys.serializers.demand import DemandPhotoSerializers
-from base.exceptions import WLException
+
+
+logger = logging.getLogger(__name__)
 
 
 class DefaultInviterInfoSerializer(serializers.ModelSerializer):
@@ -81,7 +84,7 @@ class InviteInfoDisplaySerializer(serializers.ModelSerializer):
                     else appr_obj.net_weight
                 data['total_price'] = data['price'] * data['quantity']
             except AppraisalInfo.DoesNotExist:
-                raise WLException(404, "This invite's status is signed but it has no appraisal ")
+                logger.warning("This invite's status is signed but it has no appraisal")
 
         return data
 
