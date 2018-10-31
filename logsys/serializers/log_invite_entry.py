@@ -100,12 +100,9 @@ class InviteAndAppraisalLogSerializer(serializers.ModelSerializer):
 
     def get_appr_log(self, obj):
         # type: (InviteInfo) -> object
-        if self._user is not None and self._user.role == role_choice.BUYER:
-            try:
-                return AppraisalLogSerializer(
-                    instance=HistoricalAppraisalInfo.objects.filter(ivid=obj).latest('history_date')
-                ).data
-            except HistoricalAppraisalInfo.DoesNotExist:
-                return None
-        else:
+        try:
+            return AppraisalLogSerializer(
+                instance=HistoricalAppraisalInfo.objects.filter(ivid=obj).latest('history_date')
+            ).data
+        except HistoricalAppraisalInfo.DoesNotExist:
             return None
