@@ -1,5 +1,5 @@
 from .admin_site import admin_site
-from model_admin import core_admin, order_admin, user_admin, appraisal_admin
+from model_admin import core_admin, order_admin, user_admin, appraisal_admin, invite_admin
 
 
 managed = [
@@ -7,6 +7,7 @@ managed = [
     order_admin,
     user_admin,
     appraisal_admin,
+    invite_admin,
 ]
 
 
