@@ -37,7 +37,7 @@ def get_state_change_template(state_name, state_from, state_after):
 
     state_templates = cached_state_templates_dict.get(state_name, None)
     if state_templates is None:
-        logger.warning("Push template for {state_name} does not exist." % state_name)
+        logger.warning("Push template for {state_name} does not exist.".format(state_name=state_name))
         return None, None
 
     for template in state_templates:
