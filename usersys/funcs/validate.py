@@ -5,6 +5,7 @@ Created by Hangyu Fan, May 6, 2018
 
 Last modified: May 8, 2018
 """
+import logging
 from base.exceptions import *
 from rest_framework.exceptions import ValidationError
 from usersys.models import UserValidate, UserValidateArea, UserValidatePhoto
@@ -12,6 +13,9 @@ from usersys.model_choices.user_enum import validate_status_choice
 from .utils.usersid import user_from_sid
 from usersys.serializers.validate import UserValidateUserSerializer, UserValidateAreaSerializer
 from usersys.forms import ValidatePhotoUploadForm
+
+
+logger = logging.getLogger(__name__)
 
 
 @default_exception(Error500)
@@ -104,7 +108,10 @@ def save_validate(user, validate_obj=None, validate_areas=None, validate_request
 
     # Cannot revert by user
     if uvobj.validate_status not in (validate_status_choice.NOT_COMMITTED, validate_status_choice.REJECTED):
-        raise Error401("Already committed, cannot change")
+        # FIXME: In case frontend cannot jump, we return normal but do nothing here.
+        logger.info("Already committed, cannot change: uid: %d" % user.id)
+        return
+        # raise Error401("Already committed, cannot change")
 
     if validate_areas is not None:
         append_areas(uvobj, validate_areas)
