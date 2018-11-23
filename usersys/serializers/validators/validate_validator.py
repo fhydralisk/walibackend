@@ -37,6 +37,9 @@ class UserValidateStatusValidator(object):
         # Determine the existing instance, if this is an update operation.
         self.instance = getattr(serializer_field.parent, 'instance', None)
         self.updated_data = getattr(serializer_field.parent, 'initial_data', None)
+        self.t_user = self.updated_data.get('t_user', None)
+        if self.t_user is None:
+            self.t_user = self.instance.t_user
 
     def ensure_user_vstatus(self, value):
 
@@ -50,10 +53,10 @@ class UserValidateStatusValidator(object):
     def ensure_fields(self, value):
         # Ensure each filed is filled
         if value != validate_status_choice.NOT_COMMITTED:
-            if self.instance.t_user is None:
+            if self.t_user is None:
                 return False
             try:
-                fields_check = self.fields_to_validate[self.instance.uid.role][self.instance.t_user]
+                fields_check = self.fields_to_validate[self.instance.uid.role][self.t_user]
             except KeyError:
                 raise ValidationError("user role, t_user is invalid", 403)
 
@@ -73,12 +76,12 @@ class UserValidateStatusValidator(object):
         # Ensure photos are uploaded
         if value != validate_status_choice.NOT_COMMITTED:
             photoobjs = self.instance.validate_photo.filter(inuse=True)
-            if self.instance.t_user == t_user_choice.ENTERPRISE_USER:
+            if self.t_user == t_user_choice.ENTERPRISE_USER:
                 photoobjs = photoobjs.filter(t_photo=t_photo_choice.LICENSE)
                 if not photoobjs.exists():
                     return False
 
-            if self.instance.t_user == t_user_choice.INDIVIDUAL_USER:
+            if self.t_user == t_user_choice.INDIVIDUAL_USER:
                 photo_id_top = photoobjs.filter(t_photo=t_photo_choice.ID_TOP)
                 photo_id_bot = photoobjs.filter(t_photo=t_photo_choice.ID_BOTTOM)
                 if not (photo_id_top.exists() and photo_id_bot.exists()):
