@@ -48,9 +48,4 @@ class DummyPhoneValidator(BasePhoneValidator):
         return self.STATIC_VCODE
 
 
-class AliyunPhoneValidator(BasePhoneValidator):
-    # TODO: Implement this validator
-    pass
-
-
 phone_validator = import_string(settings.PHONE_VALIDATOR)()
