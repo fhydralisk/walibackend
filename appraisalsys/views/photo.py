@@ -47,8 +47,8 @@ class ObtainCheckPhotoView(WLAPIView, APIView):
 
     ERROR_HTTP_STATUS = True
 
-    def get(self, reuest):
-        data, context = self.get_request_obj(reuest)
+    def get(self, request):
+        data, context = self.get_request_obj(request)
 
         seri_api = GetDeleteCheckPhotoSerializer(data=data)
         self.validate_serializer(seri_api)

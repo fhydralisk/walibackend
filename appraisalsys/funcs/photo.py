@@ -54,7 +54,6 @@ def get_photo_obj(user, photo_id):
         raise WLException(404, "no such photo")
 
 
-
 @default_exception(Error500)
 @user_from_sid(Error404)
 def get_check_photo(user, photo_id):
