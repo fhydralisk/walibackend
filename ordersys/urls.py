@@ -2,10 +2,13 @@ from django.conf.urls import include, url
 import views.obtain as obtain
 import views.operate as operate
 import views.photo as photo
+from .funcs.fetch_order_log import order_log_view
+
 
 url_pattern_obtain = [
     url(r'^list/', obtain.ObtainOrderView.as_view()),
     url(r'^order/', obtain.ObtainOrderDetailView.as_view()),
+    url(r'^order_log/$', order_log_view),
 ]
 
 
