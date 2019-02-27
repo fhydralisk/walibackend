@@ -93,7 +93,7 @@ def fetch_order_log():
 def order_log_view(request, **kwargs):
     f = fetch_order_log()
     r = FileResponse(f, content_type='application/x-xls')
-    r['Content-Disposition'] = 'inline; filename=order-{date}.pdf'.format(
+    r['Content-Disposition'] = 'inline; filename=order-{date}.xls'.format(
         date=now()
     )
     return r
