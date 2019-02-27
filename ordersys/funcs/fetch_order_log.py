@@ -9,12 +9,20 @@ from usersys.serializers.user_info import UserInfoSerialzier
 
 
 class InviteSerializer(serializers.ModelSerializer):
-    uid_s = UserInfoSerialzier()
-    uid_t = UserInfoSerialzier()
-
     class Meta:
         model = InviteInfo
         fields = '__all__'
+
+    def to_representation(self, instance):
+        rep = super(InviteSerializer, self).to_representation(instance)
+        # uid_s = rep.pop('uid_s')
+        # uid_t = rep.pop('uid_t')
+        # for k, v in uid_s.items():
+        #     rep['uid_s_%s' % k] = v
+        # for k, v in uid_t.items():
+        #     rep['uid_t_%s' % k] = v
+
+        return rep
 
 
 class LogOrderSerializer(serializers.ModelSerializer):
