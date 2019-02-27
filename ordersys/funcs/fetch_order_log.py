@@ -64,7 +64,7 @@ def xls(data):
 
     for row, r in enumerate(data):
         for col, d in enumerate(r.values()):
-            sheet.write(row, col, d)
+            sheet.write(row + 1, col, d)
 
     f = io.BytesIO()
     wb.save(f)
