@@ -27,6 +27,7 @@ class InviteSerializer(serializers.ModelSerializer):
 
 class LogOrderSerializer(serializers.ModelSerializer):
     invite = InviteSerializer(read_only=True, source='oid.ivid')
+    final_price = serializers.ReadOnlyField(source='oid.final_price')
 
     class Meta:
         model = LogOrderStatus
@@ -35,6 +36,7 @@ class LogOrderSerializer(serializers.ModelSerializer):
             'oid',
             'o_status',
             'context',
+            'final_price',
             'operator',
             'invite',
         )
