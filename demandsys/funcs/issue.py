@@ -95,6 +95,8 @@ def publish_demand(user, demand, photo_ids=None):
         raise Error400("min_quantity must equal to or less than quantity")
 
     demand_instance = ProductDemand(**demand)
+    if demand.get('pid') is None and demand.get('qid') is not None:
+        demand_instance.pid = demand.get('qid').t3id
 
     # Auto fill some of the fields
     demand_instance.t_demand = t_demand_translator.from_role(user.role)

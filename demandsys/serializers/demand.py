@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from demandsys.models import ProductDemand, ProductDemandPhoto
+from rest_framework.exceptions import ValidationError
+from demandsys.models import ProductDemand, ProductDemandPhoto, ProductQuality, ProductTypeL3
 from demandsys.serializers.validators.address_submit import AddressChoiceValidator
 
 
@@ -90,17 +91,25 @@ class DemandPublishSerializer(serializers.ModelSerializer):
 
     duration = serializers.FloatField(default=100)
     min_quantity = serializers.FloatField(default=0)
+    qid = serializers.PrimaryKeyRelatedField(queryset=ProductQuality.objects.all(), allow_null=True, default=None)
+    pid = serializers.PrimaryKeyRelatedField(queryset=ProductTypeL3.objects.all(), allow_null=True, default=None)
 
     class Meta:
         model = ProductDemand
         fields = (
-            'pid', 'wcid', 'quantity', 'min_quantity',
+            'qid', 'pid', 'wcid', 'quantity', 'min_quantity',
             'price', 'duration', 'abid', 'aid',
             'street', 'description', 'comment', 'match', 'comment',
         )
         validators = [
             AddressChoiceValidator()
         ]
+
+    def validate(self, attrs):
+        if attrs.get('pid') is None and attrs.get('qid') is None:
+            raise ValidationError(detail='Both pid and qid is None', code=400)
+
+        return attrs
 
 
 class DemandEditSerializer(serializers.ModelSerializer):
